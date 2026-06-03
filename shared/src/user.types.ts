@@ -33,7 +33,6 @@ export interface Avatar {
 export interface Accessory {
   accessoryId: string;
   name: string;
-  isWearing: boolean;
 }
 
 /**
@@ -42,8 +41,9 @@ export interface Accessory {
  * - equipped with default face accessory
  */
 export function createDefaultAvatar(): Avatar {
+  const colors = ["blue", "pink", "orange", "green"];
   return {
-    color: "blue",
+    color: colors[Math.floor(Math.random() * colors.length)],
     accessories: [], // TODO: add default face
   };
 }
