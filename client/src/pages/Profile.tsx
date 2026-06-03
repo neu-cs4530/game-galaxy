@@ -2,6 +2,7 @@ import { useState } from "react";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import useEditProfileForm from "../hooks/useEditProfileForm.ts";
 import useTimeSince from "../hooks/useTimeSince.ts";
+import AvatarDisplay from "../components/Avatar.tsx";
 
 export default function Profile() {
   const { user } = useLoginContext();
@@ -13,6 +14,9 @@ export default function Profile() {
   return (
     <form className="content spacedSection" onSubmit={handleSubmit}>
       <h2>Profile</h2>
+      <div>
+        <AvatarDisplay avatar={user.avatar} size={200} />
+      </div>
       <div>
         <h3>General information</h3>
         <ul>

@@ -25,18 +25,6 @@ export interface Avatar {
 }
 
 /**
- * Creates a default avatar for a newly registered user.
- * - color defaults to "gray"
- * - no accessories equipped
- */
-export function createDefaultAvatar(): Avatar {
-  return {
-    color: "gray",
-    accessories: [],
-  };
-}
-
-/**
  * represents an accessory that a user can own
  * accessoryId - unique id identifying the accessory
  * name - the name of the accessory
@@ -46,6 +34,18 @@ export interface Accessory {
   accessoryId: string;
   name: string;
   isWearing: boolean;
+}
+
+/**
+ * Creates a default avatar for a newly registered user.
+ * - color defaults to blue
+ * - equipped with default face accessory
+ */
+export function createDefaultAvatar(): Avatar {
+  return {
+    color: "blue",
+    accessories: [], // TODO: add default face
+  };
 }
 
 /*** TYPES USED IN THE USER API ***/
