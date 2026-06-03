@@ -154,9 +154,22 @@ export const socketMakeMove: SocketAPI = (socket, io) => async (body) => {
     const user = await enforceAuth(auth);
     const viewUpdates = await updateGame(gameId, user, move);
     sendViewUpdates(io, gameId, viewUpdates);
+    await rewardWins(gameId, io);
+  } catch (err) {
+    logSocketError(socket, err);
+  }
+};
 
-    const game = await GameRepo.find(gameId);
-    if (!game) throw new Error(`Invalid game ${gameId}`);
+/**
+ * If game is over, update winner balances and inform clients of the update.
+ *
+ * @param gameId the identifier for this game instance
+ * @param io the socket game server
+ */
+async function rewardWins(gameId: string, io: GameServer) {
+  const game = await GameRepo.find(gameId);
+  if (!game) throw new Error(`Invalid game ${gameId}`);
+  if (game.done) {
     const winnerIndices = gameServices[game.type].getWinners(game.state);
     const winnerIds = winnerIndices.map((i) => game.players[i]);
     for (const winnerId of winnerIds) {
@@ -165,7 +178,5 @@ export const socketMakeMove: SocketAPI = (socket, io) => async (body) => {
       const newBalance = await updateCoinCount(winnerId, 10);
       io.to(userRoom(gameId, winnerId)).emit("balanceUpdated", { balance: newBalance });
     }
-  } catch (err) {
-    logSocketError(socket, err);
   }
-};
+}

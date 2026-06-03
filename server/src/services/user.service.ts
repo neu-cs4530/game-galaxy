@@ -92,6 +92,13 @@ export async function updateUser(
   return populateSafeUserInfo(user.userId);
 }
 
+/**
+ * Updates the database to give a player more coins for winning a game.
+ * 
+ * @param userId the user to update the balance of
+ * @param coins how many coins to add
+ * @returns the new user balance in total
+ */
 export async function updateCoinCount(userId: string, coins: number) {
   const newUser = await UserRepo.get(userId);
   if (coins !== undefined) newUser.balance = newUser.balance + coins;

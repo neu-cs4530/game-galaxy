@@ -50,6 +50,8 @@ export const guessLogic: GameLogic<GuessState, GuessView> = {
     if (!allGuessed(guesses)) return [];
     const diffs = guesses.map((g) => Math.abs(g - secret));
     const best = Math.min(...diffs);
+
+    //Returns the player IDs of the players with the best guess only (there may be ties)
     return diffs.map((d, i) => (d === best ? i : -1)).filter((i) => i !== -1);
   },
 };
