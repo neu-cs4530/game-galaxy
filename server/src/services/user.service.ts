@@ -1,4 +1,4 @@
-import { type SafeUserInfo, type UserUpdateRequest } from "@gamenite/shared";
+import { createDefaultAvatar, type SafeUserInfo, type UserUpdateRequest } from "@gamenite/shared";
 import { getUserByUsername, updateAuth } from "./auth.service.ts";
 import { UserRepo } from "../repository.ts";
 
@@ -16,6 +16,7 @@ export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo
     username: record.username,
     display: record.display,
     createdAt: new Date(record.createdAt),
+    avatar: record.avatar,
     balance: record.balance,
   };
 }
@@ -37,10 +38,12 @@ export async function createUser(
   if (disallowedUsernames.has(username)) {
     return { error: "That is not a permitted username" };
   }
+  const defaultAvatar = createDefaultAvatar();
   const id = await UserRepo.add({
     username,
     createdAt: createdAt.toISOString(),
     display: username,
+    avatar: defaultAvatar,
     balance: 0,
   });
   await updateAuth(username, password, id);
@@ -48,6 +51,7 @@ export async function createUser(
     username,
     createdAt,
     display: username,
+    avatar: defaultAvatar,
     balance: 0,
   };
 }

@@ -1,4 +1,4 @@
-import type { GameKey } from "@gamenite/shared";
+import type { Avatar, GameKey } from "@gamenite/shared";
 
 /**
  * Record identifiers used to look up records in a database. This type
@@ -101,11 +101,13 @@ export interface ThreadRecord {
  * - `username`: Text username (a non-random key for looking up Auth records)
  * - `display`: A display name
  * - `createdAt`: when this user registered.
+ * - `avatar` : the avatar representing this user.
  * - `balance`: the user's coin amount
  */
 export interface UserRecord {
   username: string; // References Auth records
   display: string;
   createdAt: DateISO;
+  avatar: Avatar;
   balance: number;
 }
