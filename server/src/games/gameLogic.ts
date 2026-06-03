@@ -23,4 +23,5 @@ export interface GameLogic<GameState, GameView> {
   isDone: (state: GameState) => boolean;
   viewAs: (state: GameState, playerIndex: number) => GameView;
   tagView: (view: GameView) => TaggedGameView;
+  getWinners: (state: GameState) => number[];
 }

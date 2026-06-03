@@ -48,6 +48,7 @@ export interface GameServicer {
     playerIndex: number,
     players: string[],
   ) => null | { state: unknown; views: GameViewUpdates; done: boolean };
+  getWinners: (state: any) => number[];
 }
 
 export class GameService<State, View> implements GameServicer {
@@ -97,5 +98,9 @@ export class GameService<State, View> implements GameServicer {
   view(state: any, playerIndex: number) {
     if (!state) throw new Error("Game state does not exist");
     return this._view(state, playerIndex);
+  }
+
+  getWinners(state: any): number[] {
+    return this._logic.getWinners(state);
   }
 }

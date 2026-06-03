@@ -16,6 +16,7 @@ export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo
     username: record.username,
     display: record.display,
     createdAt: new Date(record.createdAt),
+    balance: record.balance,
   };
 }
 
@@ -40,12 +41,14 @@ export async function createUser(
     username,
     createdAt: createdAt.toISOString(),
     display: username,
+    balance: 0,
   });
   await updateAuth(username, password, id);
   return {
     username,
     createdAt,
     display: username,
+    balance: 0,
   };
 }
 
@@ -87,4 +90,18 @@ export async function updateUser(
   if (display !== undefined) newUser.display = display;
   await UserRepo.set(user.userId, newUser);
   return populateSafeUserInfo(user.userId);
+}
+
+/**
+ * Updates the database to give a player more coins for winning a game.
+ * 
+ * @param userId the user to update the balance of
+ * @param coins how many coins to add
+ * @returns the new user balance in total
+ */
+export async function updateCoinCount(userId: string, coins: number) {
+  const newUser = await UserRepo.get(userId);
+  if (coins !== undefined) newUser.balance = newUser.balance + coins;
+  await UserRepo.set(userId, newUser);
+  return newUser.balance;
 }

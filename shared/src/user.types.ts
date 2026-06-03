@@ -11,6 +11,7 @@ export interface SafeUserInfo {
   username: string;
   display: string;
   createdAt: Date;
+  balance: number;
 }
 
 /*** TYPES USED IN THE USER API ***/
