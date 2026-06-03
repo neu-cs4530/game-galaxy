@@ -12,6 +12,7 @@ export interface SafeUserInfo {
   display: string;
   createdAt: Date;
   avatar: Avatar;
+  balance: number;
 }
 
 /**
@@ -28,7 +29,6 @@ export interface Avatar {
  * represents an accessory that a user can own
  * accessoryId - unique id identifying the accessory
  * name - the name of the accessory
- * isWearing - is this accessory being worn by a user? // TODO: not sure if we want this here might have to tweak once we implement this.
  */
 export interface Accessory {
   accessoryId: string;

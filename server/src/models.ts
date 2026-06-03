@@ -102,10 +102,12 @@ export interface ThreadRecord {
  * - `display`: A display name
  * - `createdAt`: when this user registered.
  * - `avatar` : the avatar representing this user.
+ * - `balance`: the user's coin amount
  */
 export interface UserRecord {
   username: string; // References Auth records
   display: string;
   createdAt: DateISO;
   avatar: Avatar;
+  balance: number;
 }
