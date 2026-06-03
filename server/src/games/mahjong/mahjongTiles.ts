@@ -67,6 +67,14 @@ export function isFlower(tile: MahjongTile): boolean {
   return tile.length === 2 && (tile.startsWith("f") || tile.startsWith("s"));
 }
 
+export function isDragon(tile: MahjongTile): boolean {
+  return tile === "rd" || tile === "gd" || tile === "wd";
+}
+
+export function isWind(tile: MahjongTile): boolean {
+  return tile === "ew" || tile === "sw" || tile === "ww" || tile === "nw";
+}
+
 /**
  * Remove the first occurrence of a tile from an array.
  * Returns the array unchanged if the tile is not present.
@@ -77,6 +85,30 @@ export function isFlower(tile: MahjongTile): boolean {
 export function removeOne(arr: MahjongTile[], tile: MahjongTile): MahjongTile[] {
   const i = arr.indexOf(tile);
   return i < 0 ? arr : [...arr.slice(0, i), ...arr.slice(i + 1)];
+}
+
+export function sortBySuit(tiles: MahjongTile[]): MahjongTile[] {
+  const suitTiles: MahjongTile[] = [];
+  const otherTiles: MahjongTile[] = [];
+
+  // divide into suit and non-suit tiles
+  for (const tile of tiles) {
+    if (isSuitTile(tile)) suitTiles.push(tile);
+    else otherTiles.push(tile);
+  }
+
+  // sort suit tiles by suit then value
+  suitTiles.sort((a, b) => {
+    const suitA = getSuit(a)!;
+    const suitB = getSuit(b)!;
+    if (suitA !== suitB) return suitA.localeCompare(suitB);
+    return getValue(a)! - getValue(b)!;
+  });
+
+  // sort non-suit tiles into winds and dragons, then concatenate everything
+  const windTiles = otherTiles.filter(isWind).sort();
+  const dragonTiles = otherTiles.filter(isDragon).sort();
+  return [...suitTiles, ...windTiles, ...dragonTiles];
 }
 
 // ─────────────────────────────────────────────────
