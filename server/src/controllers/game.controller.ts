@@ -13,6 +13,8 @@ import {
 import { z } from "zod";
 import { logSocketError } from "./socket.controller.ts";
 import { checkAuth, enforceAuth } from "../services/auth.service.ts";
+import { GameRepo, UserRepo } from "../repository.ts";
+import { updateCoinCount } from "../services/user.service.ts";
 
 /**
  * Handle POST requests to `/api/game/create` by creating a game. The game
@@ -152,6 +154,17 @@ export const socketMakeMove: SocketAPI = (socket, io) => async (body) => {
     const user = await enforceAuth(auth);
     const viewUpdates = await updateGame(gameId, user, move);
     sendViewUpdates(io, gameId, viewUpdates);
+
+    const game = await GameRepo.find(gameId);
+    if (!game) throw new Error(`Invalid game ${gameId}`);
+    const winnerIndices = gameServices[game.type].getWinners(game.state);
+    const winnerIds = winnerIndices.map((i) => game.players[i]);
+    for (const winnerId of winnerIds) {
+      const user = await UserRepo.find(winnerId);
+      if (!user) throw new Error(`Invalid user ${winnerId}`);
+      const newBalance = await updateCoinCount(winnerId, 10);
+      io.to(userRoom(gameId, winnerId)).emit("balanceUpdated", { balance: newBalance });
+    }
   } catch (err) {
     logSocketError(socket, err);
   }

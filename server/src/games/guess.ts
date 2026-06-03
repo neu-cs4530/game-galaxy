@@ -46,6 +46,12 @@ export const guessLogic: GameLogic<GuessState, GuessView> = {
     return view;
   },
   tagView: (view) => ({ type: "guess", view }),
+  getWinners: ({ secret, guesses }) => {
+    if (!allGuessed(guesses)) return [];
+    const diffs = guesses.map((g) => Math.abs(g - secret));
+    const best = Math.min(...diffs);
+    return diffs.map((d, i) => (d === best ? i : -1)).filter((i) => i !== -1);
+  },
 };
 
 export const guessGameService = new GameService<GuessState, GuessView>(guessLogic);
