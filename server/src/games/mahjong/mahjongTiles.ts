@@ -22,7 +22,7 @@ const FLOWERS = ["f1", "f2", "f3", "f4", "s1", "s2", "s3", "s4"] as const;
 function isSuitTile(tile: MahjongTile): boolean {
   return (
     tile.length === 2 &&
-    (tile[1] === "d" || tile[1] === "b" || tile[1] === "c") &&
+    ((tile[1] === "d" && !isNaN(parseInt(tile[0]))) || tile[1] === "b" || tile[1] === "c") &&
     !isNaN(parseInt(tile[0]))
   );
 }

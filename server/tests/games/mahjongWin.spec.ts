@@ -8,9 +8,9 @@ describe("isWinningHand", () => {
       "1d",
       "1d",
       "1d",
-      "2b",
-      "3b",
-      "4b",
+      "rd",
+      "rd",
+      "rd",
       "5c",
       "6c",
       "7c",
@@ -18,13 +18,14 @@ describe("isWinningHand", () => {
       "8d",
       "8d",
       "9d",
+      "9d",
     ];
     const melds: MahjongMeld[] = [];
     expect(isWinningHand(hand, melds)).toBe(true);
   });
 
   it("should recognize a winning hand with one meld", () => {
-    const hand: MahjongTile[] = ["1d", "1d", "2b", "3b", "4b", "5c", "6c", "7c", "8d", "8d"];
+    const hand: MahjongTile[] = ["1d", "1d", "1d", "nw", "nw", "nw", "5c", "6c", "7c", "8d", "8d"];
     const melds: MahjongMeld[] = [
       {
         type: "pong",
