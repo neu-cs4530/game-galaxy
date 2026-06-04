@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import "./Header.css";
 import { useNavigate } from "react-router-dom";
@@ -6,13 +7,24 @@ import { useNavigate } from "react-router-dom";
  * Header component that renders the main title.
  */
 export default function Header() {
-  const { user, reset } = useLoginContext();
+  const { socket, user, reset } = useLoginContext();
+  const [coins, setCoins] = useState(user.balance);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    socket.on("balanceUpdated", ({ balance }) => {
+      setCoins(balance);
+    });
+    return () => {
+      socket.off("balanceUpdated");
+    };
+  }, [socket]);
 
   return (
     <div id="header" className="header">
       <div className="title">GameNite!</div>
-      signed in as {user.display}
+      <div>Coins: {coins}</div>
+      <div>User: {user.display}</div>
       <button
         className="narrowcenter secondary"
         onClick={async () => {
