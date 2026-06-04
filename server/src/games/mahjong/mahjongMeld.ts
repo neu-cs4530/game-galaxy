@@ -2,8 +2,23 @@ import {
   type MahjongState,
   type MahjongMeldResponse,
 } from "@gamenite/shared/src/games/mahjong.types.ts";
-import { removeOne } from "./mahjongTiles.ts";
+import { removeOne, sortBySuit } from "./mahjongTiles.ts";
 import { drawForPlayer } from "./mahjongDraw.ts";
+
+/**
+ * cleans up the parts of state that need to be reset after a meld action (pong, kong, or seung)
+ * @param state - current state
+ * @param player - player index of the player who performed the meld action
+ * @returns updated state with the current player set to the meld action player, phase set to 'discard',
+ * and meld responses reset to null
+ */
+function meldActionCleanup(state: MahjongState, player: number): MahjongState {
+  state.lastDiscard = null;
+  state.currentPlayer = player;
+  state.phase = "discard";
+  state.meldResponses = [null, null, null, null];
+  return state;
+}
 
 /**
  * Resolve the meld window once all four players have responded.
@@ -55,15 +70,67 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
         concealed: false,
       });
 
-      //update remaining state fields
-      state.lastDiscard = null;
-      state.currentPlayer = p;
-      state.phase = "discard";
-      state.meldResponses = [null, null, null, null];
+      let next = meldActionCleanup(state, p);
 
       // kong requires a replacement draw from the dead wall
-      const next = drawForPlayer(state, p, true);
+      next = drawForPlayer(next, p, true);
       return next;
     }
   }
+
+  // ── pong ─────────────────────────────────────────
+  for (const p of turnOrder) {
+    if (responses[p].type === "pong") {
+      // update hand
+      for (let i = 0; i < 2; i++) {
+        state.hands[p] = removeOne(state.hands[p], discard);
+      }
+
+      // update melds
+      state.melds[p].push({
+        type: "pong",
+        tiles: [discard, discard, discard],
+        concealed: false,
+      });
+
+      const next = meldActionCleanup(state, p);
+      return next;
+    }
+  }
+
+  // ── seung (left-of-discarder only) ───────────────
+  for (const p of turnOrder) {
+    if (responses[p].type === "seung") {
+      const [t1, t2] = responses[p].with;
+      state.hands[p] = removeOne(state.hands[p], t1);
+      state.hands[p] = removeOne(state.hands[p], t2);
+
+      // update melds
+      state.melds[p].push({
+        type: "seung",
+        tiles: sortBySuit([discard, t1, t2]),
+        concealed: false,
+      });
+      const next = meldActionCleanup(state, p);
+      return next;
+    }
+  }
+
+  // ── nobody melded ─────────────────────────────────
+  if (state.wall.length === 0) {
+    // wall exhausted — draw game
+    return { ...state, phase: "done", winner: null };
+  }
+
+  const nextPlayer = (discarder + 1) % 4;
+  let next: MahjongState = {
+    ...state,
+    discardPile: [...state.discardPile, discard],
+    lastDiscard: null,
+    currentPlayer: nextPlayer,
+    phase: "discard",
+    meldResponses: [null, null, null, null],
+  };
+  next = drawForPlayer(next, nextPlayer);
+  return next;
 }
