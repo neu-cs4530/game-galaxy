@@ -3,12 +3,14 @@ import {
   createThread,
   getThreadById,
   getThreadSummaries,
+  setReactionOnThread,
 } from "../services/thread.service.ts";
 import {
   type ThreadInfo,
   type ThreadSummary,
   withAuth,
   zCreateThreadMessage,
+  zReactMessage,
 } from "@gamenite/shared";
 import { type RestAPI } from "../types.ts";
 import { z } from "zod";
@@ -73,6 +75,32 @@ export const postByIdComment: RestAPI<ThreadInfo, { id: string }> = async (req, 
   }
 
   const thread = await addCommentToThread(req.params.id, user, body.data.payload, new Date());
+  if (!thread) {
+    res.status(404).send({ error: "Thread not found" });
+    return;
+  }
+
+  res.send(thread);
+};
+
+/**
+ * Handle POST requests to `/api/thread/:id/react` that toggle the requesting
+ * user's emoji reaction on a thread.
+ */
+export const postByIdReaction: RestAPI<ThreadInfo, { id: string }> = async (req, res) => {
+  const body = withAuth(zReactMessage).safeParse(req.body);
+  if (!body.success) {
+    res.status(400).send({ error: "Poorly-formed request" });
+    return;
+  }
+
+  const user = await checkAuth(body.data.auth);
+  if (!user) {
+    res.status(403).send({ error: "Invalid credentials" });
+    return;
+  }
+
+  const thread = await setReactionOnThread(req.params.id, user, body.data.payload.emoji);
   if (!thread) {
     res.status(404).send({ error: "Thread not found" });
     return;

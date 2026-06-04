@@ -1,0 +1,30 @@
+.reactionButtons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+button.reactionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  border: 1px solid oklch(0.85 0 0);
+  background-color: oklch(0.97 0 0);
+  padding-inline: 0.7rem;
+}
+
+button.reactionButton:hover {
+  background-color: oklch(0.92 0 0);
+}
+
+button.reactionButton.reacted {
+  border-color: oklch(0.55 0.1 260);
+  background-color: oklch(0.92 0.05 260);
+}
+
+.reactionCount {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: oklch(0.4 0 0);
+}
