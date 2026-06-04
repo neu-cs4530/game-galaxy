@@ -56,6 +56,21 @@ describe("GET /api/thread/:id", () => {
         avatar: baseAvatar,
         balance: 100,
       },
+      reactions: [
+        {
+          emoji: "👍",
+          user: {
+            avatar: {
+              accessories: [],
+              color: "blue",
+            },
+            balance: 100,
+            createdAt: expect.anything(),
+            display: "The Knight Of Games",
+            username: "user0",
+          },
+        },
+      ],
       createdAt: new Date("2025-04-02").toISOString(),
     });
   });
@@ -178,11 +193,23 @@ describe("POST /api/thread/:id/react", () => {
     expect(response.status).toBe(200);
     expect(response.body.reactions).toContainEqual({
       emoji: "😂",
-      user: { username: "user1", display: "Yāo", createdAt: expect.anything() },
+      user: {
+        avatar: expect.anything(),
+        balance: 100,
+        username: "user1",
+        display: "Yāo",
+        createdAt: expect.anything(),
+      },
     });
     expect(response.body.reactions).toContainEqual({
       emoji: "👍",
-      user: { username: "user0", display: expect.any(String), createdAt: expect.anything() },
+      user: {
+        avatar: expect.anything(),
+        balance: 100,
+        username: "user0",
+        display: expect.any(String),
+        createdAt: expect.anything(),
+      },
     });
   });
 
@@ -201,11 +228,23 @@ describe("POST /api/thread/:id/react", () => {
     expect(response.status).toBe(200);
     expect(response.body.reactions).toContainEqual({
       emoji: "👍",
-      user: { username: "user0", display: "The Knight Of Games", createdAt: expect.anything() },
+      user: {
+        avatar: expect.anything(),
+        balance: 100,
+        username: "user0",
+        display: "The Knight Of Games",
+        createdAt: expect.anything(),
+      },
     });
     expect(response.body.reactions).toContainEqual({
       emoji: "❤️",
-      user: { username: "user0", display: "The Knight Of Games", createdAt: expect.anything() },
+      user: {
+        avatar: expect.anything(),
+        balance: 100,
+        username: "user0",
+        display: "The Knight Of Games",
+        createdAt: expect.anything(),
+      },
     });
   });
 });
