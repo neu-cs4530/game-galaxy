@@ -4,10 +4,11 @@ import supertest, { type Response } from "supertest";
 import { app } from "../src/app.ts";
 
 let response: Response;
+const baseAvatar = { color: "blue", accessories: [] };
 const auth1 = { username: "user1", password: "pwd1111" };
-const user1 = { username: "user1", display: "Yāo" };
+const user1 = { username: "user1", display: "Yāo", avatar: baseAvatar, balance: 100 };
 const auth2 = { username: "user2", password: "pwd2222" };
-const user2 = { username: "user2", display: "Sénior Dos" };
+const user2 = { username: "user2", display: "Sénior Dos", avatar: baseAvatar, balance: 100 };
 
 describe("GET /api/user/:id", () => {
   it("should 404 for nonexistent users", async () => {
@@ -146,6 +147,8 @@ describe("POST /api/user/signup", () => {
       username,
       display: username,
       createdAt: expect.anything(),
+      avatar: { color: expect.any(String), accessories: [] },
+      balance: 0,
     });
   });
 
