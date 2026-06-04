@@ -13,11 +13,13 @@ import { drawForPlayer } from "./mahjongDraw.ts";
  * and meld responses reset to null
  */
 function meldActionCleanup(state: MahjongState, player: number): MahjongState {
-  state.lastDiscard = null;
-  state.currentPlayer = player;
-  state.phase = "discard";
-  state.meldResponses = [null, null, null, null];
-  return state;
+  return {
+    ...state,
+    lastDiscard: null,
+    currentPlayer: player,
+    phase: "discard",
+    meldResponses: [null, null, null, null],
+  };
 }
 
 /**
@@ -58,19 +60,22 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
   // ── kong ─────────────────────────────────────────
   for (const p of turnOrder) {
     if (responses[p].type === "kong") {
-      // update hand
-      for (let i = 0; i < 3; i++) {
-        state.hands[p] = removeOne(state.hands[p], discard);
-      }
+      let hand = [...state.hands[p]];
+      for (let i = 0; i < 3; i++) hand = removeOne(hand, discard);
 
-      // update melds
-      state.melds[p].push({
-        type: "kong",
-        tiles: [discard, discard, discard, discard],
-        concealed: false,
-      });
+      const newMelds = [
+        ...state.melds[p],
+        { type: "kong" as const, tiles: [discard, discard, discard, discard], concealed: false },
+      ];
 
-      let next = meldActionCleanup(state, p);
+      let next = meldActionCleanup(
+        {
+          ...state,
+          hands: state.hands.map((h, i) => (i === p ? hand : [...h])),
+          melds: state.melds.map((m, i) => (i === p ? newMelds : [...m])),
+        },
+        p,
+      );
 
       // kong requires a replacement draw from the dead wall
       next = drawForPlayer(next, p, true);
@@ -81,20 +86,22 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
   // ── pong ─────────────────────────────────────────
   for (const p of turnOrder) {
     if (responses[p].type === "pong") {
-      // update hand
-      for (let i = 0; i < 2; i++) {
-        state.hands[p] = removeOne(state.hands[p], discard);
-      }
+      let hand = [...state.hands[p]];
+      for (let i = 0; i < 2; i++) hand = removeOne(hand, discard);
 
-      // update melds
-      state.melds[p].push({
-        type: "pong",
-        tiles: [discard, discard, discard],
-        concealed: false,
-      });
+      const newMelds = [
+        ...state.melds[p],
+        { type: "pong" as const, tiles: [discard, discard, discard], concealed: false },
+      ];
 
-      const next = meldActionCleanup(state, p);
-      return next;
+      return meldActionCleanup(
+        {
+          ...state,
+          hands: state.hands.map((h, i) => (i === p ? hand : [...h])),
+          melds: state.melds.map((m, i) => (i === p ? newMelds : [...m])),
+        },
+        p,
+      );
     }
   }
 
@@ -102,17 +109,23 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
   for (const p of turnOrder) {
     if (responses[p].type === "seung") {
       const [t1, t2] = responses[p].with;
-      state.hands[p] = removeOne(state.hands[p], t1);
-      state.hands[p] = removeOne(state.hands[p], t2);
+      let hand = [...state.hands[p]];
+      hand = removeOne(hand, t1);
+      hand = removeOne(hand, t2);
 
-      // update melds
-      state.melds[p].push({
-        type: "seung",
-        tiles: sortBySuit([discard, t1, t2]),
-        concealed: false,
-      });
-      const next = meldActionCleanup(state, p);
-      return next;
+      const newMelds = [
+        ...state.melds[p],
+        { type: "seung" as const, tiles: sortBySuit([discard, t1, t2]), concealed: false },
+      ];
+
+      return meldActionCleanup(
+        {
+          ...state,
+          hands: state.hands.map((h, i) => (i === p ? hand : [...h])),
+          melds: state.melds.map((m, i) => (i === p ? newMelds : [...m])),
+        },
+        p,
+      );
     }
   }
 
