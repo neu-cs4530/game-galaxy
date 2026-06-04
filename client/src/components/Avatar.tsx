@@ -10,7 +10,10 @@ interface AvatarDisplayProps {
  * @param avatar - the avatar being rendered
  * @param size - the size in which it should be scaled.
  */
-export default function AvatarDisplay({ avatar, size = 128 }: AvatarDisplayProps) {
+export default function AvatarDisplay({
+  avatar = { color: "blue", accessories: [] },
+  size = 128,
+}: AvatarDisplayProps) {
   return (
     <div style={{ position: "relative", width: size, height: size }}>
       <img
