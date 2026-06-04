@@ -32,7 +32,7 @@ function isSuitTile(tile: MahjongTile): boolean {
  * @input tile - tile string
  * @returns suit character or null
  */
-function getSuit(tile: MahjongTile): string | null {
+export function getSuit(tile: MahjongTile): string | null {
   return isSuitTile(tile) ? tile[1] : null;
 }
 
@@ -41,7 +41,7 @@ function getSuit(tile: MahjongTile): string | null {
  * @input tile - tile string
  * @returns integer value or null
  */
-function getValue(tile: MahjongTile): number | null {
+export function getValue(tile: MahjongTile): number | null {
   return isSuitTile(tile) ? parseInt(tile[0]) : null;
 }
 

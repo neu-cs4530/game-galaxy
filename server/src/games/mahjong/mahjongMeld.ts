@@ -2,7 +2,7 @@ import {
   type MahjongState,
   type MahjongMeldResponse,
 } from "@gamenite/shared/src/games/mahjong.types.ts";
-import { removeOne, sortBySuit } from "./mahjongTiles.ts";
+import { removeOne, sortBySuit, getSuit, getValue } from "./mahjongTiles.ts";
 import { drawForPlayer } from "./mahjongDraw.ts";
 
 /**
@@ -20,6 +20,37 @@ function meldActionCleanup(state: MahjongState, player: number): MahjongState {
     phase: "discard",
     meldResponses: [null, null, null, null],
   };
+}
+/**
+ * resolves the meld part of a kong action. This Only adds a new kong meld and does NOT edit the player's hand
+ * @param state - current state before resolving the kong (adding the meld to state)
+ * @param player - player index of the player performing the kong action
+ * @param tile - the tile being konged
+ * @param concealed - whether the kong is concealed (i.e. added from hand) or not (i.e. added on top of a pong)
+ * @returns new state with the kong meld added to the player's melds, and the player having drawn a replacement tile from the dead wall
+ */
+export function resolveKong(
+  state: MahjongState,
+  player: number,
+  tile: string,
+  concealed: boolean = false,
+): MahjongState {
+  const newMelds = [
+    ...state.melds[player],
+    { type: "kong" as const, tiles: [tile, tile, tile, tile], concealed: concealed },
+  ];
+
+  let next = meldActionCleanup(
+    {
+      ...state,
+      melds: state.melds.map((m, i) => (i === player ? newMelds : [...m])),
+    },
+    player,
+  );
+
+  // kong requires a replacement draw from the dead wall
+  next = drawForPlayer(next, player, true);
+  return next;
 }
 
 /**
@@ -63,23 +94,11 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
       let hand = [...state.hands[p]];
       for (let i = 0; i < 3; i++) hand = removeOne(hand, discard);
 
-      const newMelds = [
-        ...state.melds[p],
-        { type: "kong" as const, tiles: [discard, discard, discard, discard], concealed: false },
-      ];
-
-      let next = meldActionCleanup(
-        {
-          ...state,
-          hands: state.hands.map((h, i) => (i === p ? hand : [...h])),
-          melds: state.melds.map((m, i) => (i === p ? newMelds : [...m])),
-        },
+      return resolveKong(
+        { ...state, hands: state.hands.map((h, i) => (i === p ? hand : [...h])) },
         p,
+        discard,
       );
-
-      // kong requires a replacement draw from the dead wall
-      next = drawForPlayer(next, p, true);
-      return next;
     }
   }
 
@@ -146,4 +165,32 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
   };
   next = drawForPlayer(next, nextPlayer);
   return next;
+}
+
+export function isValidSeung(
+  playerIndex: number,
+  state: MahjongState,
+  move: {
+    type: "seung";
+    with: [string, string];
+  },
+  hand: string[],
+  discard: string,
+): boolean {
+  // seung is only available to the player immediately left of the discarder
+  if (playerIndex !== (state.currentPlayer + 1) % 4) return false;
+  const [t1, t2] = move.with;
+  // verify both tiles are in hand
+  if (!hand.includes(t1)) return false;
+  if (!removeOne(hand, t1).includes(t2)) return false;
+  // verify that {discard, t1, t2} form a valid same-suit sequence
+  const three = [discard, t1, t2].sort();
+  const suit = getSuit(three[0]);
+  return (
+    suit !== null &&
+    getSuit(three[1]) === suit &&
+    getSuit(three[2]) === suit &&
+    getValue(three[1]) === getValue(three[0])! + 1 &&
+    getValue(three[2]) === getValue(three[0])! + 2
+  );
 }
