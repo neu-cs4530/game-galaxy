@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { type SafeUserInfo } from "./user.types.ts";
 import { type CommentInfo } from "./comment.types.ts";
+import { type ReactionInfo } from "./reaction.types.ts";
 
 /**
  * Represents a forum post as exposed to the client. In our code, we call
@@ -12,6 +13,7 @@ import { type CommentInfo } from "./comment.types.ts";
  * - `createdAt`: when the thread was posted
  * - `createdBy`: original poster of thread
  * - `comments`: replies to the thread
+ * - `reactions`: emoji reactions to the thread
  */
 export interface ThreadInfo {
   threadId: string;
@@ -20,12 +22,13 @@ export interface ThreadInfo {
   createdAt: Date;
   createdBy: SafeUserInfo;
   comments: CommentInfo[];
+  reactions: ReactionInfo[];
 }
 
 /**
  * Represents the summary information for a thread
  */
-export interface ThreadSummary extends Omit<ThreadInfo, "text" | "comments"> {
+export interface ThreadSummary extends Omit<ThreadInfo, "text" | "comments" | "reactions"> {
   comments: number;
 }
 

@@ -46,6 +46,16 @@ describe("GET /api/thread/:id", () => {
       title: "Hello game knights",
       text: "I'm a big Nim buff and am excited to join this community.",
       comments: [],
+      reactions: [
+        {
+          emoji: "👍",
+          user: {
+            username: "user0",
+            display: "The Knight Of Games",
+            createdAt: expect.anything(),
+          },
+        },
+      ],
       createdBy: { username: "user1", display: "Yāo", createdAt: expect.anything() },
       createdAt: new Date("2025-04-02").toISOString(),
     });
@@ -84,6 +94,7 @@ describe("POST /api/thread/create", () => {
         createdAt: expect.anything(),
       },
       comments: [],
+      reactions: [],
     });
   });
 });
@@ -125,5 +136,69 @@ describe("POST /api/thread/:id/comment", () => {
         createdBy: { username: "user2", display: "Sénior Dos", createdAt: expect.anything() },
       },
     ]);
+  });
+});
+
+describe("POST /api/thread/:id/react", () => {
+  // The "Hello game knights" thread is seeded with a single 👍 from user0.
+  const threadId = "deadbeefdeadbeefdeadbeef";
+
+  it("should return 400 on an ill-formed payload", async () => {
+    response = await supertest(app)
+      .post(`/api/thread/${threadId}/react`)
+      .send({ auth: auth1, payload: { emoji: "not-an-emoji" } });
+    expect(response.status).toBe(400);
+  });
+
+  it("should return 404 on a bad id", async () => {
+    response = await supertest(app)
+      .post(`/api/thread/${randomUUID().toString()}/react`)
+      .send({ auth: auth1, payload: { emoji: "👍" } });
+    expect(response.status).toBe(404);
+  });
+
+  it("should return 403 with bad auth", async () => {
+    response = await supertest(app)
+      .post(`/api/thread/${threadId}/react`)
+      .send({ auth: { ...auth1, password: "no" }, payload: { emoji: "👍" } });
+    expect(response.status).toBe(403);
+  });
+
+  it("should add a new reaction for a user who hasn't reacted", async () => {
+    response = await supertest(app)
+      .post(`/api/thread/${threadId}/react`)
+      .send({ auth: auth1, payload: { emoji: "😂" } });
+    expect(response.status).toBe(200);
+    expect(response.body.reactions).toContainEqual({
+      emoji: "😂",
+      user: { username: "user1", display: "Yāo", createdAt: expect.anything() },
+    });
+    expect(response.body.reactions).toContainEqual({
+      emoji: "👍",
+      user: { username: "user0", display: expect.any(String), createdAt: expect.anything() },
+    });
+  });
+
+  it("should remove the reaction when the same emoji is sent again", async () => {
+    response = await supertest(app)
+      .post(`/api/thread/${threadId}/react`)
+      .send({ auth: { username: "user0", password: "pwd0000" }, payload: { emoji: "👍" } });
+    expect(response.status).toBe(200);
+    expect(response.body.reactions).toStrictEqual([]);
+  });
+
+  it("should add a second reaction when a different emoji is sent", async () => {
+    response = await supertest(app)
+      .post(`/api/thread/${threadId}/react`)
+      .send({ auth: { username: "user0", password: "pwd0000" }, payload: { emoji: "❤️" } });
+    expect(response.status).toBe(200);
+    expect(response.body.reactions).toContainEqual({
+      emoji: "👍",
+      user: { username: "user0", display: "The Knight Of Games", createdAt: expect.anything() },
+    });
+    expect(response.body.reactions).toContainEqual({
+      emoji: "❤️",
+      user: { username: "user0", display: "The Knight Of Games", createdAt: expect.anything() },
+    });
   });
 });
