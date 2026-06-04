@@ -1,10 +1,6 @@
 import { type MahjongTile, type MahjongMeld } from "@gamenite/shared/src/games/mahjong.types.ts";
 import { nextTile, removeOne, sortBySuit } from "./mahjongTiles.ts";
 
-// ─────────────────────────────────────────────────
-// Win detection
-// ─────────────────────────────────────────────────
-
 /**
  * Recursively determine whether a sorted tile list decomposes entirely
  * into valid sets (triplets or consecutive same-suit sequences of three).

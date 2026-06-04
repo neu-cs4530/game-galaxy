@@ -1,5 +1,5 @@
 import type { MahjongState, MahjongTile } from "@gamenite/shared/src/games/mahjong.types.ts";
-import { isFlower } from "./mahjongTiles.ts";
+import { isFlower, sortBySuit } from "./mahjongTiles.ts";
 
 /**
  * Draw a tile for a player from either the live wall or the dead wall.
@@ -29,12 +29,14 @@ export function drawForPlayer(
     drawn = wall.pop();
   }
 
-  if (drawn !== undefined) hand.push(drawn);
+  if (drawn !== undefined) {
+    hand.push(drawn);
+  }
 
   return {
     ...state,
     wall: wall,
-    hands: state.hands.map((h, i) => (i === player ? hand : [...h])),
+    hands: state.hands.map((h, i) => (i === player ? sortBySuit(hand) : [...h])),
     flowers,
   };
 }
