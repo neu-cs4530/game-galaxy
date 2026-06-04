@@ -1,8 +1,25 @@
-import { type CreateThreadMessage, type ThreadInfo, type ThreadSummary } from "@gamenite/shared";
+import {
+  type CreateThreadMessage,
+  type ReactionEmoji,
+  type ReactionInfo,
+  type ThreadInfo,
+  type ThreadSummary,
+} from "@gamenite/shared";
 import { populateSafeUserInfo } from "./user.service.ts";
 import { createComment, populateCommentInfo } from "./comment.service.ts";
 import { type UserWithId } from "../types.ts";
+import { type ReactionEntry } from "../models.ts";
 import { ThreadRepo } from "../repository.ts";
+
+/**
+ * Expand a stored reaction
+ *
+ * @param reaction - A reaction entry stored on a thread
+ * @returns the expanded reaction info object
+ */
+async function populateReactionInfo({ createdBy, emoji }: ReactionEntry): Promise<ReactionInfo> {
+  return { emoji, user: await populateSafeUserInfo(createdBy) };
+}
 
 /**
  * Expand a stored thread
@@ -19,6 +36,7 @@ async function populateThreadInfo(threadId: string): Promise<ThreadInfo> {
     createdBy: await populateSafeUserInfo(thread.createdBy),
     createdAt: new Date(thread.createdAt),
     comments: await Promise.all(thread.comments.map(populateCommentInfo)),
+    reactions: await Promise.all((thread.reactions ?? []).map(populateReactionInfo)),
   };
 }
 
@@ -58,6 +76,7 @@ export async function createThread(
     createdAt: createdAt.toISOString(),
     createdBy: user.userId,
     comments: [],
+    reactions: [],
   });
   return populateThreadInfo(id);
 }
@@ -108,5 +127,34 @@ export async function addCommentToThread(
   const comment = await createComment(user, text, createdAt);
   const newThread = { ...oldThread, comments: [...oldThread.comments, comment.commentId] };
   await ThreadRepo.set(possibleThreadId, newThread);
+  return populateThreadInfo(threadId);
+}
+
+/**
+ * Toggle one of a user's reactions on a thread. A user may react with any
+ * number of distinct emojis, but at most once per emoji. Reacting with the same
+ * emoji again removes said emoji
+ *
+ * @param possibleThreadId - Ostensible thread ID
+ * @param user - Reacting user
+ * @param emoji - The emoji to toggle
+ * @returns the updated thread, or null if the thread does not exist
+ */
+export async function setReactionOnThread(
+  possibleThreadId: string,
+  user: UserWithId,
+  emoji: ReactionEmoji,
+): Promise<ThreadInfo | null> {
+  const oldThread = await ThreadRepo.find(possibleThreadId);
+  if (!oldThread) return null;
+  const threadId = possibleThreadId; // We know the thread ID is valid at this point
+  const current = oldThread.reactions ?? [];
+  const hasReacted = current.some((r) => r.createdBy === user.userId && r.emoji === emoji);
+
+  const reactions: ReactionEntry[] = hasReacted
+    ? current.filter((r) => !(r.createdBy === user.userId && r.emoji === emoji))
+    : [...current, { createdBy: user.userId, emoji }];
+
+  await ThreadRepo.set(threadId, { ...oldThread, reactions });
   return populateThreadInfo(threadId);
 }
