@@ -36,8 +36,8 @@ export async function createAndLoadGame(
 ) {
   const username1 = "user" + Math.floor(Math.random() * 2_000_000);
   const password1 = "pwd_for_" + username1;
-  const username2 = "user2";
-  const password2 = "pwd2222";
+  const username2 = "user3";
+  const password2 = "pwd3333";
 
   // Create a user for user1
   await page1.goto("/login");

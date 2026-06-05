@@ -9,28 +9,28 @@ export default function Lobby() {
     <div style={{ position: "relative", width: "100%" }}>
       <LobbyDisplay />
       <RoomLink
-        sprite="/sprites/lobby/Table1_frame1.png"
+        sprite="/sprites/lobby/Shop_frame1.png"
         route={`/profile/${username}`}
         top="18%"
-        left="20%"
-        width="18%"
-        height="15%"
+        left="22%"
+        width="10%"
+        height="10%"
       />
       <RoomLink
-        sprite="/sprites/lobby/Table1_frame1.png"
+        sprite="/sprites/lobby/Closet_frame1.png"
         route={`/profile/${username}`}
-        top="15%"
-        left="30.6%"
-        width="18%"
-        height="15%"
+        top="14%"
+        left="35%"
+        width="8%"
+        height="12"
       />
       <RoomLink
-        sprite="/sprites/lobby/Table1_frame1.png"
+        sprite="/sprites/lobby/Forum_frame1.png"
         route="/forum"
-        top="20%"
-        left="50%"
-        width="18%"
-        height="15%"
+        top="18%"
+        left="53%"
+        width="10%"
+        height="13%"
       />
       <GameTable
         sprite="/sprites/lobby/Table1_frame1.png"

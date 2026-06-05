@@ -193,3 +193,23 @@ export async function viewGame(gameId: string, user: UserWithId) {
     players: await Promise.all(game.players.map(populateSafeUserInfo)),
   };
 }
+
+/**
+ * finds an ongoing game that the given user is playing if one exists.
+ * @param userId - the user for which the game needs to be found
+ * @param gameType - the type of game which needs to be found
+ * @returns the gameID if a game exists, null otherwise.
+ */
+export async function findActiveGameForUser(
+  userId: string,
+  gameType: GameKey,
+): Promise<string | null> {
+  const keys = await GameRepo.getAllKeys();
+  for (const key of keys) {
+    const game = await GameRepo.get(key);
+    if (game.type === gameType && !game.done && game.players.includes(userId)) {
+      return key;
+    }
+  }
+  return null;
+}

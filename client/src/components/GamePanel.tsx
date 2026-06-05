@@ -5,6 +5,7 @@ import useLoginContext from "../hooks/useLoginContext.ts";
 import GameDispatch from "../games/GameDispatch.tsx";
 import useSocketsForGame from "../hooks/useSocketsForGame.ts";
 import useTimeSince from "../hooks/useTimeSince.ts";
+import { LobbyButton } from "./LobbyButton.tsx";
 
 /**
  * A game panel allows viewing the status and players of a live game
@@ -19,7 +20,7 @@ export default function GamePanel({
   const { user } = useLoginContext();
   const timeSince = useTimeSince();
 
-  const { view, players, userPlayerIndex, hasWatched, joinGame, startGame } = useSocketsForGame(
+  const { view, players, userPlayerIndex, hasWatched, startGame } = useSocketsForGame(
     gameId,
     initialPlayers,
   );
@@ -38,22 +39,24 @@ export default function GamePanel({
             </div>
           ))}
         </div>
-        {
-          // If the game hasn't started and user hasn't joined, they can join
-          userPlayerIndex < 0 && !view && (
-            <button className="primary narrow" onClick={joinGame}>
-              Join Game
-            </button>
-          )
-        }
-        {
-          // If the game hasn't started and the user has joined, they can start the game if a minimum number of players are present
-          userPlayerIndex >= 0 && !view && players.length >= minPlayers && (
+        <div
+          className="buttonRow"
+          style={{
+            position: "absolute",
+            right: 0,
+            top: 0,
+            display: "flex",
+            flexDirection: "row",
+            gap: "0.5rem",
+          }}
+        >
+          {userPlayerIndex >= 0 && !view && players.length >= minPlayers && (
             <button className="primary narrow" onClick={startGame}>
               Start Game
             </button>
-          )
-        }
+          )}
+          <LobbyButton />
+        </div>
       </div>
       {view ? (
         <div className="gameFrame">

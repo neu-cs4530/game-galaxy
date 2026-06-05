@@ -2,6 +2,7 @@ import { type GameInfo, withAuth, zGameKey, zGameMakeMovePayload } from "@gameni
 import { type RestAPI, type GameViewUpdates, type SocketAPI, type GameServer } from "../types.ts";
 import {
   createGame,
+  findActiveGameForUser,
   gameServices,
   getGameById,
   getGames,
@@ -110,7 +111,11 @@ export const socketJoinAsPlayer: SocketAPI = (socket, io) => async (body) => {
     const { auth, payload: tableId } = withAuth(z.string()).parse(body);
     const user = await enforceAuth(auth);
     const table = await TableRepo.get(tableId);
-
+    const existingGameId = await findActiveGameForUser(user.userId, table.gameType);
+    if (existingGameId) {
+      socket.emit("gameJoined", existingGameId);
+      return;
+    }
     let gameId: string;
     if (!table.currentGame) {
       const game = await createGame(user, table.gameType, new Date());
@@ -153,7 +158,6 @@ export const socketJoinAsPlayer: SocketAPI = (socket, io) => async (body) => {
 
 /**
  * Handle a request to start the game.
- * TODO: remove
  */
 export const socketStart: SocketAPI = (socket, io) => async (body) => {
   try {

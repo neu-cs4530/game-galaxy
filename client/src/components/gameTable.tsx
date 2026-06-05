@@ -12,6 +12,15 @@ interface GameTableProps {
   tableId: string;
 }
 
+/**
+ * represents a table through which a user can join a game.
+ * @param sprite - the image to be rendered for the table
+ * @param top - the y coordinate of the top left of the sprite, as a % of the total img size
+ * @param left - the x coordinate of the top left of the sprite, as a % of the total img size
+ * @param width - the width of the sprite, as a % of the total img size
+ * @param height - the height of the sprite, as a % of the total img size
+ * @param tableId - the unique id of this table connecting it to the game which it links to.
+ */
 export default function GameTable({ sprite, top, left, width, height, tableId }: GameTableProps) {
   const { socket } = useLoginContext();
   const auth = useAuth();
@@ -28,10 +37,7 @@ export default function GameTable({ sprite, top, left, width, height, tableId }:
   }, [socket, navigate]);
 
   function handleClick() {
-    console.log("clicked", tableId);
-    console.log("socket connected:", socket.connected);
     socket.emit("gameJoinAsPlayer", { auth, payload: tableId });
-    console.log("emitted", tableId);
   }
 
   return (
