@@ -5,6 +5,7 @@ import { randomUUID } from "node:crypto";
 
 let response: Response;
 
+const baseAvatar = { color: "blue", accessories: [] };
 const auth1 = { username: "user1", password: "pwd1111" };
 const auth2 = { username: "user2", password: "pwd2222" };
 
@@ -27,6 +28,8 @@ describe("GET /api/thread/list", () => {
         createdAt: expect.anything(),
         display: "Yāo",
         username: "user1",
+        avatar: baseAvatar,
+        balance: 100,
       },
     });
   });
@@ -46,17 +49,28 @@ describe("GET /api/thread/:id", () => {
       title: "Hello game knights",
       text: "I'm a big Nim buff and am excited to join this community.",
       comments: [],
+      createdBy: {
+        username: "user1",
+        display: "Yāo",
+        createdAt: expect.anything(),
+        avatar: baseAvatar,
+        balance: 100,
+      },
       reactions: [
         {
           emoji: "👍",
           user: {
-            username: "user0",
-            display: "The Knight Of Games",
+            avatar: {
+              accessories: [],
+              color: "blue",
+            },
+            balance: 100,
             createdAt: expect.anything(),
+            display: "The Knight Of Games",
+            username: "user0",
           },
         },
       ],
-      createdBy: { username: "user1", display: "Yāo", createdAt: expect.anything() },
       createdAt: new Date("2025-04-02").toISOString(),
     });
   });
@@ -92,6 +106,8 @@ describe("POST /api/thread/create", () => {
         username: "user2",
         display: expect.any(String),
         createdAt: expect.anything(),
+        avatar: baseAvatar,
+        balance: 100,
       },
       comments: [],
       reactions: [],
@@ -133,7 +149,13 @@ describe("POST /api/thread/:id/comment", () => {
         commentId: expect.anything(),
         createdAt: expect.anything(),
         text: "FIRST!",
-        createdBy: { username: "user2", display: "Sénior Dos", createdAt: expect.anything() },
+        createdBy: {
+          username: "user2",
+          display: "Sénior Dos",
+          createdAt: expect.anything(),
+          avatar: baseAvatar,
+          balance: 100,
+        },
       },
     ]);
   });
@@ -171,11 +193,23 @@ describe("POST /api/thread/:id/react", () => {
     expect(response.status).toBe(200);
     expect(response.body.reactions).toContainEqual({
       emoji: "😂",
-      user: { username: "user1", display: "Yāo", createdAt: expect.anything() },
+      user: {
+        avatar: expect.anything(),
+        balance: 100,
+        username: "user1",
+        display: "Yāo",
+        createdAt: expect.anything(),
+      },
     });
     expect(response.body.reactions).toContainEqual({
       emoji: "👍",
-      user: { username: "user0", display: expect.any(String), createdAt: expect.anything() },
+      user: {
+        avatar: expect.anything(),
+        balance: 100,
+        username: "user0",
+        display: expect.any(String),
+        createdAt: expect.anything(),
+      },
     });
   });
 
@@ -194,11 +228,23 @@ describe("POST /api/thread/:id/react", () => {
     expect(response.status).toBe(200);
     expect(response.body.reactions).toContainEqual({
       emoji: "👍",
-      user: { username: "user0", display: "The Knight Of Games", createdAt: expect.anything() },
+      user: {
+        avatar: expect.anything(),
+        balance: 100,
+        username: "user0",
+        display: "The Knight Of Games",
+        createdAt: expect.anything(),
+      },
     });
     expect(response.body.reactions).toContainEqual({
       emoji: "❤️",
-      user: { username: "user0", display: "The Knight Of Games", createdAt: expect.anything() },
+      user: {
+        avatar: expect.anything(),
+        balance: 100,
+        username: "user0",
+        display: "The Knight Of Games",
+        createdAt: expect.anything(),
+      },
     });
   });
 });

@@ -10,8 +10,24 @@ import {
   UserRepo,
 } from "./repository.ts";
 import type { GameRecord, ThreadRecord } from "./models.ts";
+import type { Avatar } from "@gamenite/shared";
 import { createChat } from "./services/chat.service.ts";
 import { createUser, updateUser } from "./services/user.service.ts";
+
+/** The avatar given to every seeded user. */
+const baseAvatar: Avatar = { color: "blue", accessories: [] };
+
+/** The coin balance given to every seeded user. */
+const STARTING_COINS = 100;
+
+/** Give a seeded user a base avatar and starting coin balance. */
+async function setupSeededUser(username: string) {
+  const auth = (await getUserByUsername(username))!;
+  const record = await UserRepo.get(auth.userId);
+  record.avatar = baseAvatar;
+  record.balance = STARTING_COINS;
+  await UserRepo.set(auth.userId, record);
+}
 
 /** Reset stored games with example data. */
 async function resetStoredGames() {
@@ -119,6 +135,11 @@ async function resetStoredUsers() {
   await updateUser("user1", { display: "Yāo" });
   await updateUser("user2", { display: "Sénior Dos" });
   await updateUser("user3", { display: "Frau Drei" });
+
+  await setupSeededUser("user0");
+  await setupSeededUser("user1");
+  await setupSeededUser("user2");
+  await setupSeededUser("user3");
 }
 
 export async function resetEverythingToDefaults() {
