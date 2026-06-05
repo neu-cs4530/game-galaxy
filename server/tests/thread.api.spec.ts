@@ -26,8 +26,10 @@ describe("GET /api/thread/list", () => {
       createdBy: {
         createdAt: expect.anything(),
         display: "Yāo",
+        balance: expect.anything(),
         username: "user1",
       },
+      tags: ["nim", "matchmaking"],
     });
   });
 });
@@ -46,8 +48,14 @@ describe("GET /api/thread/:id", () => {
       title: "Hello game knights",
       text: "I'm a big Nim buff and am excited to join this community.",
       comments: [],
-      createdBy: { username: "user1", display: "Yāo", createdAt: expect.anything() },
+      createdBy: {
+        username: "user1",
+        display: "Yāo",
+        balance: expect.anything(),
+        createdAt: expect.anything(),
+      },
       createdAt: new Date("2025-04-02").toISOString(),
+      tags: ["nim"],
     });
   });
 });
@@ -71,16 +79,18 @@ describe("POST /api/thread/create", () => {
   it("should succeed with correct information", async () => {
     response = await supertest(app)
       .post(`/api/thread/create`)
-      .send({ auth: auth2, payload: { title: "Title", text: "Text" } });
+      .send({ auth: auth2, payload: { title: "Title", text: "Text", tags: [] } });
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual({
       threadId: expect.anything(),
       title: "Title",
       text: "Text",
+      tags: [],
       createdAt: expect.anything(),
       createdBy: {
         username: "user2",
         display: expect.any(String),
+        balance: expect.anything(),
         createdAt: expect.anything(),
       },
       comments: [],
@@ -122,7 +132,12 @@ describe("POST /api/thread/:id/comment", () => {
         commentId: expect.anything(),
         createdAt: expect.anything(),
         text: "FIRST!",
-        createdBy: { username: "user2", display: "Sénior Dos", createdAt: expect.anything() },
+        createdBy: {
+          username: "user2",
+          display: "Sénior Dos",
+          createdAt: expect.anything(),
+          balance: expect.anything(),
+        },
       },
     ]);
   });

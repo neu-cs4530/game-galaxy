@@ -19,11 +19,19 @@ describe("GET /api/user/:id", () => {
   it("should return existing users", async () => {
     response = await supertest(app).get(`/api/user/user1`);
     expect(response.status).toBe(200);
-    expect(response.body).toStrictEqual({ ...user1, createdAt: expect.anything() });
+    expect(response.body).toStrictEqual({
+      ...user1,
+      createdAt: expect.anything(),
+      balance: expect.anything(),
+    });
 
     response = await supertest(app).get(`/api/user/user2`);
     expect(response.status).toBe(200);
-    expect(response.body).toStrictEqual({ ...user2, createdAt: expect.anything() });
+    expect(response.body).toStrictEqual({
+      ...user2,
+      createdAt: expect.anything(),
+      balance: expect.anything(),
+    });
   });
 });
 
@@ -56,7 +64,11 @@ describe("POST /api/user/login", () => {
   it("should accept a correct username/password combination", async () => {
     response = await supertest(app).post("/api/user/login").send(auth1);
     expect(response.status).toBe(200);
-    expect(response.body).toStrictEqual({ ...user1, createdAt: expect.anything() });
+    expect(response.body).toStrictEqual({
+      ...user1,
+      createdAt: expect.anything(),
+      balance: expect.anything(),
+    });
   });
 });
 
@@ -90,6 +102,7 @@ describe("POST/api/user/:username", () => {
       ...user1,
       display: "New User 1 Display",
       createdAt: expect.anything(),
+      balance: expect.anything(),
     });
 
     // We have changed the username, which should be reflected
@@ -99,6 +112,7 @@ describe("POST/api/user/:username", () => {
       ...user1,
       display: "New User 1 Display",
       createdAt: expect.anything(),
+      balance: expect.anything(),
     });
 
     // Change the password
@@ -146,6 +160,7 @@ describe("POST /api/user/signup", () => {
       username,
       display: username,
       createdAt: expect.anything(),
+      balance: expect.anything(),
     });
   });
 
@@ -199,8 +214,8 @@ describe("POST /api/user/list", () => {
     response = await supertest(app).post("/api/user/list").send(["user2", "user1"]);
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual([
-      { ...user2, createdAt: expect.anything() },
-      { ...user1, createdAt: expect.anything() },
+      { ...user2, createdAt: expect.anything(), balance: expect.anything() },
+      { ...user1, createdAt: expect.anything(), balance: expect.anything() },
     ]);
   });
 
@@ -208,9 +223,9 @@ describe("POST /api/user/list", () => {
     response = await supertest(app).post("/api/user/list").send(["user1", "user2", "user1"]);
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual([
-      { ...user1, createdAt: expect.anything() },
-      { ...user2, createdAt: expect.anything() },
-      { ...user1, createdAt: expect.anything() },
+      { ...user1, createdAt: expect.anything(), balance: expect.anything() },
+      { ...user2, createdAt: expect.anything(), balance: expect.anything() },
+      { ...user1, createdAt: expect.anything(), balance: expect.anything() },
     ]);
   });
 });
