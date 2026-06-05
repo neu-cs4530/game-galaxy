@@ -9,7 +9,6 @@ import { GameService } from "../gameServiceManager.ts";
 import { removeOne, createDeck, shuffle } from "./mahjongTiles.ts";
 import { isWinningHand } from "./mahjongWin.ts";
 import { drawForPlayer } from "./mahjongDraw.ts";
-import type { TaggedGameView } from "@gamenite/shared";
 import { isValidSeung, resolveKong, resolveMeldWindow } from "./mahjongMeld.ts";
 
 /**
@@ -247,11 +246,9 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
       winner: state.winner,
     };
   },
-  tagView: function (view: MahjongView): TaggedGameView {
-    throw new Error("Function not implemented.");
-  },
+  tagView: (view) => ({ type: "mahjong", view }),
   getWinners: function (state: MahjongState): number[] {
-    throw new Error("Function not implemented.");
+    return state.winner !== null ? [state.winner] : [];
   },
 };
 

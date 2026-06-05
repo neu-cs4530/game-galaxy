@@ -67,4 +67,4 @@ export const zGameKey = z.union([z.literal("nim"), z.literal("guess")]);
  * Each game should have a tagged game view. The `type` should be the game's
  * GameKey, and the `view` should be the type of the games view.
  */
-export type TaggedGameView = { type: "nim"; view: NimView } | { type: "guess"; view: GuessView };
+export type TaggedGameView = { type: "nim"; view: NimView } | { type: "guess"; view: GuessView } | { type: "mahjong"; view: MahjongView } ;
