@@ -2,6 +2,7 @@ import { api } from "./api.ts";
 import type {
   CreateThreadMessage,
   ErrorMsg,
+  ReactionEmoji,
   ThreadInfo,
   ThreadSummary,
   UserAuth,
@@ -38,6 +39,24 @@ export const addCommentToThread = async (
   const res = await api.post<ThreadInfo | ErrorMsg>(`${THREAD_API_URL}/${id}/comment`, {
     auth,
     payload,
+  });
+  if ("error" in res.data) throw new Error(res.data.error);
+  return res.data;
+};
+
+/**
+ * Sends a POST request to toggle the current user's emoji reaction on a thread.
+ * Sending the emoji the user already reacted with removes it; a different emoji
+ * replaces it.
+ */
+export const reactToThread = async (
+  auth: UserAuth,
+  id: string,
+  emoji: ReactionEmoji,
+): Promise<ThreadInfo> => {
+  const res = await api.post<ThreadInfo | ErrorMsg>(`${THREAD_API_URL}/${id}/react`, {
+    auth,
+    payload: { emoji },
   });
   if ("error" in res.data) throw new Error(res.data.error);
   return res.data;

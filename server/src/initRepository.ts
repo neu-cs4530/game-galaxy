@@ -67,7 +67,14 @@ async function resetStoredThreads() {
       title: "Nim?",
       text: "Is anyone around that wants to play Nim? I'll be here for the next hour or so.",
       comments: [],
+<<<<<<< SCRUM-14-add-tags-to-post
       tags: ["nim", "matchmaking"],
+=======
+      reactions: [
+        { createdBy: user2id, emoji: "👍" },
+        { createdBy: user3id, emoji: "❤️" },
+      ],
+>>>>>>> main
     },
     deadbeefdeadbeefdeadbeef: {
       createdBy: user1id,
@@ -75,7 +82,11 @@ async function resetStoredThreads() {
       title: "Hello game knights",
       text: "I'm a big Nim buff and am excited to join this community.",
       comments: [],
+<<<<<<< SCRUM-14-add-tags-to-post
       tags: ["nim"],
+=======
+      reactions: [{ createdBy: user0id, emoji: "👍" }],
+>>>>>>> main
     },
     [randomUUID().toString()]: {
       createdBy: user3id,
@@ -83,7 +94,11 @@ async function resetStoredThreads() {
       title: "Other games?",
       text: "Nim is great, but I'm hoping some new strategy games will get introduced soon.",
       comments: [],
+<<<<<<< SCRUM-14-add-tags-to-post
       tags: ["feature request"],
+=======
+      reactions: [],
+>>>>>>> main
     },
     [randomUUID().toString()]: {
       createdBy: user2id,
@@ -91,7 +106,11 @@ async function resetStoredThreads() {
       title: "Strategy guide?",
       text: "I'm pretty confused about the right strategy for Nim, is there anyone around who can help explain this?",
       comments: [],
+<<<<<<< SCRUM-14-add-tags-to-post
       tags: ["nim", "strategy"],
+=======
+      reactions: [],
+>>>>>>> main
     },
     [randomUUID().toString()]: {
       createdBy: user0id,
@@ -99,7 +118,11 @@ async function resetStoredThreads() {
       title: "New game: multiplayer number guesser!",
       text: "GameNite now has an exciting new game: guess! Try it out today: multiple people can join this exciting game, and guess a number between 1 and 100!",
       comments: [],
+<<<<<<< SCRUM-14-add-tags-to-post
       tags: ["guess", "multiplayer"],
+=======
+      reactions: [],
+>>>>>>> main
     },
   };
   await Promise.all(Object.entries(storedThreads).map(([id, entry]) => ThreadRepo.set(id, entry)));

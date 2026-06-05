@@ -1,4 +1,4 @@
-import type { GameKey } from "@gamenite/shared";
+import type { GameKey, ReactionEmoji, Avatar } from "@gamenite/shared";
 
 /**
  * Record identifiers used to look up records in a database. This type
@@ -81,12 +81,23 @@ export interface MessageRecord {
 }
 
 /**
+ * Represents a single emoji reaction to a forum post.
+ * - `createdBy`: user id of the reacting user
+ * - `emoji`: the emoji used
+ */
+export interface ReactionEntry {
+  createdBy: RecordId; // References User records
+  emoji: ReactionEmoji;
+}
+
+/**
  * Represents a forum post as it's stored in the database.
  * - `title`: post title
  * - `text`: post contents
  * - `createdAt`: when the thread was posted
  * - `createdBy`: user id of OP
  * - `comments`: replies to the post
+ * - `reactions`: emoji reactions to the post, at most one per user per emoji
  */
 export interface ThreadRecord {
   title: string;
@@ -95,6 +106,7 @@ export interface ThreadRecord {
   createdBy: RecordId; // References User records
   comments: RecordId[]; // References Comment records
   tags: string[];
+  reactions: ReactionEntry[];
 }
 
 /**
@@ -102,11 +114,13 @@ export interface ThreadRecord {
  * - `username`: Text username (a non-random key for looking up Auth records)
  * - `display`: A display name
  * - `createdAt`: when this user registered.
+ * - `avatar` : the avatar representing this user.
  * - `balance`: the user's coin amount
  */
 export interface UserRecord {
   username: string; // References Auth records
   display: string;
   createdAt: DateISO;
+  avatar: Avatar;
   balance: number;
 }
