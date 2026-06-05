@@ -18,7 +18,7 @@ export default function useTagList(maxTags?: number): { message: string } | stri
 
   if (!tags) return { message: "Loading..." };
   if ("error" in tags) return { message: `Error: ${tags.error}` };
-  if (tags.length === 0) return { message: "No threads found..." };
+  if (tags.length === 0) return { message: "No tags found..." };
   if (maxTags) return tags.slice(0, maxTags).map((tag) => tag[0]);
   return tags.map((tag) => tag[0]);
 }

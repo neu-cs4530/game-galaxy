@@ -1,10 +1,20 @@
 import useNewThreadForm from "../hooks/useNewThreadForm.ts";
 import { useState } from "react";
+import useTagList from "../hooks/useTagList.ts";
 
 export default function NewThread() {
-  const { title, contents, err, tags, handleInputChange, handleSubmit, handleTagsKeyDown } =
-    useNewThreadForm();
+  const {
+    title,
+    contents,
+    err,
+    tags,
+    handleInputChange,
+    handleSubmit,
+    handleTagsKeyDown,
+    handleTagButton,
+  } = useNewThreadForm();
   const [tagInput, setTagInput] = useState<string>("");
+  const topTags = useTagList(5);
 
   return (
     <form className="content spacedSection" onSubmit={handleSubmit}>
@@ -41,6 +51,30 @@ export default function NewThread() {
             {tag}
           </span>
         ))}
+      </div>
+      <div className="tightSection">
+        <div className="smallAndGray">Common Tags</div>
+        {"message" in topTags ? (
+          <div>{topTags.message}</div>
+        ) : (
+          topTags.map((tag, idx) => (
+            <button
+              type="button"
+              key={idx}
+              onClick={(e) => {
+                e.preventDefault();
+                handleTagButton(tag);
+              }}
+              style={{
+                padding: "2px 8px",
+                fontSize: "0.85rem",
+                width: "fit-content",
+              }}
+            >
+              {tag}
+            </button>
+          ))
+        )}
       </div>
       <div className="tightSection">
         <div className="smallAndGray">Post contents</div>

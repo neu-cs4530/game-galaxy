@@ -33,6 +33,10 @@ export default function useNewThreadForm() {
     }
   };
 
+  const handleTagButton = (tag: string) => {
+    setTags((prev) => [...prev, tag]);
+  };
+
   /**
    * Handles form enter press for adding tags to post
    */
@@ -74,5 +78,14 @@ export default function useNewThreadForm() {
     }
   };
 
-  return { title, contents, err, tags, handleInputChange, handleSubmit, handleTagsKeyDown };
+  return {
+    title,
+    contents,
+    err,
+    tags,
+    handleInputChange,
+    handleSubmit,
+    handleTagsKeyDown,
+    handleTagButton,
+  };
 }

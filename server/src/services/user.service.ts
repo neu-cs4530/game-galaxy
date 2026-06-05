@@ -94,7 +94,7 @@ export async function updateUser(
 
 /**
  * Updates the database to give a player more coins for winning a game.
- * 
+ *
  * @param userId the user to update the balance of
  * @param coins how many coins to add
  * @returns the new user balance in total
