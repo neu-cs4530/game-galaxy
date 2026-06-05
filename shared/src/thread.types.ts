@@ -12,6 +12,7 @@ import { type CommentInfo } from "./comment.types.ts";
  * - `createdAt`: when the thread was posted
  * - `createdBy`: original poster of thread
  * - `comments`: replies to the thread
+ * - `tags`: categories the creator determines apply to this thread
  */
 export interface ThreadInfo {
   threadId: string;
@@ -20,6 +21,7 @@ export interface ThreadInfo {
   createdAt: Date;
   createdBy: SafeUserInfo;
   comments: CommentInfo[];
+  tags: string[];
 }
 
 /**
@@ -38,4 +40,5 @@ export type CreateThreadMessage = z.infer<typeof zCreateThreadMessage>;
 export const zCreateThreadMessage = z.object({
   title: z.string(),
   text: z.string(),
+  tags: z.array(z.string()),
 });

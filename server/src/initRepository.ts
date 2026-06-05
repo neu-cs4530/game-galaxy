@@ -67,6 +67,7 @@ async function resetStoredThreads() {
       title: "Nim?",
       text: "Is anyone around that wants to play Nim? I'll be here for the next hour or so.",
       comments: [],
+      tags: ["nim", "matchmaking"],
     },
     deadbeefdeadbeefdeadbeef: {
       createdBy: user1id,
@@ -74,6 +75,7 @@ async function resetStoredThreads() {
       title: "Hello game knights",
       text: "I'm a big Nim buff and am excited to join this community.",
       comments: [],
+      tags: ["nim"],
     },
     [randomUUID().toString()]: {
       createdBy: user3id,
@@ -81,6 +83,7 @@ async function resetStoredThreads() {
       title: "Other games?",
       text: "Nim is great, but I'm hoping some new strategy games will get introduced soon.",
       comments: [],
+      tags: ["feature request"],
     },
     [randomUUID().toString()]: {
       createdBy: user2id,
@@ -88,13 +91,15 @@ async function resetStoredThreads() {
       title: "Strategy guide?",
       text: "I'm pretty confused about the right strategy for Nim, is there anyone around who can help explain this?",
       comments: [],
+      tags: ["nim", "strategy"],
     },
     [randomUUID().toString()]: {
       createdBy: user0id,
       createdAt: new Date(new Date().getTime() - 1.5 * 24 * 60 * 60 * 1000).toISOString(),
       title: "New game: multiplayer number guesser!",
-      text: "Strategy.town now has an exciting new game: guess! Try it out today: multiple people can join this exciting game, and guess a number between 1 and 100!",
+      text: "GameNite now has an exciting new game: guess! Try it out today: multiple people can join this exciting game, and guess a number between 1 and 100!",
       comments: [],
+      tags: ["guess", "multiplayer"],
     },
   };
   await Promise.all(Object.entries(storedThreads).map(([id, entry]) => ThreadRepo.set(id, entry)));

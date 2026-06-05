@@ -2,7 +2,7 @@ import { type CreateThreadMessage, type ThreadInfo, type ThreadSummary } from "@
 import { populateSafeUserInfo } from "./user.service.ts";
 import { createComment, populateCommentInfo } from "./comment.service.ts";
 import { type UserWithId } from "../types.ts";
-import { ThreadRepo } from "../repository.ts";
+import { ThreadRepo, TagRepo } from "../repository.ts";
 
 /**
  * Expand a stored thread
@@ -19,6 +19,7 @@ async function populateThreadInfo(threadId: string): Promise<ThreadInfo> {
     createdBy: await populateSafeUserInfo(thread.createdBy),
     createdAt: new Date(thread.createdAt),
     comments: await Promise.all(thread.comments.map(populateCommentInfo)),
+    tags: thread.tags,
   };
 }
 
@@ -36,6 +37,7 @@ async function populateThreadSummary(threadId: string) {
     createdBy: await populateSafeUserInfo(thread.createdBy),
     createdAt: new Date(thread.createdAt),
     comments: thread.comments.length,
+    tags: thread.tags,
   };
 }
 
@@ -43,13 +45,13 @@ async function populateThreadSummary(threadId: string) {
  * Create and store a new thread
  *
  * @param user - The thread poster
- * @param contents - Title and text of the thread
+ * @param contents - Title tags and text of the thread
  * @param createdAt - Creation time for this thread
  * @returns the new thread's info object
  */
 export async function createThread(
   user: UserWithId,
-  { title, text }: CreateThreadMessage,
+  { title, text, tags }: CreateThreadMessage,
   createdAt: Date,
 ): Promise<ThreadInfo> {
   const id = await ThreadRepo.add({
@@ -58,7 +60,12 @@ export async function createThread(
     createdAt: createdAt.toISOString(),
     createdBy: user.userId,
     comments: [],
+    tags,
   });
+  for (const tag of tags) {
+    const valueInRepo = await TagRepo.find(tag);
+    await TagRepo.set(tag, (valueInRepo ?? 0) + 1);
+  }
   return populateThreadInfo(id);
 }
 
