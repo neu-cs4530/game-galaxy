@@ -20,7 +20,7 @@ test.afterEach(async () => {
 
 test.describe("The game selection infrastructure", () => {
   test("should support creating a new Nim game and having a second user join it", async () => {
-    await createAndLoadGame(page1, page2, "nim", true, true);
+    await createAndLoadGame(page1, page2, "table-table:nim", true, true);
   });
 });
 
@@ -28,7 +28,7 @@ test.describe("The game of Nim", () => {
   let username1: string;
 
   test.beforeEach(async () => {
-    username1 = await createAndLoadGame(page1, page2, "nim", true, false);
+    username1 = await createAndLoadGame(page1, page2, "table-table:nim", true, false);
   });
 
   test("should start player 1 with enabled buttons and player 2 with disabled buttons", async () => {

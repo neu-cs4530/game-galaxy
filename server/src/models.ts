@@ -53,6 +53,7 @@ export interface CommentRecord {
  * Represents a game document in the database.
  * - `type`: picks which game this is
  * - `state`: absent if the game hasn't started, or the id for the game's state
+ * - `table`: the table where this game is played
  * - `chat`: id for the game's chat
  * - `players`: active players for the game
  * - `createdAt`: when the game was created
@@ -60,12 +61,23 @@ export interface CommentRecord {
  */
 export interface GameRecord {
   type: GameKey;
+  table?: RecordId;
   state?: unknown;
   done: boolean;
   chat: RecordId; // References Chat records
   players: RecordId[]; // References User records
   createdAt: DateISO;
   createdBy: RecordId; // References User records
+}
+
+/**
+ * Represents a game table in the database
+ * - `gameType`: the game associated with this table
+ * - `currentGame`: the active gameRecord for this table (so new users can join an existing game)
+ */
+export interface TableRecord {
+  gameType: GameKey;
+  currentGame?: RecordId;
 }
 
 /**

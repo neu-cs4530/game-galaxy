@@ -20,13 +20,13 @@ test.afterEach(async () => {
 
 test.describe("The game selection infrastructure", () => {
   test("should support creating a new Number Guesser game and having a second user join it", async () => {
-    await createAndLoadGame(page1, page2, "guess", false, true);
+    await createAndLoadGame(page1, page2, "table-table:guess", false, true);
   });
 });
 
 test.describe("The game of Number Guesser", () => {
   test.beforeEach(async () => {
-    await createAndLoadGame(page1, page2, "guess", false, false);
+    await createAndLoadGame(page1, page2, "table-table:guess", false, false);
   });
 
   test("should show two winners when both guesses are the same", async () => {

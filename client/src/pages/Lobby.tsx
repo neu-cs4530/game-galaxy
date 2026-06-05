@@ -35,23 +35,18 @@ export default function Lobby() {
       <GameTable
         sprite="/sprites/lobby/Table1_frame1.png"
         top="31%"
-        left="30.6%"
+        left="30.0%"
         width="25%"
         height="20%"
+        tableId="table:nim"
       />
       <GameTable
         sprite="/sprites/lobby/Table1_frame1.png"
-        top="40%"
-        left="40.6%"
+        top="45%"
+        left="56%"
         width="25%"
         height="20%"
-      />
-      <GameTable
-        sprite="/sprites/lobby/Table1_frame1.png"
-        top="43%"
-        left="55.6%"
-        width="25%"
-        height="20%"
+        tableId="table:guess"
       />
     </div>
   );
