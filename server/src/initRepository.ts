@@ -6,6 +6,7 @@ import {
   CommentRepo,
   GameRepo,
   MessageRepo,
+  TableRepo,
   ThreadRepo,
   UserRepo,
 } from "./repository.ts";
@@ -142,6 +143,12 @@ async function resetStoredUsers() {
   await setupSeededUser("user3");
 }
 
+async function resetTables() {
+  //await TableRepo.set("table:mahjong", { gameType: "mahjong" }); (TODO: uncomment once mahjong is implemented)
+  await TableRepo.set("table:nim", { gameType: "nim" });
+  await TableRepo.set("table:guess", { gameType: "guess" });
+}
+
 export async function resetEverythingToDefaults() {
   await AuthRepo.clear();
   await ChatRepo.clear();
@@ -150,8 +157,10 @@ export async function resetEverythingToDefaults() {
   await MessageRepo.clear();
   await ThreadRepo.clear();
   await UserRepo.clear();
+  await TableRepo.clear();
 
   await resetStoredUsers();
   await resetStoredThreads();
   await resetStoredGames();
+  await resetTables();
 }
