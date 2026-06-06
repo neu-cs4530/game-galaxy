@@ -36,8 +36,11 @@ export async function createAndLoadGame(
 ) {
   const username1 = "user" + Math.floor(Math.random() * 2_000_000);
   const password1 = "pwd_for_" + username1;
-  const username2 = "user3";
-  const password2 = "pwd3333";
+  // Both players are freshly created so that neither is already enrolled in a
+  // seeded game of this type (which would make `findActiveGameForUser` redirect
+  // them to that game instead of the table's game).
+  const username2 = "user" + Math.floor(Math.random() * 2_000_000);
+  const password2 = "pwd_for_" + username2;
 
   // Create a user for user1
   await page1.goto("/login");
@@ -57,8 +60,13 @@ export async function createAndLoadGame(
     await expect(page1.getByText("you are player #1")).toBeVisible();
   }
 
-  // Log in user2
-  await logInUser(page2, username2, password2);
+  // Create a user for user2
+  await page2.goto("/login");
+  await page2.getByRole("button", { name: "Create New Account" }).click();
+  await page2.getByLabel("Username").fill(username2);
+  await page2.getByLabel("Password", { exact: true }).fill(password2);
+  await page2.getByLabel("Confirm Password").fill(password2);
+  await page2.getByRole("button", { name: "Sign Up" }).click();
   await page2.waitForURL("/");
 
   // User2 clicks the same table in the lobby

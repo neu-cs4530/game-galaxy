@@ -116,13 +116,17 @@ export const socketJoinAsPlayer: SocketAPI = (socket, io) => async (body) => {
       socket.emit("gameJoined", existingGameId);
       return;
     }
+    // Reuse the table's current game only if it's still in the waiting room.
+    // If it has already started (or finished), the table is effectively free,
+    // so make a fresh game for the joining player.
+    const currentGame = table.currentGame ? await getGameById(table.currentGame) : null;
     let gameId: string;
-    if (!table.currentGame) {
+    if (!currentGame || currentGame.status !== "waiting") {
       const game = await createGame(user, table.gameType, new Date());
       gameId = game.gameId;
       await setTableGame(tableId, gameId);
     } else {
-      gameId = table.currentGame;
+      gameId = currentGame.gameId;
     }
     let game;
     try {
