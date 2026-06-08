@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getUserByUsername } from "./services/auth.service.ts";
 import {
+  AccessoryRepo,
   AuthRepo,
   ChatRepo,
   CommentRepo,
@@ -11,12 +12,12 @@ import {
   UserRepo,
 } from "./repository.ts";
 import type { GameRecord, ThreadRecord } from "./models.ts";
-import type { Avatar } from "@gamenite/shared";
+import { createDefaultAvatar, type Avatar } from "@gamenite/shared";
 import { createChat } from "./services/chat.service.ts";
 import { createUser, updateUser } from "./services/user.service.ts";
 
 /** The avatar given to every seeded user. */
-const baseAvatar: Avatar = { color: "blue", accessories: [] };
+const baseAvatar: Avatar = createDefaultAvatar();
 
 /** The coin balance given to every seeded user. */
 const STARTING_COINS = 100;
@@ -149,6 +150,14 @@ async function resetTables() {
   await TableRepo.set("table:guess", { gameType: "guess" });
 }
 
+async function resetStoredAccessories() {
+  await AccessoryRepo.set("accessory:hat", { accessoryId: "accessory:hat", name: "Hat", cost: 100 });
+  await AccessoryRepo.set("accessory:bow", { accessoryId: "accessory:bow", name: "Bow", cost: 75 });
+  await AccessoryRepo.set("accessory:tie", { accessoryId: "accessory:tie", name: "Tie", cost: 75 });
+  await AccessoryRepo.set("accessory:face-default", { accessoryId: "accessory:face-default", name: "Default Face", cost: 0 });
+  await AccessoryRepo.set("accessory:face-glasses", { accessoryId: "accessory:face-glasses", name: "Glasses Face", cost: 150 });
+}
+
 export async function resetEverythingToDefaults() {
   await AuthRepo.clear();
   await ChatRepo.clear();
@@ -158,9 +167,11 @@ export async function resetEverythingToDefaults() {
   await ThreadRepo.clear();
   await UserRepo.clear();
   await TableRepo.clear();
+  await AccessoryRepo.clear();
 
   await resetStoredUsers();
   await resetStoredThreads();
   await resetStoredGames();
   await resetTables();
+  await resetStoredAccessories();
 }

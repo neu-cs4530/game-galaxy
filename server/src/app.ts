@@ -44,7 +44,10 @@ app.use(
         .post("/login", user.postLogin)
         .post("/signup", user.postSignup)
         .post("/:username", user.postByUsername)
-        .get("/:username", user.getByUsername),
+        .get("/:username", user.getByUsername)
+        .post("/:username/closet/wear", user.postWearAccessory)
+        .post("/:username/closet/remove", user.postRemoveAccessory)
+        .post("/:username/shop/buy", user.postBuyAccessory),
     ),
 );
 
