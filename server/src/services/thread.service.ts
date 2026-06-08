@@ -8,12 +8,8 @@ import {
 import { populateSafeUserInfo } from "./user.service.ts";
 import { createComment, populateCommentInfo } from "./comment.service.ts";
 import { type UserWithId } from "../types.ts";
-<<<<<<< SCRUM-14-add-tags-to-post
 import { ThreadRepo, TagRepo } from "../repository.ts";
-=======
 import { type ReactionEntry } from "../models.ts";
-import { ThreadRepo } from "../repository.ts";
->>>>>>> main
 
 /**
  * Expand a stored reaction
@@ -40,11 +36,8 @@ async function populateThreadInfo(threadId: string): Promise<ThreadInfo> {
     createdBy: await populateSafeUserInfo(thread.createdBy),
     createdAt: new Date(thread.createdAt),
     comments: await Promise.all(thread.comments.map(populateCommentInfo)),
-<<<<<<< SCRUM-14-add-tags-to-post
     tags: thread.tags,
-=======
     reactions: await Promise.all((thread.reactions ?? []).map(populateReactionInfo)),
->>>>>>> main
   };
 }
 
@@ -85,11 +78,8 @@ export async function createThread(
     createdAt: createdAt.toISOString(),
     createdBy: user.userId,
     comments: [],
-<<<<<<< SCRUM-14-add-tags-to-post
     tags,
-=======
     reactions: [],
->>>>>>> main
   });
   for (const tag of tags) {
     const valueInRepo = await TagRepo.find(tag);

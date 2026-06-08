@@ -13,11 +13,8 @@ import { type ReactionInfo } from "./reaction.types.ts";
  * - `createdAt`: when the thread was posted
  * - `createdBy`: original poster of thread
  * - `comments`: replies to the thread
-<<<<<<< SCRUM-14-add-tags-to-post
  * - `tags`: categories the creator determines apply to this thread
-=======
  * - `reactions`: emoji reactions to the thread
->>>>>>> main
  */
 export interface ThreadInfo {
   threadId: string;
@@ -26,11 +23,8 @@ export interface ThreadInfo {
   createdAt: Date;
   createdBy: SafeUserInfo;
   comments: CommentInfo[];
-<<<<<<< SCRUM-14-add-tags-to-post
   tags: string[];
-=======
   reactions: ReactionInfo[];
->>>>>>> main
 }
 
 /**
