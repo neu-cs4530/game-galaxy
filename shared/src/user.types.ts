@@ -47,7 +47,7 @@ export function createDefaultAvatar(): Avatar {
   return {
     color: colors[Math.floor(Math.random() * colors.length)],
     accessories: {
-      "accessory:face-default": true,
+      "face-01": true,
     },
   };
 }

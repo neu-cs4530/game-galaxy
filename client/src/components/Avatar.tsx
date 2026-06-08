@@ -11,9 +11,12 @@ interface AvatarDisplayProps {
  * @param size - the size in which it should be scaled.
  */
 export default function AvatarDisplay({
-  avatar = { color: "blue", accessories: [] },
+  avatar = { color: "blue", accessories: { "face-01": true } },
   size = 128,
 }: AvatarDisplayProps) {
+  const equipped = Object.entries(avatar.accessories)
+    .filter(([, isWearing]) => isWearing)
+    .map(([accessoryId]) => accessoryId);
   return (
     <div style={{ position: "relative", width: size, height: size }}>
       <img
@@ -24,6 +27,13 @@ export default function AvatarDisplay({
         src="/sprites/avatar/avatarOutline.png"
         style={{ position: "absolute", width: size, height: size }}
       />
+      {equipped.map((accessoryId) => (
+        <img
+          key={accessoryId}
+          src={`/sprites/accessories/${accessoryId}.png`}
+          style={{ position: "absolute", width: size, height: size }}
+        />
+      ))}
     </div>
   );
 }

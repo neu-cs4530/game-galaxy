@@ -103,7 +103,7 @@ export const postList: RestAPI<SafeUserInfo[]> = async (req, res) => {
   res.send(users);
 };
 
-export const postBuyAccessory: RestAPI<SafeUserInfo, { username: string }> = async ( req, res ) => {
+export const postBuyAccessory: RestAPI<SafeUserInfo, { username: string }> = async (req, res) => {
   const body = withAuth(z.string()).safeParse(req.body);
   if (!body.success) {
     res.status(400).send({ error: "Poorly-formed request" });
@@ -123,7 +123,7 @@ export const postBuyAccessory: RestAPI<SafeUserInfo, { username: string }> = asy
   }
 };
 
-export const postWearAccessory: RestAPI<SafeUserInfo, { username: string }> = async ( req, res ) => {
+export const postWearAccessory: RestAPI<SafeUserInfo, { username: string }> = async (req, res) => {
   const body = withAuth(z.string()).safeParse(req.body);
   if (!body.success) {
     res.status(400).send({ error: "Poorly-formed request" });
@@ -143,7 +143,10 @@ export const postWearAccessory: RestAPI<SafeUserInfo, { username: string }> = as
   }
 };
 
-export const postRemoveAccessory: RestAPI<SafeUserInfo, { username: string }> = async ( req, res ) => {
+export const postRemoveAccessory: RestAPI<SafeUserInfo, { username: string }> = async (
+  req,
+  res,
+) => {
   const body = withAuth(z.string()).safeParse(req.body);
   if (!body.success) {
     res.status(400).send({ error: "Poorly-formed request" });

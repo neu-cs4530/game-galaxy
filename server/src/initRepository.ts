@@ -151,11 +151,19 @@ async function resetTables() {
 }
 
 async function resetStoredAccessories() {
-  await AccessoryRepo.set("accessory:hat", { accessoryId: "accessory:hat", name: "Hat", cost: 100 });
-  await AccessoryRepo.set("accessory:bow", { accessoryId: "accessory:bow", name: "Bow", cost: 75 });
-  await AccessoryRepo.set("accessory:tie", { accessoryId: "accessory:tie", name: "Tie", cost: 75 });
-  await AccessoryRepo.set("accessory:face-default", { accessoryId: "accessory:face-default", name: "Default Face", cost: 0 });
-  await AccessoryRepo.set("accessory:face-glasses", { accessoryId: "accessory:face-glasses", name: "Glasses Face", cost: 150 });
+  await AccessoryRepo.set("hat-01", { accessoryId: "hat-01", name: "Hat", cost: 100 });
+  await AccessoryRepo.set("bow-01", { accessoryId: "bow-01", name: "Bow", cost: 75 });
+  await AccessoryRepo.set("tie-01", { accessoryId: "tie-01", name: "Tie", cost: 75 });
+  await AccessoryRepo.set("face-01", {
+    accessoryId: "face-01",
+    name: "Default Face",
+    cost: 0,
+  });
+  await AccessoryRepo.set("face-02", {
+    accessoryId: "face-02",
+    name: "Glasses Face",
+    cost: 150,
+  });
 }
 
 export async function resetEverythingToDefaults() {
