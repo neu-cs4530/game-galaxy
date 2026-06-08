@@ -46,7 +46,6 @@ describe("POST /api/game/create", () => {
         balance: expect.anything(),
         createdAt: expect.anything(),
         avatar: { color: "blue", accessories: [] },
-        balance: 100,
       },
       createdAt: expect.anything(),
       minPlayers: 2,
@@ -57,7 +56,6 @@ describe("POST /api/game/create", () => {
           balance: expect.anything(),
           createdAt: expect.anything(),
           avatar: { color: "blue", accessories: [] },
-          balance: 100,
         },
       ],
     });

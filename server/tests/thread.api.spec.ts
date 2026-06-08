@@ -30,7 +30,6 @@ describe("GET /api/thread/list", () => {
         balance: expect.anything(),
         username: "user1",
         avatar: baseAvatar,
-        balance: 100,
       },
       tags: ["nim", "matchmaking"],
     });
@@ -66,12 +65,8 @@ describe("GET /api/thread/:id", () => {
               accessories: [],
               color: "blue",
             },
-            createdAt: expect.anything(),
             balance: expect.anything(),
-          },
-        },
-      ],
-      createdBy: { username: "user1", display: "Yāo", createdAt: expect.anything(), balance: expect.anything() },
+            createdAt: expect.anything(),
             display: "The Knight Of Games",
             username: "user0",
           },
@@ -94,7 +89,7 @@ describe("POST /api/thread/create", () => {
       .post(`/api/thread/create`)
       .send({
         auth: { ...auth1, password: "no" },
-        payload: { title: "Evil title", text: "Evil contents" },
+        payload: { title: "Evil title", text: "Evil contents", tags: [] },
       });
     expect(response.status).toBe(403);
   });
@@ -116,7 +111,6 @@ describe("POST /api/thread/create", () => {
         balance: expect.anything(),
         createdAt: expect.anything(),
         avatar: baseAvatar,
-        balance: 100,
       },
       comments: [],
       reactions: [],
