@@ -31,5 +31,7 @@ export default function GameDispatch({
       return <NimGame {...{ ...childProps, view: view.view }} />;
     case "guess":
       return <GuessGame {...{ ...childProps, view: view.view }} />;
+    case "mahjong":
+      return <div>Mahjong game view coming soon!</div>;
   }
 }
