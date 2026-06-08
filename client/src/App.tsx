@@ -5,7 +5,7 @@ import { useState } from "react";
 import Login from "./pages/Login.tsx";
 import type { AuthContext } from "./contexts/LoginContext.ts";
 import Layout from "./components/Layout.tsx";
-import Home from "./pages/Home.tsx";
+//import Home from "./pages/Home.tsx";
 import ThreadList from "./pages/ThreadList.tsx";
 import Profile from "./pages/Profile.tsx";
 import { io } from "socket.io-client";
@@ -19,6 +19,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import fallback from "./fallback.tsx";
 import NewThread from "./pages/NewThread.tsx";
 import TimeContextKeeper from "./components/UpdatingTimeContext.tsx";
+import Lobby from "./pages/Lobby.tsx";
 
 /** If `true`, all incoming socket messages will be logged */
 const DEBUG_SOCKETS = false;
@@ -61,7 +62,7 @@ export default function App() {
               </LoggedInRoute>
             }
           >
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Lobby />} />
             <Route path="/forum" element={<ThreadList />} />
             <Route path="/forum/post/new" element={<NewThread />} />
             <Route path="/forum/post/:threadId" element={<ThreadPage />} />

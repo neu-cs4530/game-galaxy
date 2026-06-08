@@ -13,7 +13,6 @@ import useLoginContext from "./useLoginContext.ts";
  * - `userPlayerIndex`: The index of the current user in the `players` array,
  *   or null if the user is not a player
  * - `view`: The current game view for this user
- * - `joinGame`: Joins the game (if not started)
  * - `startGame`: Start the game (once joined)
  */
 export default function useSocketsForGame(gameId: string, initialPlayers: SafeUserInfo[]) {
@@ -55,10 +54,6 @@ export default function useSocketsForGame(gameId: string, initialPlayers: SafeUs
     };
   }, [gameId, socket, userPlayerIndex, auth]);
 
-  function joinGame() {
-    socket.emit("gameJoinAsPlayer", { auth, payload: gameId });
-  }
-
   function startGame() {
     socket.emit("gameStart", { auth, payload: gameId });
   }
@@ -68,7 +63,6 @@ export default function useSocketsForGame(gameId: string, initialPlayers: SafeUs
     players,
     userPlayerIndex,
     view,
-    joinGame,
     startGame,
   };
 }

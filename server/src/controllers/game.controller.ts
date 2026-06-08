@@ -2,6 +2,7 @@ import { type GameInfo, withAuth, zGameKey, zGameMakeMovePayload } from "@gameni
 import { type RestAPI, type GameViewUpdates, type SocketAPI, type GameServer } from "../types.ts";
 import {
   createGame,
+  findActiveGameForUser,
   gameServices,
   getGameById,
   getGames,
@@ -13,8 +14,9 @@ import {
 import { z } from "zod";
 import { logSocketError } from "./socket.controller.ts";
 import { checkAuth, enforceAuth } from "../services/auth.service.ts";
-import { GameRepo, UserRepo } from "../repository.ts";
+import { GameRepo, TableRepo, UserRepo } from "../repository.ts";
 import { updateCoinCount } from "../services/user.service.ts";
+import { clearTableGame, setTableGame } from "../services/table.service.ts";
 
 /**
  * Handle POST requests to `/api/game/create` by creating a game. The game
@@ -106,9 +108,37 @@ function sendViewUpdates(io: GameServer, gameId: string, updates: GameViewUpdate
  */
 export const socketJoinAsPlayer: SocketAPI = (socket, io) => async (body) => {
   try {
-    const { auth, payload: gameId } = withAuth(z.string()).parse(body);
+    const { auth, payload: tableId } = withAuth(z.string()).parse(body);
     const user = await enforceAuth(auth);
-    const game = await joinGame(gameId, user);
+    const table = await TableRepo.get(tableId);
+    const existingGameId = await findActiveGameForUser(user.userId, table.gameType);
+    if (existingGameId) {
+      socket.emit("gameJoined", existingGameId);
+      return;
+    }
+    // Reuse the table's current game only if it's still in the waiting room.
+    // If it has already started (or finished), the table is effectively free,
+    // so make a fresh game for the joining player.
+    const currentGame = table.currentGame ? await getGameById(table.currentGame) : null;
+    let gameId: string;
+    if (!currentGame || currentGame.status !== "waiting") {
+      const game = await createGame(user, table.gameType, new Date());
+      gameId = game.gameId;
+      await setTableGame(tableId, gameId);
+    } else {
+      gameId = currentGame.gameId;
+    }
+    let game;
+    try {
+      game = await joinGame(gameId, user);
+    } catch (err) {
+      if (`${err}`.includes("joining game they are in already")) {
+        socket.emit("gameJoined", gameId);
+        return;
+      }
+      throw err;
+    }
+    socket.emit("gameJoined", gameId);
 
     // Let everyone know the user joined (`io` instead of `socket` includes
     // the joiner)
@@ -122,6 +152,7 @@ export const socketJoinAsPlayer: SocketAPI = (socket, io) => async (body) => {
 
     // If the game is full, it starts automatically
     if (game.players.length === gameServices[game.type].maxPlayers) {
+      await clearTableGame(tableId);
       sendViewUpdates(io, gameId, await startGame(gameId, user));
     }
   } catch (err) {
@@ -136,6 +167,10 @@ export const socketStart: SocketAPI = (socket, io) => async (body) => {
   try {
     const { auth, payload: gameId } = withAuth(z.string()).parse(body);
     const user = await enforceAuth(auth);
+    const game = await GameRepo.get(gameId);
+    if (game.table) {
+      await clearTableGame(game.table);
+    }
     sendViewUpdates(io, gameId, await startGame(gameId, user));
   } catch (err) {
     logSocketError(socket, err);
