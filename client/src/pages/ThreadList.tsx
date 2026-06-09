@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import ThreadSummaryView from "../components/ThreadSummaryView.tsx";
 import useThreadList from "../hooks/useThreadList.ts";
-import { LobbyButton } from "../components/LobbyButton.tsx";
 
 export default function ThreadList() {
   const threadList = useThreadList();
@@ -27,9 +26,6 @@ export default function ThreadList() {
             </div>
           )}
         </>
-      </div>
-      <div style={{ width: "fit-content" }}>
-        <LobbyButton />
       </div>
     </div>
   );
