@@ -20,6 +20,8 @@ export interface ClientToServerEvents {
   gameMakeMove: (payload: WithAuth<GameMakeMovePayload>) => void;
   gameStart: (payload: WithAuth<string>) => void;
   gameWatch: (payload: WithAuth<string>) => void;
+  lobbyJoin: (payload: WithAuth<string>) => void;
+  lobbyLeave: (payload: WithAuth<string>) => void;
 }
 
 /**
@@ -35,4 +37,5 @@ export interface ServerToClientEvents {
   gameWatched: (payload: GamePlayInfo) => void;
   gameJoined: (payload: string) => void;
   balanceUpdated: (payload: { balance: number }) => void;
+  lobbyPlayersUpdated: (payload: SafeUserInfo[]) => void;
 }
