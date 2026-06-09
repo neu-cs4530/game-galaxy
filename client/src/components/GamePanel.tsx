@@ -5,7 +5,6 @@ import useLoginContext from "../hooks/useLoginContext.ts";
 import GameDispatch from "../games/GameDispatch.tsx";
 import useSocketsForGame from "../hooks/useSocketsForGame.ts";
 import useTimeSince from "../hooks/useTimeSince.ts";
-import { LobbyButton } from "./LobbyButton.tsx";
 
 /**
  * A game panel allows viewing the status and players of a live game
@@ -55,7 +54,6 @@ export default function GamePanel({
               Start Game
             </button>
           )}
-          <LobbyButton />
         </div>
       </div>
       {view ? (
