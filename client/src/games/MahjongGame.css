@@ -1,0 +1,176 @@
+.mahjongGame {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* ── status bar ── */
+.mahjongStatus {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.mahjongStatus .phaseLabel {
+  font-weight: 600;
+  color: cornflowerblue;
+}
+
+/* ── tile images ── */
+.tileImage {
+  display: inline-block;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  transition: transform 0.1s, border-color 0.1s;
+  user-select: none;
+}
+
+.tileImage--sm { height: 40px; }
+.tileImage--md { height: 50px; }
+.tileImage--lg { height: 72px; }
+
+.tileImage--clickable {
+  cursor: pointer;
+}
+
+.tileImage--clickable:hover {
+  transform: translateY(-4px);
+}
+
+.tileImage--selected {
+  border-color: cornflowerblue;
+  transform: translateY(-8px);
+  filter: drop-shadow(0 4px 6px rgba(100, 149, 237, 0.5));
+}
+
+/* ── meld display ── */
+.meldDisplay {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  padding: 4px;
+  background: var(--gray-background);
+  border-radius: 4px;
+  border: 1px dashed #ccc;
+}
+
+.meldRow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* ── other players ── */
+.otherPlayers {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.otherPlayer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0.5rem;
+  border: 1px dashed #ddd;
+  border-radius: 6px;
+  flex: 1;
+  min-width: 140px;
+}
+
+.otherPlayer .playerName {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-foreground);
+}
+
+.handBacks {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1px;
+}
+
+.flowerRow {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  align-items: center;
+}
+
+/* ── center area ── */
+.centerArea {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.discardArea {
+  flex: 1;
+}
+
+.discardPile {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 0.5rem;
+  background: var(--gray-background);
+  border-radius: 6px;
+  min-height: 52px;
+}
+
+.lastDiscardArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0.5rem;
+  border: 2px solid cornflowerblue;
+  border-radius: 6px;
+  background: rgba(100, 149, 237, 0.05);
+}
+
+/* ── my area ── */
+.myArea {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hand {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2px;
+  align-items: flex-end;
+  padding-bottom: 0.5rem;
+}
+
+/* ── action panel ── */
+.actionPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.responseStatus {
+  font-style: italic;
+  color: var(--gray-foreground);
+  font-size: 0.875rem;
+}
