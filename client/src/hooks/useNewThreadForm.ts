@@ -33,6 +33,10 @@ export default function useNewThreadForm() {
     }
   };
 
+  /**
+   * When pressing on the common tag list, adds that to the post's tags.
+   * @param tag the tag label of the button pressed by the user
+   */
   const handleTagButton = (tag: string) => {
     setTags((prev) => [...prev, tag]);
   };
