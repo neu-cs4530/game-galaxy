@@ -17,6 +17,7 @@ import { checkAuth, enforceAuth } from "../services/auth.service.ts";
 import { GameRepo, TableRepo, UserRepo } from "../repository.ts";
 import { updateCoinCount } from "../services/user.service.ts";
 import { clearTableGame, setTableGame } from "../services/table.service.ts";
+import { broadcastTables } from "./lobby.controller.ts";
 
 /**
  * Handle POST requests to `/api/game/create` by creating a game. The game
@@ -134,6 +135,7 @@ export const socketJoinAsPlayer: SocketAPI = (socket, io) => async (body) => {
     } catch (err) {
       if (`${err}`.includes("joining game they are in already")) {
         socket.emit("gameJoined", gameId);
+        await broadcastTables(io);
         return;
       }
       throw err;
@@ -155,6 +157,7 @@ export const socketJoinAsPlayer: SocketAPI = (socket, io) => async (body) => {
       await clearTableGame(tableId);
       sendViewUpdates(io, gameId, await startGame(gameId, user));
     }
+    await broadcastTables(io);
   } catch (err) {
     logSocketError(socket, err);
   }
@@ -172,6 +175,7 @@ export const socketStart: SocketAPI = (socket, io) => async (body) => {
       await clearTableGame(game.table);
     }
     sendViewUpdates(io, gameId, await startGame(gameId, user));
+    await broadcastTables(io);
   } catch (err) {
     logSocketError(socket, err);
   }
