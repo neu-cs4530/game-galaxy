@@ -149,6 +149,10 @@ async function resetTables() {
   await TableRepo.set("table:guess", { gameType: "guess" });
 }
 
+async function resetChats() {
+  await ChatRepo.set("lobby", { createdAt: new Date().toISOString(), messages: [] });
+}
+
 export async function resetEverythingToDefaults() {
   await AuthRepo.clear();
   await ChatRepo.clear();
@@ -161,6 +165,7 @@ export async function resetEverythingToDefaults() {
 
   await resetStoredUsers();
   await resetStoredThreads();
+  await resetChats();
   await resetStoredGames();
   await resetTables();
 }
