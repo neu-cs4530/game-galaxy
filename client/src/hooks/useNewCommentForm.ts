@@ -2,6 +2,7 @@ import { type ChangeEvent, type SubmitEvent, useState } from "react";
 import useAuth from "./useAuth.ts";
 import { addCommentToThread } from "../services/threadService.ts";
 import type { ThreadInfo } from "@gamenite/shared";
+import useLoginContext from "./useLoginContext.ts";
 
 /**
  * Custom hook to manage comment creation form logic
@@ -21,6 +22,7 @@ export default function useNewCommentForm(
   const [comment, setComment] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const auth = useAuth();
+  const { socket } = useLoginContext();
 
   function handleInputChange(e: ChangeEvent<HTMLTextAreaElement>) {
     setComment(e.target.value);
@@ -47,6 +49,7 @@ export default function useNewCommentForm(
       setErr(null);
       setThread(newThread);
       setComment("");
+      socket.emit("threadInteraction", { threadId: threadId, eventType: "comment" });
     } catch (err) {
       setErr(`${err}`);
     }

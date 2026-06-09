@@ -2,6 +2,7 @@ import { type ChangeEvent, type KeyboardEvent, useState, type SubmitEvent } from
 import useAuth from "./useAuth.ts";
 import { useNavigate } from "react-router-dom";
 import { createThread } from "../services/threadService.ts";
+import useLoginContext from "./useLoginContext.ts";
 
 /**
  * Custom hook to manage thread creation form logic
@@ -18,6 +19,7 @@ export default function useNewThreadForm() {
   const [tags, setTags] = useState<string[]>([]);
   const auth = useAuth();
   const navigate = useNavigate();
+  const { addThreadSubscription } = useLoginContext();
 
   /**
    * Handles form input change
@@ -77,6 +79,7 @@ export default function useNewThreadForm() {
     try {
       const thread = await createThread(auth, { title, text: contents, tags });
       await navigate(`/forum/post/${thread.threadId}`);
+      addThreadSubscription(thread.threadId);
     } catch (err) {
       setErr(`${err}`);
     }

@@ -6,6 +6,8 @@ import { Navigate } from "react-router-dom";
 interface LoggedInRouteParams {
   auth: AuthContext | null;
   socket: GameSocket | null;
+  subscribedThreads: string[];
+  addThreadSubscription: (threadId: string) => void;
   children: JSX.Element;
 }
 
@@ -19,12 +21,21 @@ interface LoggedInRouteParams {
  * will navigate back to the login page, even though the user will have just,
  * from their perspective, logged in.
  */
-export default function LoggedInRoute({ auth, socket, children }: LoggedInRouteParams) {
+export default function LoggedInRoute({
+  auth,
+  socket,
+  subscribedThreads,
+  addThreadSubscription,
+  children,
+}: LoggedInRouteParams) {
   // This use of `useMemo` is critical, because there are there are other
   // places in the app where `context` appears as part of a dependency array
   // (notably in `useAuth`). If we don't use `useMemo` here, those dependency
   // arrays will change every time the app updates.
-  const context = useMemo(() => (auth && socket ? { ...auth, socket } : null), [auth, socket]);
+  const context = useMemo(
+    () => (auth && socket ? { ...auth, socket, subscribedThreads, addThreadSubscription } : null),
+    [auth, socket, subscribedThreads, addThreadSubscription],
+  );
   return context ? (
     <LoginContext.Provider value={context}>{children}</LoginContext.Provider>
   ) : (

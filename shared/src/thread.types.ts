@@ -45,3 +45,11 @@ export const zCreateThreadMessage = z.object({
   text: z.string(),
   tags: z.array(z.string()),
 });
+
+/*** Types used in websocket notifications */
+
+/** Relevant information for thread notification system */
+export type ThreadEvent = {
+  threadId: string;
+  eventType: "comment" | "reaction";
+};

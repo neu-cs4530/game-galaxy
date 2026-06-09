@@ -46,6 +46,11 @@ function NoSuchRoute() {
 
 export default function App() {
   const [auth, setAuth] = useState<AuthContext | null>(null);
+  const [subscribedThreads, setSubscribedThreads] = useState<string[]>([]);
+
+  function addThreadSubscription(threadId: string) {
+    setSubscribedThreads((prev) => [...prev, threadId]);
+  }
   return (
     socket && (
       <BrowserRouter>
@@ -53,7 +58,12 @@ export default function App() {
           <Route path="/login" element={<Login setAuth={(auth) => setAuth(auth)} />} />
           <Route
             element={
-              <LoggedInRoute auth={auth} socket={socket}>
+              <LoggedInRoute
+                auth={auth}
+                socket={socket}
+                subscribedThreads={subscribedThreads}
+                addThreadSubscription={addThreadSubscription}
+              >
                 <TimeContextKeeper updateFrequency={20 * 1000}>
                   <ErrorBoundary fallbackRender={fallback}>
                     <Layout />

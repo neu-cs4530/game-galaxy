@@ -21,6 +21,8 @@ export interface AuthContext {
 export const LoginContext = createContext<
   | (AuthContext & {
       socket: GameSocket;
+      subscribedThreads: string[];
+      addThreadSubscription: (threadId: string) => void;
     })
   | null
 >(null);
