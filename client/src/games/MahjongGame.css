@@ -29,9 +29,9 @@
   user-select: none;
 }
 
-.tileImage--sm { height: 40px; }
+.tileImage--sm { height: 36px; }
 .tileImage--md { height: 50px; }
-.tileImage--lg { height: 72px; }
+.tileImage--lg { height: 64px; }
 
 .tileImage--clickable {
   cursor: pointer;
