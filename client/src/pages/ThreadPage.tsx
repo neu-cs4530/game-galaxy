@@ -22,7 +22,7 @@ export default function ThreadPage() {
           <h2>{threadInfo.title}</h2>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
             Tags:
-            {threadInfo.tags.map((tag, index) => (
+            {(threadInfo.tags ?? []).map((tag, index) => (
               <span
                 key={index}
                 style={{
@@ -43,21 +43,23 @@ export default function ThreadPage() {
           </div>
           <ThreadReactions thread={threadInfo} setThread={setThread} />
           <div className="dottedList">
-            {threadInfo.comments.map(({ commentId, text, createdBy, createdAt, editedAt }) => (
-              <div className="dottedListItem" role="listitem" key={commentId}>
-                <div>
-                  <div>{text}</div>
-                  <div className="smallAndGray">
-                    Reply by {createdBy.display}
-                    {createdBy.username === threadInfo.createdBy.username && (
-                      <span className="opBlue"> OP</span>
-                    )}{" "}
-                    {formatTimeSince(createdAt)}
-                    {editedAt && ` (last edited ${formatTimeSince(editedAt)})`}
+            {(threadInfo.comments ?? []).map(
+              ({ commentId, text, createdBy, createdAt, editedAt }) => (
+                <div className="dottedListItem" role="listitem" key={commentId}>
+                  <div>
+                    <div>{text}</div>
+                    <div className="smallAndGray">
+                      Reply by {createdBy.display}
+                      {createdBy.username === threadInfo.createdBy.username && (
+                        <span className="opBlue"> OP</span>
+                      )}{" "}
+                      {formatTimeSince(createdAt)}
+                      {editedAt && ` (last edited ${formatTimeSince(editedAt)})`}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ),
+            )}
           </div>
           <NewForumComment
             firstPost={threadInfo.comments.length === 0}

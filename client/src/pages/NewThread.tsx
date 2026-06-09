@@ -52,7 +52,10 @@ export default function NewThread() {
           </span>
         ))}
       </div>
-      <div className="tightSection">
+      <div
+        className="tightSection"
+        style={{ display: "flex", flexDirection: "row", gap: "5px", alignItems: "center" }}
+      >
         <div className="smallAndGray">Common Tags</div>
         {"message" in topTags ? (
           <div>{topTags.message}</div>

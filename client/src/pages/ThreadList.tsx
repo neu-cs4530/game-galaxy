@@ -3,7 +3,6 @@ import ThreadSummaryView from "../components/ThreadSummaryView.tsx";
 import useThreadList from "../hooks/useThreadList.ts";
 import { useState } from "react";
 import useTagList from "../hooks/useTagList.ts";
-import { LobbyButton } from "../components/LobbyButton.tsx";
 
 export default function ThreadList() {
   const threadList = useThreadList();
@@ -22,7 +21,8 @@ export default function ThreadList() {
               : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
           )
           .filter(
-            (thread) => filter.length === 0 || filter.every((tag) => thread.tags.includes(tag)),
+            (thread) =>
+              filter.length === 0 || filter.every((tag) => (thread.tags ?? []).includes(tag)),
           );
 
   const handleTagButton = (tag: string) => {
