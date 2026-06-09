@@ -4,6 +4,7 @@ import GuessGame from "./GuessGame.tsx";
 import type { JSX } from "react";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import useAuth from "../hooks/useAuth.ts";
+import MahjongGame from "./MahjongGame.tsx";
 
 interface GameDispatchProps {
   userPlayerIndex: number;
@@ -32,6 +33,6 @@ export default function GameDispatch({
     case "guess":
       return <GuessGame {...{ ...childProps, view: view.view }} />;
     case "mahjong":
-      return <div>Mahjong game view coming soon!</div>;
+      return <MahjongGame {...{ ...childProps, view: view.view }} />;
   }
 }

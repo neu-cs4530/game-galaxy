@@ -68,9 +68,10 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
    *   they can also declare a kong if they have the appropriate tiles, but this is optional and
    *   does not interrupt the normal turn flow (they still must discard or declare win after)
    * - during 'meld_window' any non-discarding player must respond to the most recent discard with
-   *   a meld action (pong, kong, seung, or sik wu (a win)), or they can pass; once all
+   *   a meld action (pong, kong, seung, or sik wu (a win)), or they can pass; all responses
+   *   are checked to ensure they are valid before the window resolves. Once all
    *   players have responded the window resolves and the game state updates according to the
-   *   highest-priority valid response (win > kong > pong > seung > pass)
+   *   highest-priority valid response (win > kong > pong > seung > pass).
    * @input state - current state
    * @input payload - raw move payload
    * @input playerIndex - acting player index
@@ -102,7 +103,6 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
         const newState: MahjongState = {
           ...state,
           hands: state.hands.map((h, i) => (i === playerIndex ? newHand : [...h])),
-          discardPile: [...state.discardPile, move.tile],
           lastDiscard: move.tile,
           phase: "meld_window",
           meldResponses,
@@ -169,39 +169,40 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
       const discard = state.lastDiscard!;
       let response: MahjongMeldResponse | null = null;
 
-      switch (move.type) {
-        case "pass":
-          response = { type: "pass" };
-          break;
+      if (move.type === "win") {
+        // discard must complete the hand
+        if (!isWinningHand([...hand, discard], state.melds[playerIndex])) return null;
+        response = { type: "win" };
+      }
 
-        case "win":
-          // discard must complete the hand
-          if (!isWinningHand([...hand, discard], state.melds[playerIndex])) return null;
-          response = { type: "win" };
-          break;
+      if (move.type === "pass") {
+        response = { type: "pass" };
+      }
 
-        case "pong":
-          // need 2 matching tiles in hand, 3 isnt accepted because that should be a kong
-          if (hand.filter((t) => t === discard).length !== 2) return null;
-          response = { type: "pong" };
-          break;
-
-        case "seung":
-          if (isValidSeung(playerIndex, state, move, hand, discard)) {
-            response = { type: "seung", with: move.with };
-          } else {
-            return null;
+      if (move.type === "meld") {
+        const [t1, t2, t3] = move.with;
+        // check that the player has the stated tiles in their hand
+        let newHand = [...hand];
+        newHand = removeOne(newHand, t1);
+        newHand = removeOne(newHand, t2);
+        if (t3) {
+          newHand = removeOne(newHand, t3);
+          if (newHand.length !== hand.length - 3) return null;
+          // must be a kong, need 3 matching tiles in hand to kong a discard
+          if (t1 === t2 && t2 === t3 && t3 === discard) {
+            response = { type: "kong" };
           }
-          break;
+        }
+        if (newHand.length !== hand.length - 2) return null;
 
-        case "kong":
-          // need 3 matching tiles in hand to kong a discard
-          if (hand.filter((t) => t === discard).length < 3) return null;
-          response = { type: "kong" };
-          break;
+        // need 2 matching tiles in hand, 3 isnt accepted because that should be a kong
+        if (t1 === t2 && t2 === discard) {
+          response = { type: "pong" };
+        }
 
-        default:
-          return null; // unrecognised move type for this phase
+        if (isValidSeung(playerIndex, state, t1, t2, discard)) {
+          response = { type: "seung", with: [t1, t2] };
+        }
       }
 
       const newResponses = state.meldResponses.map((r, i) => (i === playerIndex ? response : r));
