@@ -8,6 +8,7 @@ import * as chat from "./controllers/chat.controller.ts";
 import * as game from "./controllers/game.controller.ts";
 import * as user from "./controllers/user.controller.ts";
 import * as thread from "./controllers/thread.controller.ts";
+import * as tag from "./controllers/tag.controller.ts";
 import { type GameServer } from "./types.ts";
 
 export const app = express();
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(
   "/api",
   Router()
+    .use("/tag", express.Router().get("/list", tag.getList))
     .use(
       "/game",
       express

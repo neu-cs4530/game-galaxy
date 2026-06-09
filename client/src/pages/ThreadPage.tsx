@@ -20,6 +20,23 @@ export default function ThreadPage() {
       ) : (
         <div className="spacedSection">
           <h2>{threadInfo.title}</h2>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+            Tags:
+            {threadInfo.tags.map((tag, index) => (
+              <span
+                key={index}
+                style={{
+                  padding: "4px 10px",
+                  border: "1px solid blue",
+                  borderRadius: "4px",
+                  backgroundColor: "lightblue",
+                  fontSize: "0.85rem",
+                }}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
           <div className="notTooWide">{threadInfo.text}</div>
           <div className="smallAndGray">
             Posted by {threadInfo.createdBy.display} {formatTimeSince(threadInfo.createdAt)}
