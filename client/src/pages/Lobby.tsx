@@ -17,14 +17,39 @@ const LOBBY_AVATAR_POSITIONS = [
   { top: "73%", left: "12%" },
 ];
 
+const NIM_POSITIONS = [
+  { top: "31%", left: "40%" },
+  { top: "33%", left: "35%" },
+];
+
+const NUMBER_GUESSER_POSITIONS = [
+  { top: "45%", left: "62.5%" },
+  { top: "48%", left: "61%" },
+  { top: "45%", left: "68%" },
+  { top: "50%", left: "70%" },
+];
+
+// Where seated players are placed, per table
+const tablePositions: Record<string, { top: string; left: string }[]> = {
+  "table:nim": NIM_POSITIONS,
+  "table:guess": NUMBER_GUESSER_POSITIONS,
+};
+
 export default function Lobby() {
   const username = useAuth().username;
-  const { players } = useSocketsForLobbyPlayers("lobby");
+  const { players, tablePlayers } = useSocketsForLobbyPlayers("lobby");
+
+  // Players seated at a table are shown there, not roaming the lobby floor.
+  const seatedUsernames = new Set(
+    tablePlayers.flatMap((table) => table.players.map((player) => player.username)),
+  );
+  const floorPlayers = players.filter((player) => !seatedUsernames.has(player.username));
+
   return (
     <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
       <div style={{ position: "relative", width: "60%" }}>
         <LobbyDisplay />
-        {players.map((player, index) => {
+        {floorPlayers.map((player, index) => {
           const position =
             LOBBY_AVATAR_POSITIONS[index] ??
             LOBBY_AVATAR_POSITIONS[LOBBY_AVATAR_POSITIONS.length - 1];
@@ -37,6 +62,22 @@ export default function Lobby() {
               size="30%"
             />
           );
+        })}
+        {tablePlayers.flatMap((table) => {
+          const positions = tablePositions[table.tableId] ?? [];
+          return table.players.map((player, index) => {
+            const position = positions[index] ?? positions[positions.length - 1];
+            if (!position) return null;
+            return (
+              <AvatarDisplayLobby
+                key={`${table.tableId}-${player.username}-${index}`}
+                avatar={player.avatar}
+                top={position.top}
+                left={position.left}
+                size="30%"
+              />
+            );
+          });
         })}
         <RoomLink
           sprite="/sprites/lobby/Shop_frame1.png"

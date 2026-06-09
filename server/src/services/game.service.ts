@@ -197,7 +197,7 @@ export async function viewGame(gameId: string, user: UserWithId) {
 }
 
 /**
- * finds an ongoing game that the given user is playing if one exists.
+ * Find an in-progress game that the given user is playing if one exists
  * @param userId - the user for which the game needs to be found
  * @param gameType - the type of game which needs to be found
  * @returns the gameID if a game exists, null otherwise.
@@ -209,7 +209,7 @@ export async function findActiveGameForUser(
   const keys = await GameRepo.getAllKeys();
   for (const key of keys) {
     const game = await GameRepo.get(key);
-    if (game.type === gameType && !game.done && game.players.includes(userId)) {
+    if (game.type === gameType && game.state && !game.done && game.players.includes(userId)) {
       return key;
     }
   }

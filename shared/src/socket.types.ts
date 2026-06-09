@@ -4,6 +4,7 @@ import {
   type ChatUserJoinedPayload,
   type ChatUserLeftPayload,
 } from "./chat.types.ts";
+import { type LobbyTablePlayers } from "./lobby.types.ts";
 import { type NewMessagePayload } from "./message.types.ts";
 import { type WithAuth } from "./auth.types.ts";
 import { type GameMakeMovePayload, type GamePlayInfo, type TaggedGameView } from "./game.types.ts";
@@ -38,4 +39,5 @@ export interface ServerToClientEvents {
   gameJoined: (payload: string) => void;
   balanceUpdated: (payload: { balance: number }) => void;
   lobbyPlayersUpdated: (payload: SafeUserInfo[]) => void;
+  lobbyTablesUpdated: (payload: LobbyTablePlayers[]) => void;
 }

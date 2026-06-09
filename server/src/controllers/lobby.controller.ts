@@ -4,6 +4,8 @@ import { type GameServer, type GameServerSocket, type SocketAPI } from "../types
 import { populateSafeUserInfo } from "../services/user.service.ts";
 import { logSocketError } from "./socket.controller.ts";
 import { enforceAuth } from "../services/auth.service.ts";
+import { TableRepo } from "../repository.ts";
+import { getGameById } from "../services/game.service.ts";
 
 /**
  * The socket.io room used to broadcast lobby presence.
@@ -25,6 +27,22 @@ function broadcastPlayers(io: GameServer): void {
   io.to(LOBBY_ROOM).emit("lobbyPlayersUpdated", [...lobbyPresence.values()]);
 }
 
+/**
+ * Send everyone in the lobby the players seated at each table. Once the game starts the seats clear.
+ */
+export async function broadcastTables(io: GameServer): Promise<void> {
+  const tableIds = await TableRepo.getAllKeys();
+  const tables = await Promise.all(
+    tableIds.map(async (tableId) => {
+      const table = await TableRepo.get(tableId);
+      const game = table.currentGame ? await getGameById(table.currentGame) : null;
+      const players = game?.status === "waiting" ? game.players : [];
+      return { tableId, players };
+    }),
+  );
+  io.to(LOBBY_ROOM).emit("lobbyTablesUpdated", tables);
+}
+
 /** Record a user's presence in the lobby and broadcast the updated list. */
 export const socketJoin: SocketAPI = (socket, io) => async (body) => {
   try {
@@ -33,6 +51,7 @@ export const socketJoin: SocketAPI = (socket, io) => async (body) => {
     await socket.join(LOBBY_ROOM);
     lobbyPresence.set(socket.id, await populateSafeUserInfo(user.userId));
     broadcastPlayers(io);
+    await broadcastTables(io);
   } catch (err) {
     logSocketError(socket, err);
   }
