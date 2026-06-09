@@ -3,7 +3,6 @@ import useLoginContext from "../hooks/useLoginContext.ts";
 import useEditProfileForm from "../hooks/useEditProfileForm.ts";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import AvatarDisplay from "../components/Avatar.tsx";
-import { LobbyButton } from "../components/LobbyButton.tsx";
 
 export default function Profile() {
   const { user } = useLoginContext();
@@ -93,9 +92,6 @@ export default function Profile() {
         <button className="primary narrow">Submit</button>
       </div>
       <div className="smallAndGray">After updating your profile, you will be logged out</div>
-      <div style={{ width: "fit-content" }}>
-        <LobbyButton />
-      </div>
     </form>
   );
 }

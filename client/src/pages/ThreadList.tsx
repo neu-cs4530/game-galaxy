@@ -85,9 +85,6 @@ export default function ThreadList() {
           )}
         </>
       </div>
-      <div style={{ width: "fit-content" }}>
-        <LobbyButton />
-      </div>
     </div>
   );
 }
