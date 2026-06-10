@@ -37,12 +37,14 @@ export function getSuit(tile: MahjongTile): string | null {
 }
 
 /**
- * Return the numeric face value (1–9) of a suit tile, or null.
+ * Return the numeric face value (1–9) of a suit tile a flower/season tile (1-4), or null.
  * @input tile - tile string
  * @returns integer value or null
  */
 export function getValue(tile: MahjongTile): number | null {
-  return isSuitTile(tile) ? parseInt(tile[0]) : null;
+  if (isSuitTile(tile)) return parseInt(tile[0]);
+  if (isFlower(tile)) return parseInt(tile[1]);
+  return null;
 }
 
 /**
@@ -64,7 +66,9 @@ export function nextTile(tile: MahjongTile): MahjongTile | null {
  * @returns boolean
  */
 export function isFlower(tile: MahjongTile): boolean {
-  return tile.length === 2 && (tile.startsWith("f") || tile.startsWith("s"));
+  return (
+    tile.length === 2 && (tile.startsWith("f") || (tile.startsWith("s") && !tile.endsWith("w")))
+  );
 }
 
 export function isDragon(tile: MahjongTile): boolean {

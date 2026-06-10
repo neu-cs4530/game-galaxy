@@ -157,7 +157,7 @@ async function resetStoredUsers() {
 }
 
 async function resetTables() {
-  //await TableRepo.set("table:mahjong", { gameType: "mahjong" }); (TODO: uncomment once mahjong is implemented)
+  await TableRepo.set("table:mahjong", { gameType: "mahjong" });
   await TableRepo.set("table:nim", { gameType: "nim" });
   await TableRepo.set("table:guess", { gameType: "guess" });
 }

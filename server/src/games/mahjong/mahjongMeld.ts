@@ -170,21 +170,14 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
 export function isValidSeung(
   playerIndex: number,
   state: MahjongState,
-  move: {
-    type: "seung";
-    with: [string, string];
-  },
-  hand: string[],
-  discard: string,
+  t1: string,
+  t2: string,
+  t3: string,
 ): boolean {
   // seung is only available to the player immediately left of the discarder
   if (playerIndex !== (state.currentPlayer + 1) % 4) return false;
-  const [t1, t2] = move.with;
-  // verify both tiles are in hand
-  if (!hand.includes(t1)) return false;
-  if (!removeOne(hand, t1).includes(t2)) return false;
   // verify that {discard, t1, t2} form a valid same-suit sequence
-  const three = [discard, t1, t2].sort();
+  const three = [t1, t2, t3].sort();
   const suit = getSuit(three[0]);
   return (
     suit !== null &&
