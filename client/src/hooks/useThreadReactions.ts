@@ -48,7 +48,10 @@ export default function useThreadReactions(
       const updated = await reactToThread(auth, thread.threadId, emoji);
       setErr(null);
       setThread(updated);
-      socket.emit("threadInteraction", { threadId: thread.threadId, eventType: "reaction" });
+      socket.emit("threadInteraction", {
+        auth,
+        payload: { threadId: thread.threadId, eventType: "reaction" },
+      });
     } catch (e) {
       setErr(`${e}`);
     }

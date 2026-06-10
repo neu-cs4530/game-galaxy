@@ -49,7 +49,10 @@ export default function useNewCommentForm(
       setErr(null);
       setThread(newThread);
       setComment("");
-      socket.emit("threadInteraction", { threadId: threadId, eventType: "comment" });
+      socket.emit("threadInteraction", {
+        auth,
+        payload: { threadId: threadId, eventType: "comment" },
+      });
     } catch (err) {
       setErr(`${err}`);
     }

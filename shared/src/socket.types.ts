@@ -21,7 +21,7 @@ export interface ClientToServerEvents {
   gameMakeMove: (payload: WithAuth<GameMakeMovePayload>) => void;
   gameStart: (payload: WithAuth<string>) => void;
   gameWatch: (payload: WithAuth<string>) => void;
-  threadInteraction: (payload: ThreadEvent) => void;
+  threadInteraction: (payload: WithAuth<ThreadEvent>) => void;
 }
 
 /**

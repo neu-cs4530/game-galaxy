@@ -53,3 +53,8 @@ export type ThreadEvent = {
   threadId: string;
   eventType: "comment" | "reaction";
 };
+
+export const zThreadEvent = z.object({
+  threadId: z.string(),
+  eventType: z.enum(["comment", "reaction"]),
+});
