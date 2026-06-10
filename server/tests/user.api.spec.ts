@@ -5,7 +5,8 @@ import { app } from "../src/app.ts";
 
 let response: Response;
 const baseAvatar = {
-  color: "blue", accessories: {
+  color: "blue",
+  accessories: {
     "face-01": true,
   },
 };

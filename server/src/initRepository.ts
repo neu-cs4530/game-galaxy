@@ -171,7 +171,8 @@ async function resetStoredAccessories() {
     name: "Default Face",
     cost: 0,
   });
-  
+}
+
 async function resetChats() {
   await ChatRepo.set("lobby", { createdAt: new Date().toISOString(), messages: [] });
 }
