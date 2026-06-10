@@ -4,6 +4,9 @@ interface BuyButtonProps {
   onBuy: (accessoryid: string) => void;
 }
 
+/**
+ * button to allow the user to purchase the given accessory
+ */
 export function BuyButton({ accessoryId, owned, onBuy }: BuyButtonProps) {
   const handleClick = () => {
     onBuy(accessoryId);

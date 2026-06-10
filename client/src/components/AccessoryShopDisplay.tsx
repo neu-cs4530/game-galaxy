@@ -9,6 +9,9 @@ interface AccessoryDisplayProps {
   size: number;
 }
 
+/**
+ * renders the list of accessories available for purchase
+ */
 export function AccessoryShopDisplay({ accessories = [], size = 100 }: AccessoryDisplayProps) {
   const { user, socket } = useLoginContext();
   const auth = useAuth();

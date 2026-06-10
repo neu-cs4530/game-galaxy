@@ -43,9 +43,8 @@ export interface Accessory {
  * - equipped with default face accessory
  */
 export function createDefaultAvatar(): Avatar {
-  const colors = ["blue", "pink", "orange", "green"];
   return {
-    color: colors[Math.floor(Math.random() * colors.length)],
+    color: "blue",
     accessories: {
       "face-01": true,
     },

@@ -51,6 +51,12 @@ export const getUserById = async (username: string): Promise<SafeUserInfo> => {
   return res.data;
 };
 
+/**
+ * Sends a POST request to purchase an accessory for the logged-in user.
+ * @param auth - The authenticated user's credentials
+ * @param accessoryId - The id of the accessory to purchase
+ * @returns The updated user object reflecting the new accessory, or throws if the purchase fails
+ */
 export const buyAccessory = async (auth: UserAuth, accessoryId: string): Promise<SafeUserInfo> => {
   const res = await api.post<SafeUserInfo | ErrorMsg>(`${USER_API_URL}/${auth.username}/shop/buy`, {
     auth,

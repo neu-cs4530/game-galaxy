@@ -44,7 +44,10 @@ describe("POST /api/game/create", () => {
         username: "user3",
         display: "Frau Drei",
         createdAt: expect.anything(),
-        avatar: { color: "blue", accessories: [] },
+        avatar: {
+          color: "blue",
+          accessories: { "face-01": true },
+        },
         balance: 100,
       },
       createdAt: expect.anything(),
@@ -54,7 +57,10 @@ describe("POST /api/game/create", () => {
           username: "user3",
           display: "Frau Drei",
           createdAt: expect.anything(),
-          avatar: { color: "blue", accessories: [] },
+          avatar: {
+            color: "blue",
+            accessories: { "face-01": true },
+          },
           balance: 100,
         },
       ],
