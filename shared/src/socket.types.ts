@@ -26,6 +26,8 @@ export interface ClientToServerEvents {
   shopBuyAccessory: (payload: WithAuth<string>) => void;
   lobbyJoin: (payload: WithAuth<string>) => void;
   lobbyLeave: (payload: WithAuth<string>) => void;
+  wearAccessory: (payload: WithAuth<string>) => void;
+  removeAccessory: (payload: WithAuth<string>) => void;
 }
 
 /**

@@ -1,21 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import useEditProfileForm from "../hooks/useEditProfileForm.ts";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import AvatarDisplay from "../components/Avatar.tsx";
+import { getUserById } from "../services/userService.ts";
+import type { Avatar } from "@gamenite/shared";
 
 export default function Profile() {
   const { user } = useLoginContext();
   const timeSince = useTimeSince();
   const [showPass, setShowPass] = useState(false);
+  const [avatar, setAvatar] = useState<Avatar>(user.avatar);
+  const [fetchErr, setFetchErr] = useState<string | null>(null);
   const { display, setDisplay, password, setPassword, confirm, setConfirm, err, handleSubmit } =
     useEditProfileForm();
+
+  useEffect(() => {
+    getUserById(user.username)
+      .then((u) => setAvatar(u.avatar))
+      .catch((e) => setFetchErr(`${e}`));
+  }, [user.username]);
 
   return (
     <form className="content spacedSection" onSubmit={handleSubmit}>
       <h2>Profile</h2>
+      {fetchErr && <p className="error-message">{fetchErr}</p>}
       <div>
-        <AvatarDisplay avatar={user.avatar} size={200} />
+        <AvatarDisplay avatar={avatar} size={200} />
       </div>
       <div>
         <h3>General information</h3>
@@ -36,7 +47,7 @@ export default function Profile() {
           <button
             className="secondary narrow"
             onClick={(e) => {
-              e.preventDefault(); // Don't submit form
+              e.preventDefault();
               setDisplay(user.display);
             }}
           >
@@ -58,7 +69,7 @@ export default function Profile() {
           <button
             className="secondary narrow"
             onClick={(e) => {
-              e.preventDefault(); // Don't submit form
+              e.preventDefault();
               setPassword("");
               setConfirm("");
             }}
@@ -69,7 +80,7 @@ export default function Profile() {
             className="secondary narrow"
             aria-label="Toggle show password"
             onClick={(e) => {
-              e.preventDefault(); // Don't submit form
+              e.preventDefault();
               setShowPass((v) => !v);
             }}
           >

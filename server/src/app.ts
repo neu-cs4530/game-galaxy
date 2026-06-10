@@ -67,6 +67,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("shopBuyAccessory", accessory.socketBuyAccessory(socket, io));
+  socket.on("wearAccessory", accessory.socketWearAccessory(socket, io));
+  socket.on("removeAccessory", accessory.socketRemoveAccessory(socket, io));
 
   socket.on("chatJoin", chat.socketJoin(socket, io));
   socket.on("chatLeave", chat.socketLeave(socket, io));
