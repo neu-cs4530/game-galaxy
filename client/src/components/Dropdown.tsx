@@ -59,7 +59,7 @@ export function DropdownContent({ children }: { children: React.ReactNode }) {
     </div>
   ) : null;
 }
-
+/** Sets up the list styling for individual items on open */
 export function DropdownList({ children }: { children: React.ReactNode }) {
   const { setOpen } = useContext(DropdownContext);
 
@@ -70,6 +70,7 @@ export function DropdownList({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** Each notification in the dropdown menu */
 export function DropdownItem({ threadId, eventType }: { threadId: string; eventType: string }) {
   return (
     <li style={{ borderBottom: "1px solid #eee" }}>

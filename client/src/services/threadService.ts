@@ -41,7 +41,6 @@ export const addCommentToThread = async (
     payload,
   });
   if ("error" in res.data) throw new Error(res.data.error);
-  //guess: put socket.emit here?
   return res.data;
 };
 
@@ -60,7 +59,6 @@ export const reactToThread = async (
     payload: { emoji },
   });
   if ("error" in res.data) throw new Error(res.data.error);
-  //guess: put socket.emit here?
   return res.data;
 };
 

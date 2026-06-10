@@ -1,7 +1,7 @@
 /* eslint no-console: "off" */
 
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Login from "./pages/Login.tsx";
 import type { AuthContext } from "./contexts/LoginContext.ts";
 import Layout from "./components/Layout.tsx";
@@ -20,6 +20,7 @@ import fallback from "./fallback.tsx";
 import NewThread from "./pages/NewThread.tsx";
 import TimeContextKeeper from "./components/UpdatingTimeContext.tsx";
 import Lobby from "./pages/Lobby.tsx";
+import { threadList } from "./services/threadService.ts";
 
 /** If `true`, all incoming socket messages will be logged */
 const DEBUG_SOCKETS = false;
@@ -48,9 +49,24 @@ export default function App() {
   const [auth, setAuth] = useState<AuthContext | null>(null);
   const [subscribedThreads, setSubscribedThreads] = useState<string[]>([]);
 
+  //defines the addThreadSubscription behavior that gets passed into LoginContext
   function addThreadSubscription(threadId: string) {
     setSubscribedThreads((prev) => [...prev, threadId]);
   }
+
+  //On login, updates a user's subscribed threads with ones they have made so they get notifs
+  useEffect(() => {
+    if (!auth) return;
+    const loadSubscriptions = async () => {
+      const threads = await threadList();
+      threads
+        .filter((t) => t.createdBy.username === auth.user.username)
+        .forEach((t) => addThreadSubscription(t.threadId));
+    };
+
+    void loadSubscriptions().catch((err) => console.error("Failed to load subscriptions", err));
+  }, [auth]);
+
   return (
     socket && (
       <BrowserRouter>
