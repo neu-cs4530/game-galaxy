@@ -3,33 +3,65 @@ import useLoginContext from "../hooks/useLoginContext.ts";
 import "./Header.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { LobbyButton } from "./LobbyButton.tsx";
+import { type ThreadEvent } from "@gamenite/shared";
+import {
+  Dropdown,
+  DropdownButton,
+  DropdownContent,
+  DropdownItem,
+  DropdownList,
+} from "./Dropdown.tsx";
 
 /**
  * Header component that renders the main title.
  */
 export default function Header() {
-  const { socket, user, setUser, reset } = useLoginContext();
+  const { socket, user, setUser, reset, subscribedThreads } = useLoginContext();
   const [coins, setCoins] = useState(user.balance);
   const navigate = useNavigate();
   const location = useLocation();
+  const [recentNotifs, setRecentNotifs] = useState<ThreadEvent[]>([]);
 
   useEffect(() => {
-    socket.on("balanceUpdated", ({ balance }) => {
+    const handleThreadUpdate = ({ threadId, eventType }: ThreadEvent) => {
+      if (subscribedThreads.includes(threadId)) {
+        setRecentNotifs((prev) => {
+          const updated = [...prev, { threadId, eventType }];
+          return updated.length > 4 ? updated.slice(-3) : updated;
+        });
+      }
+    };
+
+    const handleBalanceUpdated = ({ balance }: { balance: number }) => {
       setCoins(balance);
-    });
+    };
+
     socket.on("userUpdated", (updatedUser) => {
       setUser(updatedUser);
       setCoins(updatedUser.balance);
     });
+    socket.on("balanceUpdated", handleBalanceUpdated);
+    socket.on("threadUpdate", handleThreadUpdate);
     return () => {
-      socket.off("balanceUpdated");
+      socket.off("balanceUpdated", handleBalanceUpdated);
+      socket.off("threadUpdate", handleThreadUpdate);
       socket.off("userUpdated");
     };
-  }, [socket, setUser]);
+  }, [socket, setUser, subscribedThreads]);
 
   return (
     <div id="header" className="header">
       <div className="title">GameNite!</div>
+      <Dropdown>
+        <DropdownButton>Recent Notifications</DropdownButton>
+        <DropdownContent>
+          <DropdownList>
+            {recentNotifs.map(({ threadId, eventType }, idx) => (
+              <DropdownItem key={idx} threadId={threadId} eventType={eventType}></DropdownItem>
+            ))}
+          </DropdownList>
+        </DropdownContent>
+      </Dropdown>
       <div>Coins: {coins}</div>
       <div>User: {user.display}</div>
       <button

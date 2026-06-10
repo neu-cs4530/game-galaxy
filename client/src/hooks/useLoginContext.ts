@@ -11,6 +11,8 @@ import type { SafeUserInfo } from "@gamenite/shared";
  * - `user`: the logged-in user's information
  * - `pass`: the logged-in user's password (it's bad web dev to keep this around! but we're using it for our nonstandard auth process)
  * - `reset`: a callback
+ * - `subscribedThreads`: tracking what threads this user gets notifications for
+ * - `addThreadSubscription`: used to add threadIds to the subscribed list
  */
 export default function useLoginContext(): {
   socket: GameSocket;
@@ -18,6 +20,8 @@ export default function useLoginContext(): {
   pass: string;
   setUser: (user: SafeUserInfo) => void;
   reset: () => void;
+  subscribedThreads: string[];
+  addThreadSubscription: (threadId: string) => void;
 } {
   const context = useContext(LoginContext);
   if (!context) {

@@ -133,6 +133,8 @@ export const zMahjongMove = z.discriminatedUnion("type", [
   z.object({ type: z.literal("win") }),
   z.object({ type: z.literal("kong"), tile: z.string().optional() }),
   z.object({ type: z.literal("pass") }),
-  z.object({ type: z.literal("pong") }),
-  z.object({ type: z.literal("seung"), with: z.tuple([z.string(), z.string()]) }),
+  z.object({
+    type: z.literal("meld"),
+    with: z.array(z.string()),
+  }),
 ]);

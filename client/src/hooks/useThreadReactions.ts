@@ -31,7 +31,7 @@ export default function useThreadReactions(
   setThread: (thread: ThreadInfo) => void,
 ) {
   const auth = useAuth();
-  const { user } = useLoginContext();
+  const { user, socket } = useLoginContext();
   const [err, setErr] = useState<string | null>(null);
 
   const tallies: ReactionTally[] = REACTION_EMOJIS.map((emoji) => {
@@ -48,6 +48,10 @@ export default function useThreadReactions(
       const updated = await reactToThread(auth, thread.threadId, emoji);
       setErr(null);
       setThread(updated);
+      socket.emit("threadInteraction", {
+        auth,
+        payload: { threadId: thread.threadId, eventType: "reaction" },
+      });
     } catch (e) {
       setErr(`${e}`);
     }
