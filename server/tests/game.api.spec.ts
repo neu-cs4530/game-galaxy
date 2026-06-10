@@ -45,7 +45,10 @@ describe("POST /api/game/create", () => {
         display: "Frau Drei",
         balance: expect.anything(),
         createdAt: expect.anything(),
-        avatar: { color: "blue", accessories: [] },
+        avatar: {
+          color: "blue",
+          accessories: { "face-01": true },
+        },
       },
       createdAt: expect.anything(),
       minPlayers: 2,
@@ -55,7 +58,10 @@ describe("POST /api/game/create", () => {
           display: "Frau Drei",
           balance: expect.anything(),
           createdAt: expect.anything(),
-          avatar: { color: "blue", accessories: [] },
+          avatar: {
+            color: "blue",
+            accessories: { "face-01": true },
+          },
         },
       ],
     });

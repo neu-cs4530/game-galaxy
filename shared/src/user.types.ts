@@ -18,21 +18,23 @@ export interface SafeUserInfo {
 /**
  * represents a user's avatar representation in GameNite
  * color - the color of the avatar
- * accessories - the list of accessories being worn by the avatar
+ * accessories - the list of accessories owned by the avatar with a boolean indicating if they are being worn
  */
 export interface Avatar {
   color: string;
-  accessories: Accessory[];
+  accessories: Record<string, boolean>;
 }
 
 /**
  * represents an accessory that a user can own
  * accessoryId - unique id identifying the accessory
  * name - the name of the accessory
+ * cost - how many coins is this accessory worth?
  */
 export interface Accessory {
   accessoryId: string;
   name: string;
+  cost: number;
 }
 
 /**
@@ -41,10 +43,11 @@ export interface Accessory {
  * - equipped with default face accessory
  */
 export function createDefaultAvatar(): Avatar {
-  const colors = ["blue", "pink", "orange", "green"];
   return {
-    color: colors[Math.floor(Math.random() * colors.length)],
-    accessories: [], // TODO: add default face
+    color: "blue",
+    accessories: {
+      "face-01": true,
+    },
   };
 }
 

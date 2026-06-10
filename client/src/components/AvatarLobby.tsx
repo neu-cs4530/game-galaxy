@@ -15,11 +15,14 @@ interface AvatarLobbyDisplayProps {
  * @param size - the size in which the avatar should be scaled (measured in %)
  */
 export default function AvatarLobbyDisplay({
-  avatar = { color: "blue", accessories: [] },
+  avatar = { color: "blue", accessories: {} },
   top = "10%",
   left = "10%",
   size = "10%",
 }: AvatarLobbyDisplayProps) {
+  const equipped = Object.entries(avatar.accessories)
+    .filter(([, isWearing]) => isWearing)
+    .map(([accessoryId]) => accessoryId);
   return (
     <div style={{ position: "absolute", top, left, width: size, height: size, cursor: "pointer" }}>
       <img
@@ -30,6 +33,13 @@ export default function AvatarLobbyDisplay({
         src="/sprites/avatar/avatarOutline.png"
         style={{ position: "absolute", width: size, height: size }}
       />
+      {equipped.map((accessoryId) => (
+        <img
+          key={accessoryId}
+          src={`/sprites/accessories/${accessoryId}.png`}
+          style={{ position: "absolute", width: size, height: size }}
+        />
+      ))}
     </div>
   );
 }

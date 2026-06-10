@@ -81,7 +81,7 @@ export default function Lobby() {
         })}
         <RoomLink
           sprite="/sprites/lobby/Shop_frame1.png"
-          route={`/profile/${username}`}
+          route="/shop"
           top="18%"
           left="22%"
           width="10%"
@@ -89,7 +89,7 @@ export default function Lobby() {
         />
         <RoomLink
           sprite="/sprites/lobby/Closet_frame1.png"
-          route={`/profile/${username}`}
+          route={`/closet/${username}`}
           top="14%"
           left="35%"
           width="8%"

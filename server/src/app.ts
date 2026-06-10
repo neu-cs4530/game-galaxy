@@ -9,6 +9,7 @@ import * as game from "./controllers/game.controller.ts";
 import * as lobby from "./controllers/lobby.controller.ts";
 import * as user from "./controllers/user.controller.ts";
 import * as thread from "./controllers/thread.controller.ts";
+import * as accessory from "./controllers/accessory.controller.ts";
 import * as tag from "./controllers/tag.controller.ts";
 import { type GameServer } from "./types.ts";
 
@@ -47,8 +48,12 @@ app.use(
         .post("/login", user.postLogin)
         .post("/signup", user.postSignup)
         .post("/:username", user.postByUsername)
-        .get("/:username", user.getByUsername),
-    ),
+        .get("/:username", user.getByUsername)
+        .post("/:username/closet/wear", user.postWearAccessory)
+        .post("/:username/closet/remove", user.postRemoveAccessory)
+        .post("/:username/shop/buy", user.postBuyAccessory),
+    )
+    .use("/accessory", Router().get("/", accessory.getAccessories)),
 );
 
 io.on("connection", (socket) => {
@@ -59,6 +64,8 @@ io.on("connection", (socket) => {
     console.log(`CONN [${socketId}] disconnected`);
     lobby.handleDisconnect(io, socket);
   });
+
+  socket.on("shopBuyAccessory", accessory.socketBuyAccessory(socket, io));
 
   socket.on("chatJoin", chat.socketJoin(socket, io));
   socket.on("chatLeave", chat.socketLeave(socket, io));
