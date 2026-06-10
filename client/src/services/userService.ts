@@ -50,3 +50,12 @@ export const getUserById = async (username: string): Promise<SafeUserInfo> => {
   if ("error" in res.data) throw new Error(res.data.error);
   return res.data;
 };
+
+export const buyAccessory = async (auth: UserAuth, accessoryId: string): Promise<SafeUserInfo> => {
+  const res = await api.post<SafeUserInfo | ErrorMsg>(`${USER_API_URL}/${auth.username}/shop/buy`, {
+    auth,
+    payload: accessoryId,
+  });
+  if ("error" in res.data) throw new Error(res.data.error);
+  return res.data;
+};

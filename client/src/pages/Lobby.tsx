@@ -10,7 +10,7 @@ export default function Lobby() {
       <LobbyDisplay />
       <RoomLink
         sprite="/sprites/lobby/Shop_frame1.png"
-        route={`/profile/${username}`}
+        route="/shop"
         top="18%"
         left="22%"
         width="10%"

@@ -8,6 +8,7 @@ import * as chat from "./controllers/chat.controller.ts";
 import * as game from "./controllers/game.controller.ts";
 import * as user from "./controllers/user.controller.ts";
 import * as thread from "./controllers/thread.controller.ts";
+import * as accessory from "./controllers/accessory.controller.ts";
 import { type GameServer } from "./types.ts";
 
 export const app = express();
@@ -48,7 +49,8 @@ app.use(
         .post("/:username/closet/wear", user.postWearAccessory)
         .post("/:username/closet/remove", user.postRemoveAccessory)
         .post("/:username/shop/buy", user.postBuyAccessory),
-    ),
+    )
+    .use("/accessory", Router().get("/", accessory.getAccessories)),
 );
 
 io.on("connection", (socket) => {
@@ -58,6 +60,8 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log(`CONN [${socketId}] disconnected`);
   });
+
+  socket.on("shopBuyAccessory", accessory.socketBuyAccessory(socket, io));
 
   socket.on("chatJoin", chat.socketJoin(socket, io));
   socket.on("chatLeave", chat.socketLeave(socket, io));

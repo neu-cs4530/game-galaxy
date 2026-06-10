@@ -1,4 +1,5 @@
 import { AccessoryRepo, UserRepo } from "../repository.ts";
+import { updateCoinCount } from "./user.service.ts";
 
 /**
  * purchase an accessory from the store, and add it to the user's closet
@@ -8,11 +9,15 @@ import { AccessoryRepo, UserRepo } from "../repository.ts";
 export async function buyAccessory(accessoryId: string, userId: string) {
   const accessory = await AccessoryRepo.get(accessoryId);
   const user = await UserRepo.get(userId);
-  if (user.balance >= accessory.cost) {
-    user.avatar.accessories[accessoryId] = false;
-  } else {
+  if (accessoryId in user.avatar.accessories) {
+    throw new Error(`User already owns accessory ${accessory.name}`);
+  }
+  if (user.balance < accessory.cost) {
     throw new Error(`You do not have enough coins to buy this accessory!`);
   }
+  user.avatar.accessories[accessoryId] = false;
+  await UserRepo.set(userId, user);
+  await updateCoinCount(userId, -accessory.cost);
 }
 
 /**
@@ -23,7 +28,7 @@ export async function buyAccessory(accessoryId: string, userId: string) {
 export async function wearAccessory(accessoryId: string, userId: string) {
   const user = await UserRepo.get(userId);
   if (!(accessoryId in user.avatar.accessories)) {
-    throw new Error(`User ${userId} does not own accessory ${accessoryId}`);
+    throw new Error(`User ${userId} does not own accessory`);
   }
   user.avatar.accessories[accessoryId] = true;
   await UserRepo.set(userId, user);
@@ -37,7 +42,7 @@ export async function wearAccessory(accessoryId: string, userId: string) {
 export async function removeAccessory(accessoryId: string, userId: string) {
   const user = await UserRepo.get(userId);
   if (!(accessoryId in user.avatar.accessories)) {
-    throw new Error(`User ${userId} does not own accessory ${accessoryId}`);
+    throw new Error(`User ${userId} does not own accessory`);
   }
   user.avatar.accessories[accessoryId] = false;
   await UserRepo.set(userId, user);

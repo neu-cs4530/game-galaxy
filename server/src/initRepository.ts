@@ -12,12 +12,9 @@ import {
   UserRepo,
 } from "./repository.ts";
 import type { GameRecord, ThreadRecord } from "./models.ts";
-import { createDefaultAvatar, type Avatar } from "@gamenite/shared";
+import { createDefaultAvatar } from "@gamenite/shared";
 import { createChat } from "./services/chat.service.ts";
 import { createUser, updateUser } from "./services/user.service.ts";
-
-/** The avatar given to every seeded user. */
-const baseAvatar: Avatar = createDefaultAvatar();
 
 /** The coin balance given to every seeded user. */
 const STARTING_COINS = 100;
@@ -26,7 +23,7 @@ const STARTING_COINS = 100;
 async function setupSeededUser(username: string) {
   const auth = (await getUserByUsername(username))!;
   const record = await UserRepo.get(auth.userId);
-  record.avatar = baseAvatar;
+  record.avatar = createDefaultAvatar(); // fresh object per user
   record.balance = STARTING_COINS;
   await UserRepo.set(auth.userId, record);
 }
@@ -158,11 +155,6 @@ async function resetStoredAccessories() {
     accessoryId: "face-01",
     name: "Default Face",
     cost: 0,
-  });
-  await AccessoryRepo.set("face-02", {
-    accessoryId: "face-02",
-    name: "Glasses Face",
-    cost: 150,
   });
 }
 
