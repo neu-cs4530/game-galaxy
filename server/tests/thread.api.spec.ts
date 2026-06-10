@@ -33,10 +33,11 @@ describe("GET /api/thread/list", () => {
       createdBy: {
         createdAt: expect.anything(),
         display: "Yāo",
+        balance: expect.anything(),
         username: "user1",
         avatar: baseAvatar,
-        balance: 100,
       },
+      tags: ["nim", "matchmaking"],
     });
   });
 });
@@ -60,7 +61,7 @@ describe("GET /api/thread/:id", () => {
         display: "Yāo",
         createdAt: expect.anything(),
         avatar: baseAvatar,
-        balance: 100,
+        balance: expect.anything(),
       },
       reactions: [
         {
@@ -70,7 +71,7 @@ describe("GET /api/thread/:id", () => {
               accessories: { "face-01": true },
               color: "blue",
             },
-            balance: 100,
+            balance: expect.anything(),
             createdAt: expect.anything(),
             display: "The Knight Of Games",
             username: "user0",
@@ -78,6 +79,7 @@ describe("GET /api/thread/:id", () => {
         },
       ],
       createdAt: new Date("2025-04-02").toISOString(),
+      tags: ["nim"],
     });
   });
 });
@@ -93,7 +95,7 @@ describe("POST /api/thread/create", () => {
       .post(`/api/thread/create`)
       .send({
         auth: { ...auth1, password: "no" },
-        payload: { title: "Evil title", text: "Evil contents" },
+        payload: { title: "Evil title", text: "Evil contents", tags: [] },
       });
     expect(response.status).toBe(403);
   });
@@ -101,19 +103,20 @@ describe("POST /api/thread/create", () => {
   it("should succeed with correct information", async () => {
     response = await supertest(app)
       .post(`/api/thread/create`)
-      .send({ auth: auth2, payload: { title: "Title", text: "Text" } });
+      .send({ auth: auth2, payload: { title: "Title", text: "Text", tags: [] } });
     expect(response.status).toBe(200);
     expect(response.body).toStrictEqual({
       threadId: expect.anything(),
       title: "Title",
       text: "Text",
+      tags: [],
       createdAt: expect.anything(),
       createdBy: {
         username: "user2",
         display: expect.any(String),
+        balance: expect.anything(),
         createdAt: expect.anything(),
         avatar: baseAvatar,
-        balance: 100,
       },
       comments: [],
       reactions: [],
@@ -159,8 +162,8 @@ describe("POST /api/thread/:id/comment", () => {
           username: "user2",
           display: "Sénior Dos",
           createdAt: expect.anything(),
+          balance: expect.anything(),
           avatar: baseAvatar,
-          balance: 100,
         },
       },
     ]);

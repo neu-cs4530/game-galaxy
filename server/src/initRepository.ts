@@ -10,6 +10,7 @@ import {
   TableRepo,
   ThreadRepo,
   UserRepo,
+  TagRepo,
 } from "./repository.ts";
 import type { GameRecord, ThreadRecord } from "./models.ts";
 import { createDefaultAvatar } from "@gamenite/shared";
@@ -82,6 +83,7 @@ async function resetStoredThreads() {
       title: "Nim?",
       text: "Is anyone around that wants to play Nim? I'll be here for the next hour or so.",
       comments: [],
+      tags: ["nim", "matchmaking"],
       reactions: [
         { createdBy: user2id, emoji: "👍" },
         { createdBy: user3id, emoji: "❤️" },
@@ -93,6 +95,7 @@ async function resetStoredThreads() {
       title: "Hello game knights",
       text: "I'm a big Nim buff and am excited to join this community.",
       comments: [],
+      tags: ["nim"],
       reactions: [{ createdBy: user0id, emoji: "👍" }],
     },
     [randomUUID().toString()]: {
@@ -101,6 +104,7 @@ async function resetStoredThreads() {
       title: "Other games?",
       text: "Nim is great, but I'm hoping some new strategy games will get introduced soon.",
       comments: [],
+      tags: ["feature request"],
       reactions: [],
     },
     [randomUUID().toString()]: {
@@ -109,18 +113,29 @@ async function resetStoredThreads() {
       title: "Strategy guide?",
       text: "I'm pretty confused about the right strategy for Nim, is there anyone around who can help explain this?",
       comments: [],
+      tags: ["nim", "strategy"],
       reactions: [],
     },
     [randomUUID().toString()]: {
       createdBy: user0id,
       createdAt: new Date(new Date().getTime() - 1.5 * 24 * 60 * 60 * 1000).toISOString(),
       title: "New game: multiplayer number guesser!",
-      text: "Strategy.town now has an exciting new game: guess! Try it out today: multiple people can join this exciting game, and guess a number between 1 and 100!",
+      text: "GameNite now has an exciting new game: guess! Try it out today: multiple people can join this exciting game, and guess a number between 1 and 100!",
       comments: [],
+      tags: ["guess", "multiplayer"],
       reactions: [],
     },
   };
   await Promise.all(Object.entries(storedThreads).map(([id, entry]) => ThreadRepo.set(id, entry)));
+}
+
+/** Reset stores tags with basic ones */
+async function resetStoredTags() {
+  await TagRepo.set("nim", 0);
+  await TagRepo.set("guess", 0);
+  await TagRepo.set("matchmaking", 0);
+  await TagRepo.set("strategy", 0);
+  await TagRepo.set("feature request", 0);
 }
 
 /** Reset stored users with example data */
@@ -156,6 +171,9 @@ async function resetStoredAccessories() {
     name: "Default Face",
     cost: 0,
   });
+  
+async function resetChats() {
+  await ChatRepo.set("lobby", { createdAt: new Date().toISOString(), messages: [] });
 }
 
 export async function resetEverythingToDefaults() {
@@ -166,11 +184,14 @@ export async function resetEverythingToDefaults() {
   await MessageRepo.clear();
   await ThreadRepo.clear();
   await UserRepo.clear();
+  await TagRepo.clear();
   await TableRepo.clear();
   await AccessoryRepo.clear();
 
   await resetStoredUsers();
+  await resetStoredTags();
   await resetStoredThreads();
+  await resetChats();
   await resetStoredGames();
   await resetTables();
   await resetStoredAccessories();

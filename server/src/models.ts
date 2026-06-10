@@ -117,6 +117,7 @@ export interface ThreadRecord {
   createdAt: DateISO;
   createdBy: RecordId; // References User records
   comments: RecordId[]; // References Comment records
+  tags: string[];
   reactions: ReactionEntry[];
 }
 
