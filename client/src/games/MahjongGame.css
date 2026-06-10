@@ -25,13 +25,21 @@
   display: inline-block;
   border-radius: 3px;
   border: 1px solid transparent;
-  transition: transform 0.1s, border-color 0.1s;
+  transition:
+    transform 0.1s,
+    border-color 0.1s;
   user-select: none;
 }
 
-.tileImage--sm { height: 36px; }
-.tileImage--md { height: 50px; }
-.tileImage--lg { height: 64px; }
+.tileImage--sm {
+  height: 36px;
+}
+.tileImage--md {
+  height: 50px;
+}
+.tileImage--lg {
+  height: 64px;
+}
 
 .tileImage--clickable {
   cursor: pointer;
