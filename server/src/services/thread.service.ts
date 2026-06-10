@@ -36,7 +36,7 @@ async function populateThreadInfo(threadId: string): Promise<ThreadInfo> {
     createdBy: await populateSafeUserInfo(thread.createdBy),
     createdAt: new Date(thread.createdAt),
     comments: await Promise.all(thread.comments.map(populateCommentInfo)),
-    tags: thread.tags as string[], //cast should be fine, either empty or contains strings
+    tags: thread.tags,
     reactions: await Promise.all((thread.reactions ?? []).map(populateReactionInfo)),
   };
 }
@@ -55,7 +55,7 @@ async function populateThreadSummary(threadId: string) {
     createdBy: await populateSafeUserInfo(thread.createdBy),
     createdAt: new Date(thread.createdAt),
     comments: thread.comments.length,
-    tags: thread.tags as string[], //cast should be fine, either empty or contains strings
+    tags: thread.tags,
   };
 }
 
