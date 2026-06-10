@@ -47,6 +47,13 @@ export default function Header() {
   return (
     <div id="header" className="header">
       <div className="title">GameNite!</div>
+      <button
+        className="narrowcenter secondary"
+        onClick={() => void navigate(`/profile/${user.username}`)}
+      >
+        Profile
+      </button>
+      {location.pathname !== "/" && <LobbyButton />}
       <Dropdown>
         <DropdownButton>Recent Notifications</DropdownButton>
         <DropdownContent>
@@ -68,7 +75,6 @@ export default function Header() {
       >
         Log Out
       </button>
-      {location.pathname !== "/" && <LobbyButton />}
     </div>
   );
 }

@@ -1,26 +1,37 @@
-import type { Accessory } from "@gamenite/shared";
+import useAccessory from "../hooks/useAccessory";
+import { WearButton } from "./WearButton";
 
 interface AccessoryDisplayProps {
-  accessories: Accessory[];
+  accessories: Record<string, boolean>;
   size: number;
+  onToggle: (accessoryid: string, isWearing: boolean) => void;
 }
 
 /**
- * renders the list of accessories owned by the user.
+ * display all the accessories owned by this user.
  */
-export function AccessoryClosetDisplay({ accessories = [], size = 100 }: AccessoryDisplayProps) {
-  const accessoryList = accessories.map((accessory) => (
-    <li key={accessory.accessoryId} style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-      <img
-        src={`/sprites/accessories/${accessory.accessoryId}.png`}
-        style={{ width: size, height: size }}
-      />
-      <div>
-        <p>
-          <b>{accessory.name}</b>
-        </p>
-      </div>
-    </li>
-  ));
+export function AccessoryClosetDisplay({
+  accessories = {},
+  size = 100,
+  onToggle,
+}: AccessoryDisplayProps) {
+  const { accessories: catalog } = useAccessory();
+  const accessoryList = Object.entries(accessories).map(([accessoryId, isWearing]) => {
+    const catalogItem = catalog.find((a) => a.accessoryId === accessoryId);
+    return (
+      <li key={accessoryId} style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <img
+          src={`/sprites/accessories/${accessoryId}.png`}
+          style={{ width: size, height: size }}
+        />
+        <div>
+          <p>
+            <b>{catalogItem?.name ?? accessoryId}</b>
+          </p>
+          <WearButton accessoryId={accessoryId} isWearing={isWearing} onToggle={onToggle} />
+        </div>
+      </li>
+    );
+  });
   return <ul>{accessoryList}</ul>;
 }
