@@ -5,7 +5,10 @@ import { randomUUID } from "node:crypto";
 
 let response: Response;
 
-const baseAvatar = { color: "blue", accessories: [] };
+const baseAvatar = {
+  color: "blue",
+  accessories: { "face-01": true },
+};
 const auth1 = { username: "user1", password: "pwd1111" };
 const auth2 = { username: "user2", password: "pwd2222" };
 
@@ -62,7 +65,7 @@ describe("GET /api/thread/:id", () => {
           emoji: "👍",
           user: {
             avatar: {
-              accessories: [],
+              accessories: { "face-01": true },
               color: "blue",
             },
             balance: expect.anything(),

@@ -20,6 +20,8 @@ import fallback from "./fallback.tsx";
 import NewThread from "./pages/NewThread.tsx";
 import TimeContextKeeper from "./components/UpdatingTimeContext.tsx";
 import Lobby from "./pages/Lobby.tsx";
+import Shop from "./pages/Shop.tsx";
+import Closet from "./pages/Closet.tsx";
 
 /** If `true`, all incoming socket messages will be logged */
 const DEBUG_SOCKETS = false;
@@ -80,6 +82,8 @@ export default function App() {
             <Route path="/game/new" element={<NewGame />} />
             <Route path="/game/:gameId" element={<Game />} />
             <Route path="/profile/:username" element={<Profile />} />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/closet/:username" element={<Closet />} />
             <Route path="/*" element={<NoSuchRoute />} />
           </Route>
         </Routes>

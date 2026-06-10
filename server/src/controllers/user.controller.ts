@@ -8,6 +8,7 @@ import {
 import { type RestAPI } from "../types.ts";
 import { z } from "zod";
 import { checkAuth, getUserByUsername } from "../services/auth.service.ts";
+import { buyAccessory, removeAccessory, wearAccessory } from "../services/accessory.service.ts";
 
 /**
  * Handles user login by validating credentials.
@@ -100,4 +101,67 @@ export const postList: RestAPI<SafeUserInfo[]> = async (req, res) => {
   }
 
   res.send(users);
+};
+
+export const postBuyAccessory: RestAPI<SafeUserInfo, { username: string }> = async (req, res) => {
+  const body = withAuth(z.string()).safeParse(req.body);
+  if (!body.success) {
+    res.status(400).send({ error: "Poorly-formed request" });
+    return;
+  }
+
+  const user = await checkAuth(body.data.auth);
+  if (!user || user.username !== req.params.username) {
+    res.status(403).send({ error: "Invalid credentials" });
+    return;
+  }
+  try {
+    await buyAccessory(body.data.payload, user.userId);
+    res.send(await populateSafeUserInfo(user.userId));
+  } catch (err) {
+    res.status(400).send({ error: `${err}` });
+  }
+};
+
+export const postWearAccessory: RestAPI<SafeUserInfo, { username: string }> = async (req, res) => {
+  const body = withAuth(z.string()).safeParse(req.body);
+  if (!body.success) {
+    res.status(400).send({ error: "Poorly-formed request" });
+    return;
+  }
+
+  const user = await checkAuth(body.data.auth);
+  if (!user || user.username !== req.params.username) {
+    res.status(403).send({ error: "Invalid credentials" });
+    return;
+  }
+  try {
+    await wearAccessory(body.data.payload, user.userId);
+    res.send(await populateSafeUserInfo(user.userId));
+  } catch (err) {
+    res.status(400).send({ error: `${err}` });
+  }
+};
+
+export const postRemoveAccessory: RestAPI<SafeUserInfo, { username: string }> = async (
+  req,
+  res,
+) => {
+  const body = withAuth(z.string()).safeParse(req.body);
+  if (!body.success) {
+    res.status(400).send({ error: "Poorly-formed request" });
+    return;
+  }
+
+  const user = await checkAuth(body.data.auth);
+  if (!user || user.username !== req.params.username) {
+    res.status(403).send({ error: "Invalid credentials" });
+    return;
+  }
+  try {
+    await removeAccessory(body.data.payload, user.userId);
+    res.send(await populateSafeUserInfo(user.userId));
+  } catch (err) {
+    res.status(400).send({ error: `${err}` });
+  }
 };

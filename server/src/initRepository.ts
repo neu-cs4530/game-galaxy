@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getUserByUsername } from "./services/auth.service.ts";
 import {
+  AccessoryRepo,
   AuthRepo,
   ChatRepo,
   CommentRepo,
@@ -12,12 +13,9 @@ import {
   TagRepo,
 } from "./repository.ts";
 import type { GameRecord, ThreadRecord } from "./models.ts";
-import type { Avatar } from "@gamenite/shared";
+import { createDefaultAvatar } from "@gamenite/shared";
 import { createChat } from "./services/chat.service.ts";
 import { createUser, updateUser } from "./services/user.service.ts";
-
-/** The avatar given to every seeded user. */
-const baseAvatar: Avatar = { color: "blue", accessories: [] };
 
 /** The coin balance given to every seeded user. */
 const STARTING_COINS = 100;
@@ -26,7 +24,7 @@ const STARTING_COINS = 100;
 async function setupSeededUser(username: string) {
   const auth = (await getUserByUsername(username))!;
   const record = await UserRepo.get(auth.userId);
-  record.avatar = baseAvatar;
+  record.avatar = createDefaultAvatar(); // fresh object per user
   record.balance = STARTING_COINS;
   await UserRepo.set(auth.userId, record);
 }
@@ -164,6 +162,17 @@ async function resetTables() {
   await TableRepo.set("table:guess", { gameType: "guess" });
 }
 
+async function resetStoredAccessories() {
+  await AccessoryRepo.set("hat-01", { accessoryId: "hat-01", name: "Hat", cost: 100 });
+  await AccessoryRepo.set("bow-01", { accessoryId: "bow-01", name: "Bow", cost: 75 });
+  await AccessoryRepo.set("tie-01", { accessoryId: "tie-01", name: "Tie", cost: 75 });
+  await AccessoryRepo.set("face-01", {
+    accessoryId: "face-01",
+    name: "Default Face",
+    cost: 0,
+  });
+}
+
 async function resetChats() {
   await ChatRepo.set("lobby", { createdAt: new Date().toISOString(), messages: [] });
 }
@@ -178,6 +187,7 @@ export async function resetEverythingToDefaults() {
   await UserRepo.clear();
   await TagRepo.clear();
   await TableRepo.clear();
+  await AccessoryRepo.clear();
 
   await resetStoredUsers();
   await resetStoredTags();
@@ -185,4 +195,5 @@ export async function resetEverythingToDefaults() {
   await resetChats();
   await resetStoredGames();
   await resetTables();
+  await resetStoredAccessories();
 }
