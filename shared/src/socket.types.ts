@@ -4,6 +4,7 @@ import {
   type ChatUserJoinedPayload,
   type ChatUserLeftPayload,
 } from "./chat.types.ts";
+import { type LobbyTablePlayers } from "./lobby.types.ts";
 import { type NewMessagePayload } from "./message.types.ts";
 import { type WithAuth } from "./auth.types.ts";
 import { type GameMakeMovePayload, type GamePlayInfo, type TaggedGameView } from "./game.types.ts";
@@ -22,6 +23,9 @@ export interface ClientToServerEvents {
   gameStart: (payload: WithAuth<string>) => void;
   gameWatch: (payload: WithAuth<string>) => void;
   threadInteraction: (payload: WithAuth<ThreadEvent>) => void;
+  shopBuyAccessory: (payload: WithAuth<string>) => void;
+  lobbyJoin: (payload: WithAuth<string>) => void;
+  lobbyLeave: (payload: WithAuth<string>) => void;
 }
 
 /**
@@ -38,4 +42,6 @@ export interface ServerToClientEvents {
   gameJoined: (payload: string) => void;
   balanceUpdated: (payload: { balance: number }) => void;
   threadUpdate: (payload: ThreadEvent) => void;
+  lobbyPlayersUpdated: (payload: SafeUserInfo[]) => void;
+  lobbyTablesUpdated: (payload: LobbyTablePlayers[]) => void;
 }

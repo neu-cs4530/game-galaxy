@@ -1,24 +1,30 @@
 import type { Avatar } from "@gamenite/shared";
 
-interface AvatarDisplayProps {
+interface AvatarLobbyDisplayProps {
   avatar: Avatar;
-  size: number;
+  top: string;
+  left: string;
+  size: string;
 }
 
 /**
- * returns a component to render the given avatar with the relevant accessories and color.
+ * returns a component to render the given avatar in the lobby with the relevant accessories and color.
  * @param avatar - the avatar being rendered
- * @param size - the size in which it should be scaled.
+ * @param top - how far should the avatar be from the top of the screen (measured in %)
+ * @param left - how far should the avatar be from the left of the screen (measured in %)
+ * @param size - the size in which the avatar should be scaled (measured in %)
  */
-export default function AvatarDisplay({
-  avatar = { color: "blue", accessories: { "face-01": true } },
-  size = 128,
-}: AvatarDisplayProps) {
+export default function AvatarLobbyDisplay({
+  avatar = { color: "blue", accessories: {} },
+  top = "10%",
+  left = "10%",
+  size = "10%",
+}: AvatarLobbyDisplayProps) {
   const equipped = Object.entries(avatar.accessories)
     .filter(([, isWearing]) => isWearing)
     .map(([accessoryId]) => accessoryId);
   return (
-    <div style={{ position: "relative", width: size, height: size }}>
+    <div style={{ position: "absolute", top, left, width: size, height: size, cursor: "pointer" }}>
       <img
         src={`/sprites/avatar/colors/${avatar.color}.png`}
         style={{ position: "absolute", width: size, height: size }}
