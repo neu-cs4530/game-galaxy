@@ -181,27 +181,27 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
 
       if (move.type === "meld") {
         const [t1, t2, t3] = move.with;
-        // check that the player has the stated tiles in their hand
         let newHand = [...hand];
         newHand = removeOne(newHand, t1);
         newHand = removeOne(newHand, t2);
-        if (t3) {
+
+        if (t3 !== undefined) {
           newHand = removeOne(newHand, t3);
           if (newHand.length !== hand.length - 3) return null;
-          // must be a kong, need 3 matching tiles in hand to kong a discard
           if (t1 === t2 && t2 === t3 && t3 === discard) {
             response = { type: "kong" };
+          } else {
+            return null;
           }
-        }
-        if (newHand.length !== hand.length - 2) return null;
-
-        // need 2 matching tiles in hand, 3 isnt accepted because that should be a kong
-        if (t1 === t2 && t2 === discard) {
-          response = { type: "pong" };
-        }
-
-        if (isValidSeung(playerIndex, state, t1, t2, discard)) {
-          response = { type: "seung", with: [t1, t2] };
+        } else {
+          if (newHand.length !== hand.length - 2) return null;
+          if (t1 === t2 && t2 === discard) {
+            response = { type: "pong" };
+          } else if (isValidSeung(playerIndex, state, t1, t2, discard)) {
+            response = { type: "seung", with: [t1, t2] };
+          } else {
+            return null;
+          }
         }
       }
 
