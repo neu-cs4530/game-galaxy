@@ -12,6 +12,7 @@ import * as thread from "./controllers/thread.controller.ts";
 import * as accessory from "./controllers/accessory.controller.ts";
 import * as tag from "./controllers/tag.controller.ts";
 import { type GameServer } from "./types.ts";
+import { withAuth, zThreadEvent } from "@gamenite/shared";
 
 export const app = express();
 export const httpServer = http.createServer(app);
@@ -78,6 +79,12 @@ io.on("connection", (socket) => {
   socket.on("gameMakeMove", game.socketMakeMove(socket, io));
   socket.on("gameStart", game.socketStart(socket, io));
   socket.on("gameWatch", game.socketWatch(socket, io));
+  socket.on("threadInteraction", (body) => {
+    const {
+      payload: { threadId, eventType },
+    } = withAuth(zThreadEvent).parse(body);
+    io.emit("threadUpdate", { threadId, eventType });
+  });
 
   socket.onAny((name, payload) => {
     const zPayload = z.object({ auth: z.object({ username: z.string() }), payload: z.any() });
