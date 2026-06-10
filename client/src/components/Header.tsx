@@ -8,7 +8,7 @@ import { LobbyButton } from "./LobbyButton.tsx";
  * Header component that renders the main title.
  */
 export default function Header() {
-  const { socket, user, reset } = useLoginContext();
+  const { socket, user, setUser, reset } = useLoginContext();
   const [coins, setCoins] = useState(user.balance);
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,10 +17,15 @@ export default function Header() {
     socket.on("balanceUpdated", ({ balance }) => {
       setCoins(balance);
     });
+    socket.on("userUpdated", (updatedUser) => {
+      setUser(updatedUser);
+      setCoins(updatedUser.balance);
+    });
     return () => {
       socket.off("balanceUpdated");
+      socket.off("userUpdated");
     };
-  }, [socket]);
+  }, [socket, setUser]);
 
   return (
     <div id="header" className="header">

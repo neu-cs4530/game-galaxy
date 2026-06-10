@@ -16,6 +16,7 @@ export default function useLoginContext(): {
   socket: GameSocket;
   user: SafeUserInfo;
   pass: string;
+  setUser: (user: SafeUserInfo) => void;
   reset: () => void;
 } {
   const context = useContext(LoginContext);

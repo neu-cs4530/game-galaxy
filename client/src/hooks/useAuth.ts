@@ -17,7 +17,7 @@ export default function useAuth(): UserAuth {
   // time connecting and disconnecting sockets until the end of time.
   const auth = useMemo(
     () => ({ username: context.user.username, password: context.pass }),
-    [context],
+    [context.user.username, context.pass],
   );
   return auth;
 }

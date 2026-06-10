@@ -39,6 +39,7 @@ export interface ServerToClientEvents {
   gameWatched: (payload: GamePlayInfo) => void;
   gameJoined: (payload: string) => void;
   balanceUpdated: (payload: { balance: number }) => void;
+  userUpdated: (payload: SafeUserInfo) => void;
   lobbyPlayersUpdated: (payload: SafeUserInfo[]) => void;
   lobbyTablesUpdated: (payload: LobbyTablePlayers[]) => void;
 }

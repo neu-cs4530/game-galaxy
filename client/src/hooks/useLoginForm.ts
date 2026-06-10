@@ -85,7 +85,10 @@ export default function useLoginForm(setAuth: (auth: AuthContext | null) => void
       } else {
         user = await loginUser({ username, password });
       }
-      setAuth({ user, pass: password, reset: () => setAuth(null) });
+      const reset = () => setAuth(null);
+      const setUser = (newUser: SafeUserInfo) =>
+        setAuth({ user: newUser, pass: password, setUser, reset });
+      setAuth({ user, pass: password, setUser, reset });
       await navigate("/");
     } catch (err) {
       setErr(`${err}`);
