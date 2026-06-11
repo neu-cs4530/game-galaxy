@@ -103,6 +103,14 @@ export default function Lobby() {
           width="10%"
           height="13%"
         />
+        <RoomLink
+          sprite="/sprites/lobby/Forum_frame1.png"
+          route="/auction"
+          top="25%"
+          left="65%"
+          width="10%"
+          height="13%"
+        />
         <GameTable
           sprite="/sprites/lobby/Table1_frame1.png"
           top="31%"

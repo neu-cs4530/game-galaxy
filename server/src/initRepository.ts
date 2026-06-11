@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { getUserByUsername } from "./services/auth.service.ts";
 import {
   AccessoryRepo,
+  AuctionRepo,
   AuthRepo,
   ChatRepo,
   CommentRepo,
@@ -177,6 +178,25 @@ async function resetChats() {
   await ChatRepo.set("lobby", { createdAt: new Date().toISOString(), messages: [] });
 }
 
+async function resetStoredAuctions() {
+  await createUser("auctioneer", "ilovetoauction", new Date());
+  await updateUser("auctioneer", { display: "The Auctioneer" });
+
+  const sellerId = (await getUserByUsername("auctioneer"))!.userId;
+  const seller = await UserRepo.get(sellerId);
+  seller.avatar.accessories["hat-01"] = false;
+  await UserRepo.set(sellerId, seller);
+
+  await AuctionRepo.set("auctionseed", {
+    seller: sellerId,
+    accessoryId: "hat-01",
+    startingPrice: 50,
+    offers: [],
+    status: "open",
+    createdAt: new Date().toISOString(),
+  });
+}
+
 export async function resetEverythingToDefaults() {
   await AuthRepo.clear();
   await ChatRepo.clear();
@@ -188,6 +208,7 @@ export async function resetEverythingToDefaults() {
   await TagRepo.clear();
   await TableRepo.clear();
   await AccessoryRepo.clear();
+  await AuctionRepo.clear();
 
   await resetStoredUsers();
   await resetStoredTags();
@@ -196,4 +217,5 @@ export async function resetEverythingToDefaults() {
   await resetStoredGames();
   await resetTables();
   await resetStoredAccessories();
+  await resetStoredAuctions();
 }
