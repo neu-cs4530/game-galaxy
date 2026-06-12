@@ -72,6 +72,8 @@ export default function App() {
   return (
     socket && (
       <BrowserRouter>
+        <div className="stars"></div>
+        <div className="twinkling"></div>
         <Routes>
           <Route path="/login" element={<Login setAuth={(auth) => setAuth(auth)} />} />
           <Route

@@ -5,10 +5,6 @@ export default function LobbyDisplay() {
   return (
     <div style={{ position: "relative", width: "100%", aspectRatio: "1 / 1" }}>
       <img
-        src="/sprites/lobby/Background.png"
-        style={{ position: "absolute", width: "100%", height: "100%", opacity: "80%" }}
-      />
-      <img
         src="/sprites/lobby/floor.png"
         style={{ position: "absolute", width: "100%", height: "100%" }}
       />
