@@ -5,6 +5,7 @@ interface AvatarLobbyDisplayProps {
   top: string;
   left: string;
   size: string;
+  onClick?: () => void;
 }
 
 /**
@@ -13,18 +14,23 @@ interface AvatarLobbyDisplayProps {
  * @param top - how far should the avatar be from the top of the screen (measured in %)
  * @param left - how far should the avatar be from the left of the screen (measured in %)
  * @param size - the size in which the avatar should be scaled (measured in %)
+ * @param onClick - what to do when the avatar is clicked
  */
 export default function AvatarLobbyDisplay({
   avatar = { color: "blue", accessories: {} },
   top = "10%",
   left = "10%",
   size = "10%",
+  onClick,
 }: AvatarLobbyDisplayProps) {
   const equipped = Object.entries(avatar.accessories)
     .filter(([, isWearing]) => isWearing)
     .map(([accessoryId]) => accessoryId);
   return (
-    <div style={{ position: "absolute", top, left, width: size, height: size, cursor: "pointer" }}>
+    <div
+      onClick={onClick}
+      style={{ position: "absolute", top, left, width: size, height: size, cursor: "pointer" }}
+    >
       <img
         src={`/sprites/avatar/colors/${avatar.color}.png`}
         style={{ position: "absolute", width: size, height: size }}

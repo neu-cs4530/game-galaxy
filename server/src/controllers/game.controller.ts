@@ -15,7 +15,7 @@ import { z } from "zod";
 import { logSocketError } from "./socket.controller.ts";
 import { checkAuth, enforceAuth } from "../services/auth.service.ts";
 import { GameRepo, TableRepo, UserRepo } from "../repository.ts";
-import { updateCoinCount } from "../services/user.service.ts";
+import { updateCoinCount, incrementWins } from "../services/user.service.ts";
 import { clearTableGame, setTableGame } from "../services/table.service.ts";
 import { broadcastTables } from "./lobby.controller.ts";
 
@@ -215,6 +215,7 @@ async function rewardWins(gameId: string, io: GameServer) {
       const user = await UserRepo.find(winnerId);
       if (!user) throw new Error(`Invalid user ${winnerId}`);
       const newBalance = await updateCoinCount(winnerId, 10);
+      await incrementWins(winnerId);
       io.to(userRoom(gameId, winnerId)).emit("balanceUpdated", { balance: newBalance });
     }
   }
