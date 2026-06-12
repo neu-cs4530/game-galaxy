@@ -18,6 +18,7 @@ export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo
     createdAt: new Date(record.createdAt),
     avatar: record.avatar,
     balance: record.balance,
+    wins: record.wins ?? 0,
   };
 }
 
@@ -45,6 +46,7 @@ export async function createUser(
     display: username,
     avatar: defaultAvatar,
     balance: 0,
+    wins: 0,
   });
   await updateAuth(username, password, id);
   return {
@@ -53,6 +55,7 @@ export async function createUser(
     display: username,
     avatar: defaultAvatar,
     balance: 0,
+    wins: 0,
   };
 }
 
@@ -108,4 +111,17 @@ export async function updateCoinCount(userId: string, coins: number) {
   if (coins !== undefined) newUser.balance = newUser.balance + coins;
   await UserRepo.set(userId, newUser);
   return newUser.balance;
+}
+
+/**
+ * Updates the database to record that a player won a game.
+ *
+ * @param userId the user whose win count should be incremented
+ * @returns the user's new total win count
+ */
+export async function incrementWins(userId: string) {
+  const newUser = await UserRepo.get(userId);
+  newUser.wins = (newUser.wins ?? 0) + 1;
+  await UserRepo.set(userId, newUser);
+  return newUser.wins;
 }
