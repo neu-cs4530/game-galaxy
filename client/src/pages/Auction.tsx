@@ -14,6 +14,8 @@ export default function Auction() {
   const { user } = useLoginContext();
   const { listings, err } = useAuctions();
 
+  // Check which listings were made by the user and which were made by others
+  // This code avoids having to make unique paths for all users
   const myListings = listings.filter((l) => l.seller.username === user.username);
   const otherListings = listings.filter((l) => l.seller.username !== user.username);
 
@@ -104,6 +106,9 @@ function SellForm({ myListings }: { myListings: AuctionListing[] }) {
   const [startingPrice, setStartingPrice] = useState(0);
 
   const nameOf = (id: string) => catalog.find((a) => a.accessoryId === id)?.name ?? id;
+  const costOf = (id: string) => catalog.find((a) => a.accessoryId === id)?.cost;
+
+  const originalCost = costOf(accessoryId || sellable[0]);
 
   const handleSell = () => {
     const id = accessoryId || sellable[0];
@@ -131,6 +136,7 @@ function SellForm({ myListings }: { myListings: AuctionListing[] }) {
         <input
           type="number"
           min={0}
+          max={originalCost !== undefined ? originalCost - 1 : undefined}
           value={startingPrice}
           onChange={(e) => setStartingPrice(Number(e.target.value))}
           style={{ width: "6rem" }}
