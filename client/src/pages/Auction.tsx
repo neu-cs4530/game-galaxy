@@ -138,7 +138,11 @@ function SellForm({ myListings }: { myListings: AuctionListing[] }) {
           min={0}
           max={originalCost !== undefined ? originalCost - 1 : undefined}
           value={startingPrice}
-          onChange={(e) => setStartingPrice(Number(e.target.value))}
+          onChange={(e) => {
+            const value = Number(e.target.value);
+            const upperBound = originalCost !== undefined ? originalCost - 1 : Infinity;
+            setStartingPrice(Math.min(Math.max(value, 0), upperBound));
+          }}
           style={{ width: "6rem" }}
         />
       </label>
