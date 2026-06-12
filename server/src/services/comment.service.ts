@@ -40,3 +40,26 @@ export async function createComment(
   });
   return populateCommentInfo(id);
 }
+
+/**
+ * Edits an existing comment's text, recording the time of the edit. Only the
+ * comment's original author may edit it.
+ *
+ * @param commentId - id of the comment to edit
+ * @param user - the user attempting the edit
+ * @param text - the new comment text
+ * @param editedAt - the time of the edit
+ * @returns the updated comment info, or null if the comment does not exist or
+ * the user is not its author
+ */
+export async function editComment(
+  commentId: string,
+  user: UserWithId,
+  text: string,
+  editedAt: Date,
+): Promise<CommentInfo | null> {
+  const comment = await CommentRepo.find(commentId);
+  if (!comment || comment.createdBy !== user.userId) return null;
+  await CommentRepo.set(commentId, { ...comment, text, editedAt: editedAt.toISOString() });
+  return populateCommentInfo(commentId);
+}

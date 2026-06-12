@@ -6,7 +6,7 @@ import {
   type ThreadSummary,
 } from "@gamenite/shared";
 import { populateSafeUserInfo } from "./user.service.ts";
-import { createComment, populateCommentInfo } from "./comment.service.ts";
+import { createComment, editComment, populateCommentInfo } from "./comment.service.ts";
 import { type UserWithId } from "../types.ts";
 import { ThreadRepo, TagRepo } from "../repository.ts";
 import { type ReactionEntry } from "../models.ts";
@@ -135,6 +135,32 @@ export async function addCommentToThread(
   const newThread = { ...oldThread, comments: [...oldThread.comments, comment.commentId] };
   await ThreadRepo.set(possibleThreadId, newThread);
   return populateThreadInfo(threadId);
+}
+
+/**
+ * Edit one of a thread's comments. Only the comment's original author may
+ * edit it.
+ *
+ * @param possibleThreadId - Ostensible thread ID
+ * @param commentId - id of the comment to edit
+ * @param user - editing user
+ * @param text - new comment contents
+ * @param editedAt - time of the edit
+ * @returns the updated thread, or null if the thread/comment does not exist or
+ * the user is not the comment's author
+ */
+export async function editCommentInThread(
+  possibleThreadId: string,
+  commentId: string,
+  user: UserWithId,
+  text: string,
+  editedAt: Date,
+): Promise<ThreadInfo | null> {
+  const thread = await ThreadRepo.find(possibleThreadId);
+  if (!thread || !thread.comments.includes(commentId)) return null;
+  const edited = await editComment(commentId, user, text, editedAt);
+  if (!edited) return null;
+  return populateThreadInfo(possibleThreadId);
 }
 
 /**

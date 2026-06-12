@@ -2,6 +2,7 @@ import "./ThreadPage.css";
 import { useParams } from "react-router-dom";
 import useThreadInfo from "../hooks/useThreadInfo.ts";
 import NewForumComment from "../components/NewForumComment.tsx";
+import ForumComment from "../components/ForumComment.tsx";
 import ThreadReactions from "../components/ThreadReactions.tsx";
 import useTimeSince from "../hooks/useTimeSince.ts";
 
@@ -43,23 +44,14 @@ export default function ThreadPage() {
           </div>
           <ThreadReactions thread={threadInfo} setThread={setThread} />
           <div className="dottedList">
-            {(threadInfo.comments ?? []).map(
-              ({ commentId, text, createdBy, createdAt, editedAt }) => (
-                <div className="dottedListItem" role="listitem" key={commentId}>
-                  <div>
-                    <div>{text}</div>
-                    <div className="smallAndGray">
-                      Reply by {createdBy.display}
-                      {createdBy.username === threadInfo.createdBy.username && (
-                        <span className="opBlue"> OP</span>
-                      )}{" "}
-                      {formatTimeSince(createdAt)}
-                      {editedAt && ` (last edited ${formatTimeSince(editedAt)})`}
-                    </div>
-                  </div>
-                </div>
-              ),
-            )}
+            {(threadInfo.comments ?? []).map((comment) => (
+              <ForumComment
+                key={comment.commentId}
+                comment={comment}
+                thread={threadInfo}
+                setThread={setThread}
+              />
+            ))}
           </div>
           <NewForumComment
             firstPost={threadInfo.comments.length === 0}

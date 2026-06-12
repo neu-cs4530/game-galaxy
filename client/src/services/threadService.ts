@@ -45,6 +45,23 @@ export const addCommentToThread = async (
 };
 
 /**
+ * Sends a POST request to edit an existing comment on a thread.
+ */
+export const editComment = async (
+  auth: UserAuth,
+  threadId: string,
+  commentId: string,
+  payload: string,
+): Promise<ThreadInfo> => {
+  const res = await api.post<ThreadInfo | ErrorMsg>(
+    `${THREAD_API_URL}/${threadId}/comment/${commentId}`,
+    { auth, payload },
+  );
+  if ("error" in res.data) throw new Error(res.data.error);
+  return res.data;
+};
+
+/**
  * Sends a POST request to toggle the current user's emoji reaction on a thread.
  * Sending the emoji the user already reacted with removes it; a different emoji
  * replaces it.

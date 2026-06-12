@@ -40,6 +40,7 @@ app.use(
         .get("/list", thread.getList)
         .get("/:id", thread.getById)
         .post("/:id/comment", thread.postByIdComment)
+        .post("/:id/comment/:commentId", thread.postByIdCommentEdit)
         .post("/:id/react", thread.postByIdReaction),
     )
     .use(
