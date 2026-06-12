@@ -12,7 +12,7 @@ interface ThreadReactionsProps {
  * switch, or remove their own reaction.
  */
 export default function ThreadReactionsPreview({ thread, setThread }: ThreadReactionsProps) {
-  const { tallies, err } = useThreadReactions(thread, setThread);
+  const { tallies, err, toggle } = useThreadReactions(thread, setThread);
 
   return (
     <div className="threadReactions">
@@ -26,6 +26,7 @@ export default function ThreadReactionsPreview({ thread, setThread }: ThreadReac
               className={`reactionButton${reacted ? " reacted" : ""}`}
               aria-pressed={reacted}
               aria-label={`React with ${emoji}`}
+              onClick={() => toggle(emoji)}
             >
               <span className="reactionEmoji">{emoji}</span>
               {count > 0 && <span className="reactionCount">{count}</span>}
