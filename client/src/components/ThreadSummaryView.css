@@ -3,6 +3,9 @@
   flex-direction: row;
   border-top: 1px dashed black;
   color: var(--gray-foreground);
+  padding-block: 0.25rem;
+  gap: 1rem;
+
 }
 
 .threadSummary div {
