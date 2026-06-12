@@ -23,6 +23,7 @@ import Lobby from "./pages/Lobby.tsx";
 import { threadList } from "./services/threadService.ts";
 import Shop from "./pages/Shop.tsx";
 import Closet from "./pages/Closet.tsx";
+import Auction from "./pages/Auction.tsx";
 
 /** If `true`, all incoming socket messages will be logged */
 const DEBUG_SOCKETS = false;
@@ -100,6 +101,7 @@ export default function App() {
             <Route path="/profile/:username" element={<Profile />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/closet/:username" element={<Closet />} />
+            <Route path="/auction" element={<Auction />} />
             <Route path="/*" element={<NoSuchRoute />} />
           </Route>
         </Routes>
