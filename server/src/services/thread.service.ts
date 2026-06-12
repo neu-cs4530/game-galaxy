@@ -1,5 +1,6 @@
 import {
   type CreateThreadMessage,
+  type EditThreadMessage,
   type ReactionEmoji,
   type ReactionInfo,
   type ThreadInfo,
@@ -38,6 +39,7 @@ async function populateThreadInfo(threadId: string): Promise<ThreadInfo> {
     comments: await Promise.all(thread.comments.map(populateCommentInfo)),
     tags: thread.tags,
     reactions: await Promise.all((thread.reactions ?? []).map(populateReactionInfo)),
+    editedAt: thread.editedAt ? new Date(thread.editedAt) : undefined,
   };
 }
 
@@ -135,6 +137,34 @@ export async function addCommentToThread(
   const newThread = { ...oldThread, comments: [...oldThread.comments, comment.commentId] };
   await ThreadRepo.set(possibleThreadId, newThread);
   return populateThreadInfo(threadId);
+}
+
+/**
+ * Edit a thread's title and text. Only the thread's original poster may edit
+ * it.
+ *
+ * @param possibleThreadId - Ostensible thread ID
+ * @param user - editing user
+ * @param contents - new title and text for the post
+ * @param editedAt - time of the edit
+ * @returns the updated thread, or null if the thread does not exist or the user
+ * is not its original poster
+ */
+export async function editThread(
+  possibleThreadId: string,
+  user: UserWithId,
+  { title, text }: EditThreadMessage,
+  editedAt: Date,
+): Promise<ThreadInfo | null> {
+  const oldThread = await ThreadRepo.find(possibleThreadId);
+  if (!oldThread || oldThread.createdBy !== user.userId) return null;
+  await ThreadRepo.set(possibleThreadId, {
+    ...oldThread,
+    title,
+    text,
+    editedAt: editedAt.toISOString(),
+  });
+  return populateThreadInfo(possibleThreadId);
 }
 
 /**

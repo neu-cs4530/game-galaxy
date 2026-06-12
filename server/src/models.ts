@@ -110,6 +110,7 @@ export interface ReactionEntry {
  * - `createdBy`: user id of OP
  * - `comments`: replies to the post
  * - `reactions`: emoji reactions to the post, at most one per user per emoji
+ * - `editedAt`: when the post was last edited
  */
 export interface ThreadRecord {
   title: string;
@@ -119,6 +120,7 @@ export interface ThreadRecord {
   comments: RecordId[]; // References Comment records
   tags: string[];
   reactions: ReactionEntry[];
+  editedAt?: DateISO;
 }
 
 /**

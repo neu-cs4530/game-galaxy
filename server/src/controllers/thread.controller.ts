@@ -2,6 +2,7 @@ import {
   addCommentToThread,
   createThread,
   editCommentInThread,
+  editThread,
   getThreadById,
   getThreadSummaries,
   setReactionOnThread,
@@ -11,6 +12,7 @@ import {
   type ThreadSummary,
   withAuth,
   zCreateThreadMessage,
+  zEditThreadMessage,
   zReactMessage,
 } from "@gamenite/shared";
 import { type RestAPI } from "../types.ts";
@@ -56,6 +58,32 @@ export const postCreate: RestAPI<ThreadInfo> = async (req, res) => {
   }
 
   res.send(await createThread(user, body.data.payload, new Date()));
+};
+
+/**
+ * Handle POST requests to `/api/thread/:id` that edit an existing thread's
+ * title and text.
+ */
+export const postByIdEdit: RestAPI<ThreadInfo, { id: string }> = async (req, res) => {
+  const body = withAuth(zEditThreadMessage).safeParse(req.body);
+  if (!body.success) {
+    res.status(400).send({ error: "Poorly-formed request" });
+    return;
+  }
+
+  const user = await checkAuth(body.data.auth);
+  if (!user) {
+    res.status(403).send({ error: "Invalid credentials" });
+    return;
+  }
+
+  const thread = await editThread(req.params.id, user, body.data.payload, new Date());
+  if (!thread) {
+    res.status(404).send({ error: "Thread not found" });
+    return;
+  }
+
+  res.send(thread);
 };
 
 /**

@@ -1,6 +1,7 @@
 import { api } from "./api.ts";
 import type {
   CreateThreadMessage,
+  EditThreadMessage,
   ErrorMsg,
   ReactionEmoji,
   ThreadInfo,
@@ -37,6 +38,22 @@ export const addCommentToThread = async (
   payload: string,
 ): Promise<ThreadInfo> => {
   const res = await api.post<ThreadInfo | ErrorMsg>(`${THREAD_API_URL}/${id}/comment`, {
+    auth,
+    payload,
+  });
+  if ("error" in res.data) throw new Error(res.data.error);
+  return res.data;
+};
+
+/**
+ * Sends a POST request to edit an existing thread's title and text.
+ */
+export const editThread = async (
+  auth: UserAuth,
+  threadId: string,
+  payload: EditThreadMessage,
+): Promise<ThreadInfo> => {
+  const res = await api.post<ThreadInfo | ErrorMsg>(`${THREAD_API_URL}/${threadId}`, {
     auth,
     payload,
   });
