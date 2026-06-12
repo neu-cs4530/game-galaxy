@@ -17,6 +17,7 @@ export interface ClientToServerEvents {
   chatJoin: (payload: WithAuth<string>) => void;
   chatLeave: (payload: WithAuth<string>) => void;
   chatSendMessage: (payload: WithAuth<NewMessagePayload>) => void;
+  gameAddBot: (payload: WithAuth<string>) => void;
   gameJoinAsPlayer: (payload: WithAuth<string>) => void;
   gameMakeMove: (payload: WithAuth<GameMakeMovePayload>) => void;
   gameStart: (payload: WithAuth<string>) => void;

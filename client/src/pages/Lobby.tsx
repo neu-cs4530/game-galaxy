@@ -119,6 +119,14 @@ export default function Lobby() {
           height="20%"
           tableId="table:guess"
         />
+        <GameTable
+          sprite="/sprites/lobby/Table1_frame1.png"
+          top="38%"
+          left="43%"
+          width="25%"
+          height="20%"
+          tableId="table:mahjong"
+        />
       </div>
       <div style={{ position: "relative", width: "40%" }}>
         <ChatPanel chatId="lobby"></ChatPanel>

@@ -7,6 +7,9 @@ import { guessGameService } from "../games/guess.ts";
 import { type GameViewUpdates, type UserWithId } from "../types.ts";
 import { GameRepo } from "../repository.ts";
 import { mahjongGameService } from "../games/mahjong/mahjong.ts";
+import { getBotMove as mahjongBotMove } from "../games/mahjong/mahjongBot.ts";
+import type { MahjongState } from "@gamenite/shared/src/games/mahjong.types.ts";
+
 /**
  * The service interface for individual games
  */
@@ -15,6 +18,46 @@ export const gameServices: { [key in GameKey]: GameServicer } = {
   guess: guessGameService,
   mahjong: mahjongGameService,
 };
+
+/**
+ * Run bot moves after a state change until no bot needs to act.
+ * Bot player IDs start with "bot:" — no user accounts or DB lookups needed.
+ * Calls updateGameRaw directly to avoid circular recursion.
+ *
+ * @param gameId - the game to advance
+ * @param views - the view updates from the triggering move
+ * @returns the view updates from the final bot move, or the original views if no bots acted
+ */
+async function runBotLoop(gameId: string, views: GameViewUpdates): Promise<GameViewUpdates> {
+  let currentViews = views;
+  let madeMove = true;
+
+  while (madeMove) {
+    madeMove = false;
+    const game = await GameRepo.find(gameId);
+    if (!game?.state || game.done || game.type !== "mahjong") break;
+
+    const botIndices = game.players
+      .map((id, i) => ({ id, i }))
+      .filter(({ id }) => id.startsWith("bot:"))
+      .map(({ i }) => i);
+
+    for (const botIndex of botIndices) {
+      const move = mahjongBotMove(game.state as MahjongState, botIndex);
+      if (!move) continue;
+
+      const botUser: UserWithId = {
+        userId: game.players[botIndex],
+        username: game.players[botIndex],
+      };
+      currentViews = await updateGameRaw(gameId, botUser, move);
+      madeMove = true;
+      break;
+    }
+  }
+
+  return currentViews;
+}
 
 /**
  * Expand a stored game
@@ -74,8 +117,7 @@ export async function getGameById(gameId: string): Promise<GameInfo | null> {
 }
 
 /**
- * Adds a user to a game that hasn't started yet. If the resulting game object has the maximum
- * allowed number of players, it is the responsibility of the caller to start the game.
+ * Adds a user to a game that hasn't started yet.
  *
  * @param gameId - Ostensible game id
  * @param user - Authenticated user
@@ -103,35 +145,62 @@ export async function joinGame(gameId: string, user: UserWithId): Promise<GameIn
 }
 
 /**
- * Initializes a game that hasn't started yet
+ * Add a bot player to a waiting game.
+ * Pushes a "bot:N" placeholder ID onto game.players — no user account needed.
  *
- * @param gameId - Ostensible game id
- * @param user - Authenticated user
- * @returns the necessary views for everyone watching the game
- * @throws if the game id is not valid, if the game already started, or if the game lacks enough
- * players to start
+ * @param gameId - the game to add a bot to
+ * @returns the updated game info
+ * @throws if the game is invalid, already started, or full
  */
-export async function startGame(gameId: string, user: UserWithId): Promise<GameViewUpdates> {
+export async function addBotToGame(gameId: string): Promise<GameInfo> {
   const game = await GameRepo.find(gameId);
-  if (!game) throw new Error(`user ${user.username} starting invalid game`);
-  if (game.state) {
-    throw new Error(`user ${user.username} starting game that started`);
+  if (!game) throw new Error("Invalid game id");
+  if (game.state) throw new Error("Game has already started");
+  const max = gameServices[game.type].maxPlayers;
+  if (max === null) {
+    throw new Error("game must have at least one player");
+  }
+  if (game.players.length >= max) {
+    throw new Error("Game is full");
   }
 
-  const key: GameKey = game.type;
+  // count existing bots to generate a unique placeholder id
+  const botCount = game.players.filter((id) => id.startsWith("bot:")).length;
+  game.players = [...game.players, `bot:${botCount}`];
+  await GameRepo.set(gameId, game);
+  return populateGameInfo(gameId);
+}
 
-  if (game.players.length < gameServices[key].minPlayers) {
+/**
+ * Initializes a game that hasn't started yet (internal — no bot loop).
+ */
+async function startGameRaw(gameId: string, user: UserWithId): Promise<GameViewUpdates> {
+  const game = await GameRepo.find(gameId);
+  if (!game) throw new Error(`user ${user.username} starting invalid game`);
+  if (game.state) throw new Error(`user ${user.username} starting game that started`);
+  if (game.players.length < gameServices[game.type].minPlayers) {
     throw new Error(`user ${user.username} starting underpopulated game`);
   }
   if (!game.players.some((userId) => userId === user.userId)) {
     throw new Error(`user ${user.username} starting game they're not in`);
   }
-  const { state, views } = gameServices[key].create(game.players);
 
+  const { state, views } = gameServices[game.type].create(game.players);
   game.state = state;
   await GameRepo.set(gameId, game);
-
   return views;
+}
+
+/**
+ * Initializes a game that hasn't started yet, then runs any pending bot moves.
+ *
+ * @param gameId - Ostensible game id
+ * @param user - Authenticated user
+ * @returns the necessary views after bots act
+ */
+export async function startGame(gameId: string, user: UserWithId): Promise<GameViewUpdates> {
+  const views = await startGameRaw(gameId, user);
+  return runBotLoop(gameId, views);
 }
 
 /**
@@ -142,37 +211,49 @@ export async function startGame(gameId: string, user: UserWithId): Promise<GameV
 export async function getGames(): Promise<GameInfo[]> {
   const keys = await GameRepo.getAllKeys();
   const unsorted = await Promise.all(keys.map(populateGameInfo));
-
   return unsorted.toSorted((game1, game2) => game2.createdAt.getTime() - game1.createdAt.getTime());
 }
 
 /**
- * Updates a game state and returns the necessary view updates
- *
- * @param gameId - Ostensible game id
- * @param user - Authenticated user
- * @param move - Unsanitized game move
- * @returns the view updates to send to players and watchers
- * @throws if the game id or move is not valid
+ * Updates a game state (internal — no bot loop).
  */
-export async function updateGame(gameId: string, user: UserWithId, move: unknown) {
+async function updateGameRaw(
+  gameId: string,
+  user: UserWithId,
+  move: unknown,
+): Promise<GameViewUpdates> {
   const game = await GameRepo.find(gameId);
   if (!game) throw new Error(`user ${user.username} acted on an invalid game`);
-  if (!game.state) {
-    throw new Error(`user ${user.username} made a move in game of that hadn't started`);
-  }
+  if (!game.state) throw new Error(`user ${user.username} made a move in game that hadn't started`);
+
   const playerIndex = game.players.findIndex((userId) => userId === user.userId);
-  if (playerIndex < 0) {
+  if (playerIndex < 0)
     throw new Error(`user ${user.username} made a move in a game they weren't playing`);
-  }
+
   const result = gameServices[game.type].update(game.state, move, playerIndex, game.players);
   if (!result) throw new Error(`user ${user.username} made an invalid move in ${game.type}`);
 
   game.state = result.state;
   game.done = game.done || result.done;
   await GameRepo.set(gameId, game);
-
   return result.views;
+}
+
+/**
+ * Updates a game state and returns view updates after all bots have acted.
+ *
+ * @param gameId - Ostensible game id
+ * @param user - Authenticated user
+ * @param move - Unsanitized game move
+ * @returns the view updates after the player's move and all subsequent bot moves
+ */
+export async function updateGame(
+  gameId: string,
+  user: UserWithId,
+  move: unknown,
+): Promise<GameViewUpdates> {
+  const views = await updateGameRaw(gameId, user, move);
+  return runBotLoop(gameId, views);
 }
 
 /**

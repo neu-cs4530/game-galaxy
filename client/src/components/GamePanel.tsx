@@ -2,6 +2,7 @@ import "./GamePanel.css";
 import type { GameInfo } from "@gamenite/shared";
 import { gameNames } from "../util/consts.ts";
 import useLoginContext from "../hooks/useLoginContext.ts";
+import useAuth from "../hooks/useAuth.ts";
 import GameDispatch from "../games/GameDispatch.tsx";
 import useSocketsForGame from "../hooks/useSocketsForGame.ts";
 import useTimeSince from "../hooks/useTimeSince.ts";
@@ -16,13 +17,18 @@ export default function GamePanel({
   createdAt,
   minPlayers,
 }: GameInfo) {
-  const { user } = useLoginContext();
+  const { user, socket } = useLoginContext();
+  const auth = useAuth();
   const timeSince = useTimeSince();
 
   const { view, players, userPlayerIndex, hasWatched, startGame } = useSocketsForGame(
     gameId,
     initialPlayers,
   );
+
+  function addBot() {
+    socket.emit("gameAddBot", { auth, payload: gameId });
+  }
 
   return hasWatched ? (
     <div className="gamePanel">
@@ -49,6 +55,11 @@ export default function GamePanel({
             gap: "0.5rem",
           }}
         >
+          {userPlayerIndex >= 0 && !view && (
+            <button className="secondary narrow" onClick={addBot}>
+              Add Bot
+            </button>
+          )}
           {userPlayerIndex >= 0 && !view && players.length >= minPlayers && (
             <button className="primary narrow" onClick={startGame}>
               Start Game
