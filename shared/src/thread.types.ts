@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { type SafeUserInfo } from "./user.types.ts";
 import { type CommentInfo } from "./comment.types.ts";
-import { type ReactionInfo } from "./reaction.types.ts";
+import { zReactionEmoji, type ReactionEmoji, type ReactionInfo } from "./reaction.types.ts";
 
 /**
  * Represents a forum post as exposed to the client. In our code, we call
@@ -51,10 +51,14 @@ export const zCreateThreadMessage = z.object({
 /** Relevant information for thread notification system */
 export type ThreadEvent = {
   threadId: string;
-  eventType: "comment" | "reaction";
+  threadName: string;
+  displayName: string;
+  eventType: "comment" | ReactionEmoji;
 };
 
 export const zThreadEvent = z.object({
   threadId: z.string(),
-  eventType: z.enum(["comment", "reaction"]),
+  threadName: z.string(),
+  displayName: z.string(),
+  eventType: z.union([z.enum(["comment"]), zReactionEmoji]),
 });

@@ -23,10 +23,10 @@ export default function Header() {
   const [recentNotifs, setRecentNotifs] = useState<ThreadEvent[]>([]);
 
   useEffect(() => {
-    const handleThreadUpdate = ({ threadId, eventType }: ThreadEvent) => {
+    const handleThreadUpdate = ({ threadId, eventType, threadName, displayName }: ThreadEvent) => {
       if (subscribedThreads.includes(threadId)) {
         setRecentNotifs((prev) => {
-          const updated = [...prev, { threadId, eventType }];
+          const updated = [...prev, { threadId, eventType, threadName, displayName }];
           return updated.length > 4 ? updated.slice(-3) : updated;
         });
       }
@@ -51,8 +51,14 @@ export default function Header() {
         <DropdownButton>Recent Notifications</DropdownButton>
         <DropdownContent>
           <DropdownList>
-            {recentNotifs.map(({ threadId, eventType }, idx) => (
-              <DropdownItem key={idx} threadId={threadId} eventType={eventType}></DropdownItem>
+            {recentNotifs.map(({ threadId, eventType, threadName, displayName }, idx) => (
+              <DropdownItem
+                key={idx}
+                threadId={threadId}
+                eventType={eventType}
+                threadName={threadName}
+                displayName={displayName}
+              ></DropdownItem>
             ))}
           </DropdownList>
         </DropdownContent>

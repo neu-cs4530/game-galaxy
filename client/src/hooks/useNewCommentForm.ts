@@ -22,7 +22,7 @@ export default function useNewCommentForm(
   const [comment, setComment] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const auth = useAuth();
-  const { socket } = useLoginContext();
+  const { user, socket } = useLoginContext();
 
   function handleInputChange(e: ChangeEvent<HTMLTextAreaElement>) {
     setComment(e.target.value);
@@ -51,7 +51,12 @@ export default function useNewCommentForm(
       setComment("");
       socket.emit("threadInteraction", {
         auth,
-        payload: { threadId: threadId, eventType: "comment" },
+        payload: {
+          threadId: threadId,
+          threadName: newThread.title,
+          displayName: user.display,
+          eventType: "comment",
+        },
       });
     } catch (err) {
       setErr(`${err}`);

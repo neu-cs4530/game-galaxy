@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useState, useContext, createContext } from "react";
+import { type ReactionEmoji } from "@gamenite/shared";
 
 /*** Dropdown code primarily from tutorial: https://www.codemzy.com/blog/reactjs-dropdown-component  */
 
@@ -71,14 +72,26 @@ export function DropdownList({ children }: { children: React.ReactNode }) {
 }
 
 /** Each notification in the dropdown menu */
-export function DropdownItem({ threadId, eventType }: { threadId: string; eventType: string }) {
+export function DropdownItem({
+  threadId,
+  threadName,
+  displayName,
+  eventType,
+}: {
+  threadId: string;
+  threadName: string;
+  displayName: string;
+  eventType: "comment" | ReactionEmoji;
+}) {
   return (
     <li style={{ borderBottom: "1px solid #eee" }}>
       <NavLink
         to={`/forum/post/${threadId}`}
         style={{ display: "block", padding: "10px 16px", textDecoration: "none", color: "inherit" }}
       >
-        {eventType === "comment" ? "New comment on your post" : "New reaction on your post"}
+        {eventType === "comment"
+          ? displayName + " commented on " + threadName
+          : displayName + " added a " + eventType + " to " + threadName}
       </NavLink>
     </li>
   );

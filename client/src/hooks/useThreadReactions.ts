@@ -50,7 +50,12 @@ export default function useThreadReactions(
       setThread(updated);
       socket.emit("threadInteraction", {
         auth,
-        payload: { threadId: thread.threadId, eventType: "reaction" },
+        payload: {
+          threadId: thread.threadId,
+          displayName: user.display,
+          threadName: thread.title,
+          eventType: emoji,
+        },
       });
     } catch (e) {
       setErr(`${e}`);
