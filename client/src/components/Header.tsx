@@ -100,6 +100,7 @@ export default function Header() {
                 threadName={threadName}
                 displayName={displayName}
               ></DropdownItem>
+            ))}
             {auctionNotifs.map((label, idx) => (
               <DropdownLinkItem key={`auction-${idx}`} to="/auction" label={label} />
             ))}

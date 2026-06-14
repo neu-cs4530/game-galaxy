@@ -86,7 +86,11 @@ export function DropdownItem({
   return (
     <DropdownLinkItem
       to={`/forum/post/${threadId}`}
-      label={eventType === "comment" ? "New comment on your post" : "New reaction on your post"}
+      label={
+        eventType === "comment"
+          ? displayName + " commented on " + threadName
+          : displayName + " added a " + eventType + " to " + threadName
+      }
     />
   );
 }
@@ -99,9 +103,6 @@ export function DropdownLinkItem({ to, label }: { to: string; label: string }) {
         to={to}
         style={{ display: "block", padding: "10px 16px", textDecoration: "none", color: "inherit" }}
       >
-        {eventType === "comment"
-          ? displayName + " commented on " + threadName
-          : displayName + " added a " + eventType + " to " + threadName}
         {label}
       </NavLink>
     </li>
