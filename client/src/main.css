@@ -7,6 +7,49 @@
   --gray-foreground: #555;
 }
 
+/** Spacey animated background, shown behind every page **/
+html {
+  background-color: #000;
+}
+
+/* Default text is white so it reads against the dark space background */
+body {
+  color: #fff;
+}
+
+@keyframes move-twinkle-back {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -10000px 5000px;
+  }
+}
+
+.stars,
+.twinkling {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.stars {
+  background: #000 url("/sprites/ui/stars.png") repeat top center;
+  z-index: -2;
+}
+
+.twinkling {
+  background: transparent url("/sprites/ui/twinkling.png") repeat top center;
+  z-index: -1;
+  animation: move-twinkle-back 200s linear infinite;
+}
+
 /** Buttons **/
 button {
   cursor: pointer;

@@ -3,6 +3,7 @@
   padding-right: 0;
   display: grid;
   grid-template-rows: max-content 1fr;
+  color: #1a1a1a;
 }
 
 .gameRoster {
