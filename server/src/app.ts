@@ -92,9 +92,9 @@ io.on("connection", (socket) => {
   socket.on("gameWatch", game.socketWatch(socket, io));
   socket.on("threadInteraction", (body) => {
     const {
-      payload: { threadId, eventType },
+      payload: { threadId, threadName, displayName, eventType },
     } = withAuth(zThreadEvent).parse(body);
-    io.emit("threadUpdate", { threadId, eventType });
+    io.emit("threadUpdate", { threadId, threadName, displayName, eventType });
   });
 
   socket.onAny((name, payload) => {

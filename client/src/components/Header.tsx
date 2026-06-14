@@ -29,10 +29,10 @@ export default function Header() {
   const [auctionNotifs, setAuctionNotifs] = useState<string[]>([]);
 
   useEffect(() => {
-    const handleThreadUpdate = ({ threadId, eventType }: ThreadEvent) => {
+    const handleThreadUpdate = ({ threadId, eventType, threadName, displayName }: ThreadEvent) => {
       if (subscribedThreads.includes(threadId)) {
         setRecentNotifs((prev) => {
-          const updated = [...prev, { threadId, eventType }];
+          const updated = [...prev, { threadId, eventType, threadName, displayName }];
           return updated.length > 4 ? updated.slice(-3) : updated;
         });
       }
@@ -92,11 +92,13 @@ export default function Header() {
         <DropdownButton>Recent Notifications</DropdownButton>
         <DropdownContent>
           <DropdownList>
-            {recentNotifs.map(({ threadId, eventType }, idx) => (
+            {recentNotifs.map(({ threadId, eventType, threadName, displayName }, idx) => (
               <DropdownItem
-                key={`thread-${idx}`}
+                key={idx}
                 threadId={threadId}
                 eventType={eventType}
+                threadName={threadName}
+                displayName={displayName}
               ></DropdownItem>
             ))}
             {auctionNotifs.map((label, idx) => (
