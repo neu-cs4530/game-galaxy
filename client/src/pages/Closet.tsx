@@ -4,9 +4,10 @@ import AvatarDisplay from "../components/Avatar";
 import useLoginContext from "../hooks/useLoginContext";
 import { getUserById } from "../services/userService.ts";
 import type { Avatar } from "@gamenite/shared";
+import { ColorPicker } from "../components/ColorPicker.tsx";
 
 /**
- * render the accessories owned by this user, and allow them to wear/ remove accessories.
+ * render the accessories owned by this user, and allow them to wear/ remove accessories and change color.
  */
 export default function Closet() {
   const { user } = useLoginContext();
@@ -31,11 +32,20 @@ export default function Closet() {
     }));
   };
 
+  const handleColorChange = (color: string) => {
+    setAvatar((prev) => ({ ...prev, color }));
+  };
+
   return (
-    <div style={{ display: "flex", gap: "2rem" }}>
-      {err && <p className="error-message">{err}</p>}
-      <AvatarDisplay avatar={avatar} size={250} />
-      <AccessoryClosetDisplay accessories={accessories} size={100} onToggle={handleToggle} />
+    <div>
+      <div style={{ display: "flex", gap: "2rem" }}>
+        {err && <p className="error-message">{err}</p>}
+        <AvatarDisplay avatar={avatar} size={250} />
+        <AccessoryClosetDisplay accessories={accessories} size={200} onToggle={handleToggle} />
+      </div>
+      <div>
+        <ColorPicker onColorChange={handleColorChange} />
+      </div>
     </div>
   );
 }

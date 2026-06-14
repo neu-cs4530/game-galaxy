@@ -21,7 +21,7 @@ export function AccessoryClosetDisplay({
     return (
       <li key={accessoryId} style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
         <img
-          src={`/sprites/accessories/${accessoryId}.png`}
+          src={`/sprites/display/${accessoryId}-display.png`}
           style={{ width: size, height: size }}
         />
         <div>
