@@ -25,7 +25,7 @@ export function AccessoryShopDisplay({ accessories = [], size = 100 }: Accessory
   const accessoryList = accessories.map((accessory) => (
     <li key={accessory.accessoryId} style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
       <img
-        src={`/sprites/accessories/${accessory.accessoryId}.png`}
+        src={`/sprites/display/${accessory.accessoryId}-display.png`}
         style={{ width: size, height: size }}
       />
       <div>

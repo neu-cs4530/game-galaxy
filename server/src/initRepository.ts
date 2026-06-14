@@ -172,6 +172,11 @@ async function resetStoredAccessories() {
     name: "Default Face",
     cost: 0,
   });
+  await AccessoryRepo.set("face-02", {
+    accessoryId: "face-02",
+    name: "Face with Sunglasses",
+    cost: 50,
+  });
 }
 
 async function resetChats() {
