@@ -1,6 +1,7 @@
 import type { Accessory } from "@gamenite/shared";
 import { createRepo } from "./keyv.ts";
 import type {
+  AuctionRecord,
   AuthRecord,
   ChatRecord,
   CommentRecord,
@@ -21,3 +22,4 @@ export const TagRepo = createRepo<number>("tag");
 export const UserRepo = createRepo<UserRecord>("user");
 export const TableRepo = createRepo<TableRecord>("table");
 export const AccessoryRepo = createRepo<Accessory>("accessory");
+export const AuctionRepo = createRepo<AuctionRecord>("auction");

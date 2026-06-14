@@ -5,6 +5,7 @@ import useAuth from "../hooks/useAuth";
 import ChatPanel from "../components/ChatPanel";
 import AvatarDisplayLobby from "../components/AvatarLobby";
 import useSocketsForLobbyPlayers from "../hooks/useSocketsForLobbyPlayers";
+import { useNavigate } from "react-router-dom";
 
 // Where each player's avatar is placed in the lobby, in join order. Add an
 // entry here to make room for more simultaneous players.
@@ -37,6 +38,7 @@ const tablePositions: Record<string, { top: string; left: string }[]> = {
 
 export default function Lobby() {
   const username = useAuth().username;
+  const navigate = useNavigate();
   const { players, tablePlayers } = useSocketsForLobbyPlayers("lobby");
 
   // Players seated at a table are shown there, not roaming the lobby floor.
@@ -60,6 +62,7 @@ export default function Lobby() {
               top={position.top}
               left={position.left}
               size="30%"
+              onClick={() => navigate(`/profile/${player.username}`)}
             />
           );
         })}
@@ -75,6 +78,7 @@ export default function Lobby() {
                 top={position.top}
                 left={position.left}
                 size="30%"
+                onClick={() => navigate(`/profile/${player.username}`)}
               />
             );
           });
@@ -100,6 +104,14 @@ export default function Lobby() {
           route="/forum"
           top="18%"
           left="53%"
+          width="10%"
+          height="13%"
+        />
+        <RoomLink
+          sprite="/sprites/lobby/Forum_frame1.png"
+          route="/auction"
+          top="25%"
+          left="65%"
           width="10%"
           height="13%"
         />

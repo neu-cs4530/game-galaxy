@@ -10,6 +10,13 @@ import { type WithAuth } from "./auth.types.ts";
 import { type GameMakeMovePayload, type GamePlayInfo, type TaggedGameView } from "./game.types.ts";
 import { type SafeUserInfo } from "./user.types.ts";
 import type { ThreadEvent } from "./thread.types.ts";
+import type {
+  AcceptOfferMessage,
+  AuctionAcceptNotification,
+  AuctionOfferNotification,
+  CreateAuctionMessage,
+  MakeOfferMessage,
+} from "./auction.types.ts";
 
 /**
  * The Socket.io interface for client to server communication
@@ -26,6 +33,11 @@ export interface ClientToServerEvents {
   shopBuyAccessory: (payload: WithAuth<string>) => void;
   lobbyJoin: (payload: WithAuth<string>) => void;
   lobbyLeave: (payload: WithAuth<string>) => void;
+  wearAccessory: (payload: WithAuth<string>) => void;
+  removeAccessory: (payload: WithAuth<string>) => void;
+  auctionCreate: (payload: WithAuth<CreateAuctionMessage>) => void;
+  auctionOffer: (payload: WithAuth<MakeOfferMessage>) => void;
+  auctionAccept: (payload: WithAuth<AcceptOfferMessage>) => void;
 }
 
 /**
@@ -44,4 +56,7 @@ export interface ServerToClientEvents {
   threadUpdate: (payload: ThreadEvent) => void;
   lobbyPlayersUpdated: (payload: SafeUserInfo[]) => void;
   lobbyTablesUpdated: (payload: LobbyTablePlayers[]) => void;
+  auctionsUpdated: () => void;
+  auctionOfferReceived: (payload: AuctionOfferNotification) => void;
+  auctionOfferAccepted: (payload: AuctionAcceptNotification) => void;
 }

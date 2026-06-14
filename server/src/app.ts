@@ -10,6 +10,7 @@ import * as lobby from "./controllers/lobby.controller.ts";
 import * as user from "./controllers/user.controller.ts";
 import * as thread from "./controllers/thread.controller.ts";
 import * as accessory from "./controllers/accessory.controller.ts";
+import * as auction from "./controllers/auction.controller.ts";
 import * as tag from "./controllers/tag.controller.ts";
 import { type GameServer } from "./types.ts";
 import { withAuth, zThreadEvent } from "@gamenite/shared";
@@ -54,7 +55,8 @@ app.use(
         .post("/:username/closet/remove", user.postRemoveAccessory)
         .post("/:username/shop/buy", user.postBuyAccessory),
     )
-    .use("/accessory", Router().get("/", accessory.getAccessories)),
+    .use("/accessory", Router().get("/", accessory.getAccessories))
+    .use("/auction", Router().get("/list", auction.getList)),
 );
 
 io.on("connection", (socket) => {
@@ -67,6 +69,12 @@ io.on("connection", (socket) => {
   });
 
   socket.on("shopBuyAccessory", accessory.socketBuyAccessory(socket, io));
+  socket.on("wearAccessory", accessory.socketWearAccessory(socket, io));
+  socket.on("removeAccessory", accessory.socketRemoveAccessory(socket, io));
+
+  socket.on("auctionCreate", auction.socketCreateAuction(socket, io));
+  socket.on("auctionOffer", auction.socketMakeOffer(socket, io));
+  socket.on("auctionAccept", auction.socketAcceptOffer(socket, io));
 
   socket.on("chatJoin", chat.socketJoin(socket, io));
   socket.on("chatLeave", chat.socketLeave(socket, io));

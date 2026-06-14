@@ -1,7 +1,7 @@
 import { withAuth, type Accessory } from "@gamenite/shared";
 import { AccessoryRepo, UserRepo } from "../repository.ts";
 import type { RestAPI, SocketAPI } from "../types.ts";
-import { buyAccessory } from "../services/accessory.service.ts";
+import { buyAccessory, removeAccessory, wearAccessory } from "../services/accessory.service.ts";
 import { enforceAuth } from "../services/auth.service.ts";
 import { logSocketError } from "./socket.controller.ts";
 import { z } from "zod";
@@ -27,6 +27,34 @@ export const socketBuyAccessory: SocketAPI = (socket) => async (body) => {
     await buyAccessory(accessoryId, user.userId);
     const updatedUser = await UserRepo.get(user.userId);
     socket.emit("balanceUpdated", { balance: updatedUser.balance });
+  } catch (err) {
+    logSocketError(socket, err);
+  }
+};
+
+/**
+ * Handles the socket request sent by a user when they try to wear an accessory.
+ * Removes the accessory from the avatar and emits the updated coin balance back to the user.
+ */
+export const socketWearAccessory: SocketAPI = (socket) => async (body) => {
+  try {
+    const { auth, payload: accessoryId } = withAuth(z.string()).parse(body);
+    const user = await enforceAuth(auth);
+    await wearAccessory(accessoryId, user.userId);
+  } catch (err) {
+    logSocketError(socket, err);
+  }
+};
+
+/**
+ * Handles the socket request sent by a user when they try to remove an accessory.
+ * Removes the accessory from the avatar and emits the updated coin balance back to the user.
+ */
+export const socketRemoveAccessory: SocketAPI = (socket) => async (body) => {
+  try {
+    const { auth, payload: accessoryId } = withAuth(z.string()).parse(body);
+    const user = await enforceAuth(auth);
+    await removeAccessory(accessoryId, user.userId);
   } catch (err) {
     logSocketError(socket, err);
   }

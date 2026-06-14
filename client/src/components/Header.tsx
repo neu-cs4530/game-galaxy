@@ -3,12 +3,17 @@ import useLoginContext from "../hooks/useLoginContext.ts";
 import "./Header.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { LobbyButton } from "./LobbyButton.tsx";
-import { type ThreadEvent } from "@gamenite/shared";
+import {
+  type AuctionAcceptNotification,
+  type AuctionOfferNotification,
+  type ThreadEvent,
+} from "@gamenite/shared";
 import {
   Dropdown,
   DropdownButton,
   DropdownContent,
   DropdownItem,
+  DropdownLinkItem,
   DropdownList,
 } from "./Dropdown.tsx";
 
@@ -21,6 +26,7 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const [recentNotifs, setRecentNotifs] = useState<ThreadEvent[]>([]);
+  const [auctionNotifs, setAuctionNotifs] = useState<string[]>([]);
 
   useEffect(() => {
     const handleThreadUpdate = ({ threadId, eventType, threadName, displayName }: ThreadEvent) => {
@@ -36,17 +42,52 @@ export default function Header() {
       setCoins(balance);
     };
 
+    const pushAuctionNotif = (label: string) => {
+      setAuctionNotifs((prev) => {
+        const updated = [...prev, label];
+        return updated.length > 4 ? updated.slice(-3) : updated;
+      });
+    };
+
+    const handleOfferReceived = ({ seller, accessoryName }: AuctionOfferNotification) => {
+      if (seller === user.username) {
+        pushAuctionNotif(`New offer on your ${accessoryName}`);
+      }
+    };
+
+    const handleOfferAccepted = ({
+      winner,
+      accessoryName,
+      newBalance,
+    }: AuctionAcceptNotification) => {
+      if (winner === user.username) {
+        pushAuctionNotif(`Your offer on ${accessoryName} was accepted!`);
+        setCoins(newBalance);
+      }
+    };
+
     socket.on("balanceUpdated", handleBalanceUpdated);
     socket.on("threadUpdate", handleThreadUpdate);
+    socket.on("auctionOfferReceived", handleOfferReceived);
+    socket.on("auctionOfferAccepted", handleOfferAccepted);
     return () => {
       socket.off("balanceUpdated", handleBalanceUpdated);
       socket.off("threadUpdate", handleThreadUpdate);
+      socket.off("auctionOfferReceived", handleOfferReceived);
+      socket.off("auctionOfferAccepted", handleOfferAccepted);
     };
-  }, [socket, subscribedThreads]);
+  }, [socket, subscribedThreads, user.username]);
 
   return (
     <div id="header" className="header">
       <div className="title">GameNite!</div>
+      <button
+        className="narrowcenter secondary"
+        onClick={() => void navigate(`/profile/${user.username}`)}
+      >
+        Profile
+      </button>
+      {location.pathname !== "/" && <LobbyButton />}
       <Dropdown>
         <DropdownButton>Recent Notifications</DropdownButton>
         <DropdownContent>
@@ -59,6 +100,8 @@ export default function Header() {
                 threadName={threadName}
                 displayName={displayName}
               ></DropdownItem>
+            {auctionNotifs.map((label, idx) => (
+              <DropdownLinkItem key={`auction-${idx}`} to="/auction" label={label} />
             ))}
           </DropdownList>
         </DropdownContent>
@@ -74,7 +117,6 @@ export default function Header() {
       >
         Log Out
       </button>
-      {location.pathname !== "/" && <LobbyButton />}
     </div>
   );
 }

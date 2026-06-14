@@ -7,6 +7,7 @@ export interface ErrorMsg {
   error: string;
 }
 
+export * from "./auction.types.ts";
 export * from "./auth.types.ts";
 export * from "./chat.types.ts";
 export * from "./comment.types.ts";

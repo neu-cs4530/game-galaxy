@@ -128,6 +128,7 @@ export interface ThreadRecord {
  * - `createdAt`: when this user registered.
  * - `avatar` : the avatar representing this user.
  * - `balance`: the user's coin amount
+ * - `wins`: the amount of games the user won
  */
 export interface UserRecord {
   username: string; // References Auth records
@@ -135,4 +136,39 @@ export interface UserRecord {
   createdAt: DateISO;
   avatar: Avatar;
   balance: number;
+  wins: number;
+}
+
+/**
+ * Represents an offer on an auction in the database.
+ * - `offerId`: random unique id for this offer
+ * - `bidder`: user id of the player who made the offer
+ * - `price`: how many coins the bidder is offering
+ * - `message`: optional note from the bidder to the seller
+ * - `createdAt`: when the offer was made
+ */
+export interface AuctionOfferEntry {
+  offerId: string;
+  bidder: RecordId; // References User records
+  price: number;
+  message?: string;
+  createdAt: DateISO;
+}
+
+/**
+ * Represents an auction listing in the database.
+ * - `seller`: user id of the player selling the item
+ * - `accessoryId`: the id of the accessory being sold
+ * - `startingPrice`: the seller's suggested starting price
+ * - `offers`: the offers made on this listing
+ * - `status`: whether the listing is open or has been sold
+ * - `createdAt`: when the listing was created
+ */
+export interface AuctionRecord {
+  seller: RecordId; // References User records
+  accessoryId: string; // References Accessory records
+  startingPrice: number;
+  offers: AuctionOfferEntry[];
+  status: "open" | "sold";
+  createdAt: DateISO;
 }

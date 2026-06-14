@@ -84,14 +84,25 @@ export function DropdownItem({
   eventType: "comment" | ReactionEmoji;
 }) {
   return (
+    <DropdownLinkItem
+      to={`/forum/post/${threadId}`}
+      label={eventType === "comment" ? "New comment on your post" : "New reaction on your post"}
+    />
+  );
+}
+
+/** Generic notification in the dropdown menu */
+export function DropdownLinkItem({ to, label }: { to: string; label: string }) {
+  return (
     <li style={{ borderBottom: "1px solid #eee" }}>
       <NavLink
-        to={`/forum/post/${threadId}`}
+        to={to}
         style={{ display: "block", padding: "10px 16px", textDecoration: "none", color: "inherit" }}
       >
         {eventType === "comment"
           ? displayName + " commented on " + threadName
           : displayName + " added a " + eventType + " to " + threadName}
+        {label}
       </NavLink>
     </li>
   );

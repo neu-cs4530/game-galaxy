@@ -31,6 +31,7 @@ describe("GET /api/thread/list", () => {
         createdAt: expect.anything(),
         display: "Yāo",
         balance: expect.anything(),
+        wins: expect.anything(),
         username: "user1",
         avatar: baseAvatar,
       },
@@ -59,6 +60,7 @@ describe("GET /api/thread/:id", () => {
         createdAt: expect.anything(),
         avatar: baseAvatar,
         balance: expect.anything(),
+        wins: expect.anything(),
       },
       reactions: [
         {
@@ -69,6 +71,7 @@ describe("GET /api/thread/:id", () => {
               color: "blue",
             },
             balance: expect.anything(),
+            wins: expect.anything(),
             createdAt: expect.anything(),
             display: "The Knight Of Games",
             username: "user0",
@@ -112,6 +115,7 @@ describe("POST /api/thread/create", () => {
         username: "user2",
         display: expect.any(String),
         balance: expect.anything(),
+        wins: expect.anything(),
         createdAt: expect.anything(),
         avatar: baseAvatar,
       },
@@ -160,6 +164,7 @@ describe("POST /api/thread/:id/comment", () => {
           display: "Sénior Dos",
           createdAt: expect.anything(),
           balance: expect.anything(),
+          wins: expect.anything(),
           avatar: baseAvatar,
         },
       },
@@ -202,6 +207,7 @@ describe("POST /api/thread/:id/react", () => {
       user: {
         avatar: expect.anything(),
         balance: 100,
+        wins: expect.anything(),
         username: "user1",
         display: "Yāo",
         createdAt: expect.anything(),
@@ -212,6 +218,7 @@ describe("POST /api/thread/:id/react", () => {
       user: {
         avatar: expect.anything(),
         balance: 100,
+        wins: expect.anything(),
         username: "user0",
         display: expect.any(String),
         createdAt: expect.anything(),
@@ -237,6 +244,7 @@ describe("POST /api/thread/:id/react", () => {
       user: {
         avatar: expect.anything(),
         balance: 100,
+        wins: expect.anything(),
         username: "user0",
         display: "The Knight Of Games",
         createdAt: expect.anything(),
@@ -247,6 +255,7 @@ describe("POST /api/thread/:id/react", () => {
       user: {
         avatar: expect.anything(),
         balance: 100,
+        wins: expect.anything(),
         username: "user0",
         display: "The Knight Of Games",
         createdAt: expect.anything(),

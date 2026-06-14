@@ -11,9 +11,15 @@ const baseAvatar = {
   },
 };
 const auth1 = { username: "user1", password: "pwd1111" };
-const user1 = { username: "user1", display: "Yāo", avatar: baseAvatar, balance: 100 };
+const user1 = { username: "user1", display: "Yāo", avatar: baseAvatar, balance: 100, wins: 0 };
 const auth2 = { username: "user2", password: "pwd2222" };
-const user2 = { username: "user2", display: "Sénior Dos", avatar: baseAvatar, balance: 100 };
+const user2 = {
+  username: "user2",
+  display: "Sénior Dos",
+  avatar: baseAvatar,
+  balance: 100,
+  wins: 0,
+};
 
 describe("GET /api/user/:id", () => {
   it("should 404 for nonexistent users", async () => {
@@ -171,6 +177,7 @@ describe("POST /api/user/signup", () => {
         accessories: { "face-01": true },
       },
       balance: 0,
+      wins: 0,
     });
   });
 
