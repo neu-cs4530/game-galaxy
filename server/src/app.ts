@@ -12,6 +12,7 @@ import * as thread from "./controllers/thread.controller.ts";
 import * as accessory from "./controllers/accessory.controller.ts";
 import * as auction from "./controllers/auction.controller.ts";
 import * as tag from "./controllers/tag.controller.ts";
+import * as color from "./controllers/color.controller.ts";
 import { type GameServer } from "./types.ts";
 import { withAuth, zThreadEvent } from "@gamenite/shared";
 
@@ -71,6 +72,8 @@ io.on("connection", (socket) => {
   socket.on("shopBuyAccessory", accessory.socketBuyAccessory(socket, io));
   socket.on("wearAccessory", accessory.socketWearAccessory(socket, io));
   socket.on("removeAccessory", accessory.socketRemoveAccessory(socket, io));
+
+  socket.on("changeColor", color.socketChangeColor(socket, io));
 
   socket.on("auctionCreate", auction.socketCreateAuction(socket, io));
   socket.on("auctionOffer", auction.socketMakeOffer(socket, io));

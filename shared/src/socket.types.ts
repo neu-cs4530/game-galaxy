@@ -35,6 +35,7 @@ export interface ClientToServerEvents {
   lobbyLeave: (payload: WithAuth<string>) => void;
   wearAccessory: (payload: WithAuth<string>) => void;
   removeAccessory: (payload: WithAuth<string>) => void;
+  changeColor: (payload: WithAuth<string>) => void;
   auctionCreate: (payload: WithAuth<CreateAuctionMessage>) => void;
   auctionOffer: (payload: WithAuth<MakeOfferMessage>) => void;
   auctionAccept: (payload: WithAuth<AcceptOfferMessage>) => void;
