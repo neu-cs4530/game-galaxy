@@ -2,6 +2,7 @@ import {
   type MahjongState,
   type MahjongView,
   type MahjongMeldResponse,
+  type WinInfo,
   zMahjongMove,
 } from "@gamenite/shared/src/games/mahjong.types.ts";
 import type { GameLogic } from "../gameLogic.ts";
@@ -10,32 +11,20 @@ import { removeOne, createDeck, shuffle } from "./mahjongTiles.ts";
 import { isWinningHand } from "./mahjongWin.ts";
 import { drawForPlayer } from "./mahjongDraw.ts";
 import { isValidSeung, resolveKong, resolveMeldWindow } from "./mahjongMeld.ts";
+import { scoreHand, seatWindForPlayer } from "./mahjongScoring.ts";
 
 /**
  * Check whether every player has submitted a meld-window response.
- * @input responses - meld responses array
- * @returns true when no entry is null
  */
 export function allResponded(responses: (MahjongMeldResponse | null)[]): boolean {
   return responses.every((r) => r !== null);
 }
 
-// ─────────────────────────────────────────────────
-// Main game logic
-// ─────────────────────────────────────────────────
-
 export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
   minPlayers: 4,
   maxPlayers: 4,
 
-  /* ── start ──────────────────────────────────────
-   * Shuffle the 144-tile deck, deal 14 tiles to the dealer and 13 to each other player,
-   * then replace any flower tiles drawn during the deal with replacements
-   * from the dead wall (back of deck).
-   * Dealer starts with the turn and the game begins in the 'discard' phase.
-   * @input numPlayers - number of players (always 4)
-   * @returns initial MahjongState
-   */
+  /* ── start ───────────────────────────────────── */
   start: (_numPlayers) => {
     let state: MahjongState = {
       wall: shuffle(createDeck()),
@@ -49,9 +38,12 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
       meldResponses: [null, null, null, null],
       dealer: 0,
       winner: null,
+      roundWind: "ew",
+      winInfo: undefined,
+      afterKong: false,
+      consecutiveKongsThisTurn: 0,
     };
 
-    // dealer gets 14 tiles, everyone else gets 13
     const dealCounts = [14, 13, 13, 13];
     for (let p = 0; p < 4; p++) {
       for (let i = 0; i < dealCounts[p]; i++) {
@@ -61,22 +53,7 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
     return state;
   },
 
-  /* ── update ─────────────────────────────────────
-   * Process a single player action.  Returns null if the move is invalid.
-   * The valid move types depend on the current phase:
-   * - during 'discard' the current player can either discard a tile or declare a self-draw win;
-   *   they can also declare a kong if they have the appropriate tiles, but this is optional and
-   *   does not interrupt the normal turn flow (they still must discard or declare win after)
-   * - during 'meld_window' any non-discarding player must respond to the most recent discard with
-   *   a meld action (pong, kong, seung, or sik wu (a win)), or they can pass; all responses
-   *   are checked to ensure they are valid before the window resolves. Once all
-   *   players have responded the window resolves and the game state updates according to the
-   *   highest-priority valid response (win > kong > pong > seung > pass).
-   * @input state - current state
-   * @input payload - raw move payload
-   * @input playerIndex - acting player index
-   * @returns new state or null
-   */
+  /* ── update ──────────────────────────────────── */
   update: (state, payload, playerIndex) => {
     if (state.phase === "done") return null;
 
@@ -96,25 +73,33 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
         if (!hand.includes(move.tile)) return null;
 
         const newHand = removeOne(hand, move.tile);
-        // discarder's meld-window response is always 'pass'
         const meldResponses: (MahjongMeldResponse | null)[] = [null, null, null, null];
         meldResponses[playerIndex] = { type: "pass" };
 
-        const newState: MahjongState = {
+        return {
           ...state,
           hands: state.hands.map((h, i) => (i === playerIndex ? newHand : [...h])),
           lastDiscard: move.tile,
           phase: "meld_window",
           meldResponses,
+          afterKong: false,
+          consecutiveKongsThisTurn: 0,
         };
-
-        return newState;
       }
 
       // ── declare self-draw win (Ji Mo) ──
       if (move.type === "win") {
         if (!isWinningHand(state.hands[playerIndex], state.melds[playerIndex])) return null;
-        return { ...state, phase: "done", winner: playerIndex };
+        const winInfo: WinInfo = {
+          selfDraw: true,
+          afterKong: state.afterKong,
+          afterMultipleKongs: state.consecutiveKongsThisTurn >= 2,
+          finalTile: state.wall.length === 0,
+          robbingKong: false,
+          discarderIndex: undefined,
+          winningTile: "",
+        };
+        return { ...state, phase: "done", winner: playerIndex, winInfo };
       }
 
       // ── kong (concealed or promoted) ──
@@ -135,7 +120,7 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
           return next;
         }
 
-        // promoted kong: player already has a pong meld and drew the 4th tile
+        // promoted kong: existing pong meld + 4th tile drawn
         const pongIdx = state.melds[playerIndex].findIndex(
           (m) => m.type === "pong" && m.tiles[0] === tile,
         );
@@ -160,9 +145,7 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
     // MELD WINDOW — any non-discarding player acts
     // ════════════════════════════════════════════
     if (state.phase === "meld_window") {
-      // discarder cannot respond (already set to 'pass')
       if (playerIndex === state.currentPlayer) return null;
-      // player already responded
       if (state.meldResponses[playerIndex] !== null) return null;
 
       const hand = state.hands[playerIndex];
@@ -170,7 +153,6 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
       let response: MahjongMeldResponse | null = null;
 
       if (move.type === "win") {
-        // discard must complete the hand
         if (!isWinningHand([...hand, discard], state.melds[playerIndex])) return null;
         response = { type: "win" };
       }
@@ -206,7 +188,6 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
       }
 
       const newResponses = state.meldResponses.map((r, i) => (i === playerIndex ? response : r));
-
       const newState = { ...state, meldResponses: newResponses };
 
       if (allResponded(newState.meldResponses)) {
@@ -220,20 +201,36 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
 
   isDone: (state) => state.phase === "done",
 
-  /* ── viewAs ─────────────────────────────────────
-   * Build the client-facing view.  A player (playerIndex ≥ 0) can see only
-   * their own concealed hand; watchers (playerIndex === -1) see no hands.
-   * @input state - current state
-   * @input playerIndex - player index (-1 for watcher)
-   * @returns: MahjongView
-   */
+  /* ── viewAs ──────────────────────────────────── */
   viewAs: (state, playerIndex) => {
     const players = state.hands.map((hand, i) => ({
       hand: i === playerIndex || state.phase === "done" ? [...hand] : [],
-      handSize: hand.length,
       melds: [...state.melds[i]],
       flowers: [...state.flowers[i]],
     }));
+
+    const seatWinds = [0, 1, 2, 3].map((i) => seatWindForPlayer(i, state.dealer));
+
+    // compute scoring once when the game ends with a winner
+    let scoring = undefined;
+    if (state.phase === "done" && state.winner !== null && state.winInfo) {
+      const winner = state.winner;
+      // discard win: hand has 13 tiles, append winning tile to get 14
+      // self-draw win: hand already has 14 tiles
+      const completeHand = state.winInfo.selfDraw
+        ? [...state.hands[winner]]
+        : [...state.hands[winner], state.winInfo.winningTile];
+
+      scoring = scoreHand({
+        hand: completeHand,
+        melds: state.melds[winner],
+        flowers: state.flowers[winner],
+        winInfo: state.winInfo,
+        seatWind: seatWindForPlayer(winner, state.dealer),
+        roundWind: state.roundWind,
+        winnerIndex: winner,
+      });
+    }
 
     return {
       players,
@@ -245,12 +242,15 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
       meldResponses: [...state.meldResponses],
       dealer: state.dealer,
       winner: state.winner,
+      roundWind: state.roundWind,
+      seatWinds,
+      scoring,
     };
   },
+
   tagView: (view) => ({ type: "mahjong", view }),
-  getWinners: function (state: MahjongState): number[] {
-    return state.winner !== null ? [state.winner] : [];
-  },
+
+  getWinners: (state: MahjongState): number[] => (state.winner !== null ? [state.winner] : []),
 };
 
 export const mahjongGameService = new GameService<MahjongState, MahjongView>(mahjongLogic);

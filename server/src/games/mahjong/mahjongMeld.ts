@@ -1,16 +1,14 @@
-import {
-  type MahjongState,
-  type MahjongMeldResponse,
+import type {
+  MahjongState,
+  MahjongMeldResponse,
+  WinInfo,
 } from "@gamenite/shared/src/games/mahjong.types.ts";
 import { removeOne, sortBySuit, getSuit, getValue } from "./mahjongTiles.ts";
 import { drawForPlayer } from "./mahjongDraw.ts";
 
 /**
- * cleans up the parts of state that need to be reset after a meld action (pong, kong, or seung)
- * @param state - current state
- * @param player - player index of the player who performed the meld action
- * @returns updated state with the current player set to the meld action player, phase set to 'discard',
- * and meld responses reset to null
+ * Clean up state fields that must reset after any meld action (pong, seung, or kong).
+ * Resets kong-tracking fields so they only apply within a single turn's chain of kongs.
  */
 function meldActionCleanup(state: MahjongState, player: number): MahjongState {
   return {
@@ -19,15 +17,20 @@ function meldActionCleanup(state: MahjongState, player: number): MahjongState {
     currentPlayer: player,
     phase: "discard",
     meldResponses: [null, null, null, null],
+    afterKong: false,
+    consecutiveKongsThisTurn: 0,
   };
 }
+
 /**
- * resolves the meld part of a kong action. This Only adds a new kong meld and does NOT edit the player's hand
- * @param state - current state before resolving the kong (adding the meld to state)
- * @param player - player index of the player performing the kong action
+ * Resolve the meld portion of a kong action: add the kong meld, draw a
+ * replacement tile from the dead wall, and update kong-tracking fields.
+ * Does NOT edit the player's hand — callers must remove the four tiles first.
+ *
+ * @param state - state before resolving the kong (hand already updated)
+ * @param player - player index performing the kong
  * @param tile - the tile being konged
- * @param concealed - whether the kong is concealed (i.e. added from hand) or not (i.e. added on top of a pong)
- * @returns new state with the kong meld added to the player's melds, and the player having drawn a replacement tile from the dead wall
+ * @param concealed - true for concealed or promoted kongs
  */
 export function resolveKong(
   state: MahjongState,
@@ -37,8 +40,11 @@ export function resolveKong(
 ): MahjongState {
   const newMelds = [
     ...state.melds[player],
-    { type: "kong" as const, tiles: [tile, tile, tile, tile], concealed: concealed },
+    { type: "kong" as const, tiles: [tile, tile, tile, tile], concealed },
   ];
+
+  // save consecutive count before meldActionCleanup resets it
+  const prevConsecutive = state.consecutiveKongsThisTurn;
 
   let next = meldActionCleanup(
     {
@@ -48,7 +54,10 @@ export function resolveKong(
     player,
   );
 
-  // kong requires a replacement draw from the dead wall
+  // re-apply kong tracking after cleanup
+  next = { ...next, afterKong: true, consecutiveKongsThisTurn: prevConsecutive + 1 };
+
+  // draw replacement tile from the dead wall
   next = drawForPlayer(next, player, true);
   return next;
 }
@@ -56,39 +65,39 @@ export function resolveKong(
 /**
  * Resolve the meld window once all four players have responded.
  *
- * Priority order: win > kong > pong > seung.
- * Within the same priority level the player closest in counter-clockwise
+ * Priority: win > kong > pong > seung.
  * Seung is only available to the player immediately left of the discarder.
- * If nobody melded and the wall is empty the game ends in a draw.
+ * If nobody melds and the wall is empty, the game ends in a draw.
  *
- * During the meld window, the most recently discarded tile should be in state.lastDiscard
- * but NOT state.discardPile, the tile will be added to the discard pile only after the
- * window resolves with no melds.
+ * The discarded tile lives in `state.lastDiscard` (NOT yet in `state.discardPile`)
+ * until the window resolves with no meld — then it is added to discardPile.
  *
- * resolveMeldWindow assumes that all meldResponses are valid and non-null
- * and does NOT perform additional validation.
- *
- * @input state - state in which meldResponses has no null entries
- * @returns new state after applying the highest-priority response
+ * Assumes all meldResponses are valid and non-null.
  */
 export function resolveMeldWindow(state: MahjongState): MahjongState {
-  // All responses must be non-null to resolve the meld phase, so this is safe to assert
   const responses = state.meldResponses as MahjongMeldResponse[];
   const discarder = state.currentPlayer;
-  // there muse be a discard to enter the meld phase, so this is safe to assert
   const discard = state.lastDiscard as string;
 
-  // counter-clockwise turn order from the player after the discarder
   const turnOrder = [1, 2, 3].map((offset) => (discarder + offset) % 4);
 
-  // ── win ──────────────────────────────────────────
+  // ── win ──────────────────────────────────────────────────────────────────
   for (const p of turnOrder) {
     if (responses[p].type === "win") {
-      return { ...state, phase: "done", winner: p };
+      const winInfo: WinInfo = {
+        selfDraw: false,
+        afterKong: false,
+        afterMultipleKongs: false,
+        finalTile: state.wall.length === 0,
+        robbingKong: false,
+        discarderIndex: discarder,
+        winningTile: discard,
+      };
+      return { ...state, phase: "done", winner: p, winInfo };
     }
   }
 
-  // ── kong ─────────────────────────────────────────
+  // ── kong ──────────────────────────────────────────────────────────────────
   for (const p of turnOrder) {
     if (responses[p].type === "kong") {
       let hand = [...state.hands[p]];
@@ -102,7 +111,7 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
     }
   }
 
-  // ── pong ─────────────────────────────────────────
+  // ── pong ──────────────────────────────────────────────────────────────────
   for (const p of turnOrder) {
     if (responses[p].type === "pong") {
       let hand = [...state.hands[p]];
@@ -124,7 +133,7 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
     }
   }
 
-  // ── seung (left-of-discarder only) ───────────────
+  // ── seung (left-of-discarder only) ────────────────────────────────────────
   for (const p of turnOrder) {
     if (responses[p].type === "seung") {
       const [t1, t2] = responses[p].with;
@@ -148,9 +157,8 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
     }
   }
 
-  // ── nobody melded ─────────────────────────────────
+  // ── nobody melded ─────────────────────────────────────────────────────────
   if (state.wall.length === 0) {
-    // wall exhausted — draw game
     return { ...state, phase: "done", winner: null };
   }
 
@@ -162,11 +170,23 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
     currentPlayer: nextPlayer,
     phase: "discard",
     meldResponses: [null, null, null, null],
+    afterKong: false,
+    consecutiveKongsThisTurn: 0,
   };
   next = drawForPlayer(next, nextPlayer);
   return next;
 }
 
+/**
+ * Validate that two hand tiles plus the discarded tile form a valid sequence.
+ * Seung is only available to the player immediately left of the discarder.
+ *
+ * @param playerIndex - the claiming player's index
+ * @param state - current game state
+ * @param t1 - first hand tile
+ * @param t2 - second hand tile
+ * @param t3 - the discarded tile
+ */
 export function isValidSeung(
   playerIndex: number,
   state: MahjongState,
@@ -174,9 +194,7 @@ export function isValidSeung(
   t2: string,
   t3: string,
 ): boolean {
-  // seung is only available to the player immediately left of the discarder
   if (playerIndex !== (state.currentPlayer + 1) % 4) return false;
-  // verify that {discard, t1, t2} form a valid same-suit sequence
   const three = [t1, t2, t3].sort();
   const suit = getSuit(three[0]);
   return (

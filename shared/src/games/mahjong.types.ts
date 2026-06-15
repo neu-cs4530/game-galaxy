@@ -34,6 +34,50 @@ export type MahjongMeldResponse =
   | { type: "win" };
 
 /**
+ * Information about how the hand was won, used for scoring.
+ */
+export interface WinInfo {
+  /** Player drew the winning tile themselves */
+  selfDraw: boolean;
+  /** Won with the replacement tile drawn after declaring a kong */
+  afterKong: boolean;
+  /** Won after declaring multiple kongs in a row (afterKong must also be true) */
+  afterMultipleKongs: boolean;
+  /** The winning tile was the last tile in the wall */
+  finalTile: boolean;
+  /** Won by robbing a promoted kong */
+  robbingKong: boolean;
+  /** Index of the player who discarded the winning tile (undefined for self-draw) */
+  discarderIndex?: number;
+  /** The tile that completed the hand */
+  winningTile: MahjongTile;
+}
+
+/**
+ * A single line in the fan-point breakdown.
+ */
+export interface FanEntry {
+  name: string;
+  nameZh: string;
+  fan: number;
+  /** True when this pattern overrides all others with a fixed limit score */
+  isLimit?: boolean;
+}
+
+/**
+ * Complete scoring result for a winning hand.
+ * `payments[i]` is the number of points player i owes the winner
+ * (positive = pays, negative = receives).
+ */
+export interface MahjongScoring {
+  totalFan: number;
+  points: number;
+  breakdown: FanEntry[];
+  isLimit: boolean;
+  payments: number[];
+}
+
+/**
  * Full internal game state (never sent to clients directly).
  *
  * Phase semantics
@@ -83,6 +127,14 @@ export interface MahjongState {
   dealer: number;
   /** Index of the winning player, or null if the game ended in a draw */
   winner: number | null;
+  /** Current round wind tile ("ew" | "sw" | "ww" | "nw") */
+  roundWind: MahjongTile;
+  /** Set when phase becomes "done" with a winner; absent for draws */
+  winInfo?: WinInfo;
+  /** True when the last tile drawn came from the dead wall (after a kong) */
+  afterKong: boolean;
+  /** Number of consecutive kongs declared this turn without a discard in between */
+  consecutiveKongsThisTurn: number;
 }
 
 /** What a single player can see of their own position */
@@ -107,26 +159,14 @@ export interface MahjongView {
   meldResponses: (MahjongMeldResponse | null)[];
   dealer: number;
   winner: number | null;
+  /** Current round wind tile */
+  roundWind: MahjongTile;
+  /** Seat wind for each player index (derived from dealer position) */
+  seatWinds: MahjongTile[];
+  /** Populated when phase is "done" and there is a winner */
+  scoring?: MahjongScoring;
 }
 
-/**
- * Every action a player can submit.
- *
- * In the `discard` phase (only the current player may act):
- *   - `discard`         – discard a tile from hand
- *   - `win`             – declare a self-draw win (Ji Mo)
- *   - `kong`            – declare a concealed or promoted kong; `tile` is
- *                         the tile to kong
- *
- * In the `meld_window` phase (any non-discarding player):
- *   - `pass`            – decline to meld
- *   - `win`             – claim the discard to complete a winning hand (Sik Wu)
- *   - `pong`            – claim the discard to form a triplet
- *   - `seung`           – claim the discard to form a sequence; `with` is the
- *                         two hand tiles that complete the sequence (left-of-
- *                         discarder only)
- *   - `kong`            – claim the discard to form a kong
- */
 export type MahjongMove = z.infer<typeof zMahjongMove>;
 export const zMahjongMove = z.discriminatedUnion("type", [
   z.object({ type: z.literal("discard"), tile: z.string() }),
