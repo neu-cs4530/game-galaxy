@@ -83,6 +83,7 @@ export default function MahjongGame({
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [prevHandComposition, setPrevHandComposition] = useState<string>("");
   const dragIndexRef = useRef<number | null>(null);
+  const [showReference, setShowReference] = useState(false);
 
   const handComposition = myView?.hand.slice().sort().join(",") ?? "";
   if (myView && handComposition !== prevHandComposition) {
@@ -201,11 +202,26 @@ export default function MahjongGame({
           )}
           <span style={{ marginLeft: "1rem" }}>{view.wallSize} tiles left</span>
         </span>
+        <button
+          className="secondary narrow"
+          style={{ marginLeft: "auto" }}
+          onClick={() => setShowReference((v) => !v)}
+        >
+          {showReference ? "Hide guide" : "? Tile guide"}
+        </button>
       </div>
 
       <hr />
 
-      {/* ── other players ── */}
+      {showReference && (
+        <div className="referencePanel">
+          <img
+            src="/mahjong-reference.png"
+            alt="Mahjong tile reference guide"
+            className="referenceImage"
+          />
+        </div>
+      )}
       <div className="otherPlayers">
         {otherPlayerIndices.map((p) => {
           const pView = view.players[p];
