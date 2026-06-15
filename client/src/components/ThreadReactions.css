@@ -15,7 +15,7 @@ button.reactionButton {
 }
 
 button.reactionButton:hover {
-  background-color: #9682ff59 ;
+  background-color: #9682ff59;
 }
 
 button.reactionButton.reacted {
