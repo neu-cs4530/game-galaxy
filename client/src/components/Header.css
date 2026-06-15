@@ -6,12 +6,11 @@
   padding-inline: 1rem;
   grid-template-columns: 1fr repeat(7, max-content);
   width: 100%;
-  background: var(--gray-background);
   grid-area: header;
   overflow: visible;
   position: relative;
   z-index: 100;
-  color: #1a1a1a;
+  color: rgb(232, 229, 255);
 }
 
 .title {

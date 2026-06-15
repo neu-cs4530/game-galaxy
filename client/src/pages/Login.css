@@ -13,17 +13,18 @@ form.login {
   width: 300px;
   padding: 1rem;
   border-radius: 1.5rem;
-  background-color: rgba(20, 18, 48, 0.72);
-  border: 2px solid rgba(150, 130, 255, 0.35);
+  background-color: #141230b8;
+  border: 2px solid #9682ff59;
   color: #e8e6ff;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-shadow: 0px 4px 20px #c2bbe159;
 }
 
 input.widefill {
-  background-color: rgba(10, 12, 34, 0.6);
-  border: 1px solid rgba(150, 130, 255, 0.35);
+  background-color: #0a0c2499;
+  border: 1px solid #9682ff59;
   color: #e8e6ff;
 }
 
