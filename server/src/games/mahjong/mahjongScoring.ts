@@ -1,6 +1,7 @@
 import type {
   MahjongTile,
   MahjongMeld,
+  MahjongState,
   WinInfo,
   FanEntry,
   MahjongScoring,
@@ -427,4 +428,50 @@ export function scoreHand(ctx: ScoringContext): MahjongScoring {
   }
 
   return best;
+}
+
+// ── hand result helper ────────────────────────────────────────────────────────
+
+/**
+ * Transition to the voting phase after a player wins a hand.
+ * Computes the hand score, applies payments to cumulative scores,
+ * and resets the play-again votes.
+ *
+ * @param state  - game state at the moment of the win
+ * @param winner - index of the winning player
+ * @param winInfo - how the hand was won
+ */
+export function resolveHandWin(
+  state: MahjongState,
+  winner: number,
+  winInfo: WinInfo,
+): MahjongState {
+  // discard win: hand has 13 tiles; append winning tile to get 14
+  // self-draw win: hand already has 14 tiles
+  const completeHand = winInfo.selfDraw
+    ? [...state.hands[winner]]
+    : [...state.hands[winner], winInfo.winningTile];
+
+  const scoring = scoreHand({
+    hand: completeHand,
+    melds: state.melds[winner],
+    flowers: state.flowers[winner],
+    winInfo,
+    seatWind: seatWindForPlayer(winner, state.dealer),
+    roundWind: state.roundWind,
+    winnerIndex: winner,
+  });
+
+  // apply payments: payments[i] > 0 means player i pays, < 0 means receives
+  const newScores = state.scores.map((s, i) => s - scoring.payments[i]);
+
+  return {
+    ...state,
+    phase: "voting",
+    winner,
+    winInfo,
+    scores: newScores,
+    lastScoring: scoring,
+    playAgainVotes: [null, null, null, null],
+  };
 }

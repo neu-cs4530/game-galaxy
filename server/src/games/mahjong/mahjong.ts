@@ -11,20 +11,83 @@ import { removeOne, createDeck, shuffle } from "./mahjongTiles.ts";
 import { isWinningHand } from "./mahjongWin.ts";
 import { drawForPlayer } from "./mahjongDraw.ts";
 import { isValidSeung, resolveKong, resolveMeldWindow } from "./mahjongMeld.ts";
-import { scoreHand, seatWindForPlayer } from "./mahjongScoring.ts";
+import { seatWindForPlayer, resolveHandWin } from "./mahjongScoring.ts";
 
-/**
- * Check whether every player has submitted a meld-window response.
- */
 export function allResponded(responses: (MahjongMeldResponse | null)[]): boolean {
   return responses.every((r) => r !== null);
 }
+
+// ── dealer / round wind rotation ──────────────────────────────────────────────
+
+const ROUND_WINDS = ["ew", "sw", "ww", "nw"];
+
+/**
+ * Compute the next dealer and round wind after a hand ends.
+ * - Dealer moves right only if a non-dealer won.
+ * - Round wind advances when dealer rotates back to the initial dealer.
+ */
+function nextHandMeta(state: MahjongState): { nextDealer: number; nextRoundWind: string } {
+  const { dealer, winner, initialDealer, roundWind } = state;
+
+  let nextDealer = dealer;
+  if (winner !== null && winner !== dealer) {
+    nextDealer = (dealer + 1) % 4;
+  }
+
+  let nextRoundWind = roundWind;
+  if (nextDealer !== dealer && nextDealer === initialDealer) {
+    const idx = ROUND_WINDS.indexOf(roundWind);
+    nextRoundWind = ROUND_WINDS[(idx + 1) % ROUND_WINDS.length];
+  }
+
+  return { nextDealer, nextRoundWind };
+}
+
+/**
+ * Deal a fresh hand, preserving cumulative scores and dealer metadata.
+ */
+function startNextHand(state: MahjongState): MahjongState {
+  const { nextDealer, nextRoundWind } = nextHandMeta(state);
+
+  let next: MahjongState = {
+    ...state,
+    wall: shuffle(createDeck()),
+    hands: [[], [], [], []],
+    melds: [[], [], [], []],
+    flowers: [[], [], [], []],
+    discardPile: [],
+    currentPlayer: nextDealer,
+    lastDiscard: null,
+    phase: "discard",
+    meldResponses: [null, null, null, null],
+    dealer: nextDealer,
+    winner: null,
+    roundWind: nextRoundWind,
+    winInfo: undefined,
+    lastScoring: undefined,
+    afterKong: false,
+    consecutiveKongsThisTurn: 0,
+    playAgainVotes: [null, null, null, null],
+  };
+
+  // dealer gets 14 tiles, everyone else gets 13; deal starting from the new dealer
+  for (let offset = 0; offset < 4; offset++) {
+    const p = (nextDealer + offset) % 4;
+    const count = offset === 0 ? 14 : 13;
+    for (let i = 0; i < count; i++) {
+      next = drawForPlayer(next, p);
+    }
+  }
+
+  return next;
+}
+
+// ── game logic ────────────────────────────────────────────────────────────────
 
 export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
   minPlayers: 4,
   maxPlayers: 4,
 
-  /* ── start ───────────────────────────────────── */
   start: (_numPlayers) => {
     let state: MahjongState = {
       wall: shuffle(createDeck()),
@@ -42,6 +105,10 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
       winInfo: undefined,
       afterKong: false,
       consecutiveKongsThisTurn: 0,
+      scores: [0, 0, 0, 0],
+      playAgainVotes: [null, null, null, null],
+      initialDealer: 0,
+      lastScoring: undefined,
     };
 
     const dealCounts = [14, 13, 13, 13];
@@ -53,13 +120,34 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
     return state;
   },
 
-  /* ── update ──────────────────────────────────── */
   update: (state, payload, playerIndex) => {
-    if (state.phase === "done") return null;
+    if (state.phase === "ended") return null;
 
     const parsed = zMahjongMove.safeParse(payload);
     if (parsed.error) return null;
     const move = parsed.data;
+
+    // ════════════════════════════════════════════
+    // VOTING PHASE — players vote to play again
+    // ════════════════════════════════════════════
+    if (state.phase === "voting") {
+      if (move.type !== "playAgain") return null;
+      if (state.playAgainVotes[playerIndex] !== null) return null; // already voted
+
+      const newVotes = state.playAgainVotes.map((v, i) => (i === playerIndex ? move.vote : v));
+
+      // any "no" vote immediately ends the game
+      if (!move.vote) {
+        return { ...state, phase: "ended", playAgainVotes: newVotes };
+      }
+
+      // all voted yes — start next hand
+      if (newVotes.every((v) => v === true)) {
+        return startNextHand({ ...state, playAgainVotes: newVotes });
+      }
+
+      return { ...state, playAgainVotes: newVotes };
+    }
 
     // ════════════════════════════════════════════
     // DISCARD PHASE — only the current player acts
@@ -67,7 +155,6 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
     if (state.phase === "discard") {
       if (playerIndex !== state.currentPlayer) return null;
 
-      // ── discard a tile ──
       if (move.type === "discard") {
         const hand = state.hands[playerIndex];
         if (!hand.includes(move.tile)) return null;
@@ -87,7 +174,6 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
         };
       }
 
-      // ── declare self-draw win (Ji Mo) ──
       if (move.type === "win") {
         if (!isWinningHand(state.hands[playerIndex], state.melds[playerIndex])) return null;
         const winInfo: WinInfo = {
@@ -99,16 +185,14 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
           discarderIndex: undefined,
           winningTile: "",
         };
-        return { ...state, phase: "done", winner: playerIndex, winInfo };
+        return resolveHandWin(state, playerIndex, winInfo);
       }
 
-      // ── kong (concealed or promoted) ──
       if (move.type === "kong") {
         const tile = move.tile;
         if (!tile) return null;
         const hand = state.hands[playerIndex];
 
-        // concealed kong: 4 identical tiles in hand
         if (hand.filter((t) => t === tile).length >= 4) {
           let newHand = [...hand];
           for (let i = 0; i < 4; i++) newHand = removeOne(newHand, tile);
@@ -120,7 +204,6 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
           return next;
         }
 
-        // promoted kong: existing pong meld + 4th tile drawn
         const pongIdx = state.melds[playerIndex].findIndex(
           (m) => m.type === "pong" && m.tiles[0] === tile,
         );
@@ -138,7 +221,7 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
         return next;
       }
 
-      return null; // unrecognised move type for this phase
+      return null;
     }
 
     // ════════════════════════════════════════════
@@ -156,11 +239,7 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
         if (!isWinningHand([...hand, discard], state.melds[playerIndex])) return null;
         response = { type: "win" };
       }
-
-      if (move.type === "pass") {
-        response = { type: "pass" };
-      }
-
+      if (move.type === "pass") response = { type: "pass" };
       if (move.type === "meld") {
         const [t1, t2, t3] = move.with;
         let newHand = [...hand];
@@ -170,11 +249,8 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
         if (t3 !== undefined) {
           newHand = removeOne(newHand, t3);
           if (newHand.length !== hand.length - 3) return null;
-          if (t1 === t2 && t2 === t3 && t3 === discard) {
-            response = { type: "kong" };
-          } else {
-            return null;
-          }
+          if (t1 === t2 && t2 === t3 && t3 === discard) response = { type: "kong" };
+          else return null;
         } else {
           if (newHand.length !== hand.length - 2) return null;
           if (t1 === t2 && t2 === discard) {
@@ -199,38 +275,17 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
     return null;
   },
 
-  isDone: (state) => state.phase === "done",
+  isDone: (state) => state.phase === "ended",
 
-  /* ── viewAs ──────────────────────────────────── */
   viewAs: (state, playerIndex) => {
+    const isOver = state.phase === "voting" || state.phase === "ended";
     const players = state.hands.map((hand, i) => ({
-      hand: i === playerIndex || state.phase === "done" ? [...hand] : [],
+      hand: i === playerIndex || isOver ? [...hand] : [],
       melds: [...state.melds[i]],
       flowers: [...state.flowers[i]],
     }));
 
     const seatWinds = [0, 1, 2, 3].map((i) => seatWindForPlayer(i, state.dealer));
-
-    // compute scoring once when the game ends with a winner
-    let scoring = undefined;
-    if (state.phase === "done" && state.winner !== null && state.winInfo) {
-      const winner = state.winner;
-      // discard win: hand has 13 tiles, append winning tile to get 14
-      // self-draw win: hand already has 14 tiles
-      const completeHand = state.winInfo.selfDraw
-        ? [...state.hands[winner]]
-        : [...state.hands[winner], state.winInfo.winningTile];
-
-      scoring = scoreHand({
-        hand: completeHand,
-        melds: state.melds[winner],
-        flowers: state.flowers[winner],
-        winInfo: state.winInfo,
-        seatWind: seatWindForPlayer(winner, state.dealer),
-        roundWind: state.roundWind,
-        winnerIndex: winner,
-      });
-    }
 
     return {
       players,
@@ -244,13 +299,24 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
       winner: state.winner,
       roundWind: state.roundWind,
       seatWinds,
-      scoring,
+      scores: [...state.scores],
+      playAgainVotes: [...state.playAgainVotes],
+      lastScoring: state.lastScoring,
     };
   },
 
   tagView: (view) => ({ type: "mahjong", view }),
 
-  getWinners: (state: MahjongState): number[] => (state.winner !== null ? [state.winner] : []),
+  getWinners: (state: MahjongState): number[] => {
+    if (state.phase === "ended") {
+      const maxScore = Math.max(...state.scores);
+      return state.scores
+        .map((s, i) => ({ s, i }))
+        .filter(({ s }) => s === maxScore)
+        .map(({ i }) => i);
+    }
+    return state.winner !== null ? [state.winner] : [];
+  },
 };
 
 export const mahjongGameService = new GameService<MahjongState, MahjongView>(mahjongLogic);

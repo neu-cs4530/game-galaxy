@@ -5,6 +5,7 @@ import type {
 } from "@gamenite/shared/src/games/mahjong.types.ts";
 import { removeOne, sortBySuit, getSuit, getValue } from "./mahjongTiles.ts";
 import { drawForPlayer } from "./mahjongDraw.ts";
+import { resolveHandWin } from "./mahjongScoring.ts";
 
 /**
  * Clean up state fields that must reset after any meld action (pong, seung, or kong).
@@ -93,7 +94,7 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
         discarderIndex: discarder,
         winningTile: discard,
       };
-      return { ...state, phase: "done", winner: p, winInfo };
+      return resolveHandWin(state, p, winInfo);
     }
   }
 
@@ -159,7 +160,14 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
 
   // ── nobody melded ─────────────────────────────────────────────────────────
   if (state.wall.length === 0) {
-    return { ...state, phase: "done", winner: null };
+    // wall exhausted: draw — no scoring, dealer stays, players vote to continue
+    return {
+      ...state,
+      phase: "voting",
+      winner: null,
+      lastScoring: undefined,
+      playAgainVotes: [null, null, null, null],
+    };
   }
 
   const nextPlayer = (discarder + 1) % 4;
