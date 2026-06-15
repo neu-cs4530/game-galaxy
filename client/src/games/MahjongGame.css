@@ -162,6 +162,22 @@
   padding-bottom: 0.5rem;
 }
 
+/* ── draggable tile wrapper ── */
+.draggableTile {
+  cursor: grab;
+}
+
+.draggableTile:active {
+  cursor: grabbing;
+}
+
+/* ── hand controls (sort button row) ── */
+.handControls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.25rem;
+}
+
 /* ── action panel ── */
 .actionPanel {
   display: flex;

@@ -1,11 +1,43 @@
 import "./MahjongGame.css";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type {
   MahjongMove,
   MahjongView,
   MahjongMeld,
 } from "@gamenite/shared/src/games/mahjong.types.ts";
 import type { GameProps } from "../util/types.ts";
+
+// ── hand sync helper ──────────────────────────────────────────────────────────
+
+/**
+ * Merge a server-updated hand into the player's locally ordered hand.
+ * Tiles present in both are kept in their current order; newly drawn tiles
+ * are appended at the end; discarded or melded tiles are dropped.
+ *
+ * @param ordered - the player's current display order
+ * @param newHand - the authoritative hand from the server
+ * @returns a new array with the same tiles as newHand in the best preserved order
+ */
+function syncOrderedHand(ordered: string[], newHand: string[]): string[] {
+  const remaining = new Map<string, number>();
+  for (const t of newHand) remaining.set(t, (remaining.get(t) ?? 0) + 1);
+
+  const synced: string[] = [];
+  for (const t of ordered) {
+    const count = remaining.get(t) ?? 0;
+    if (count > 0) {
+      synced.push(t);
+      remaining.set(t, count - 1);
+    }
+  }
+
+  // append newly drawn tiles at the end
+  for (const [tile, count] of remaining) {
+    for (let i = 0; i < count; i++) synced.push(tile);
+  }
+
+  return synced;
+}
 
 // ── sub-components ────────────────────────────────────────────────────────────
 
@@ -16,11 +48,6 @@ interface TileImageProps {
   onClick?: () => void;
 }
 
-/**
- * Renders a single Mahjong tile image.
- * Tile sprites should be in /public/tiles/ with filenames matching tile IDs
- * (e.g. "2c.png", "ew.png") plus "back.png" for face-down tiles.
- */
 function TileImage({ tile, size = "md", selected, onClick }: TileImageProps) {
   return (
     <img
@@ -40,10 +67,6 @@ function TileImage({ tile, size = "md", selected, onClick }: TileImageProps) {
   );
 }
 
-/**
- * Renders a declared meld (pong, kong, or seung).
- * Concealed kongs show the middle two tiles face-down.
- */
 function MeldDisplay({ meld }: { meld: MahjongMeld }) {
   return (
     <div className="meldDisplay">
@@ -63,11 +86,25 @@ export default function MahjongGame({
   userPlayerIndex,
   makeMove,
 }: GameProps<MahjongView, MahjongMove>) {
-  // track selected tiles by hand index so duplicate tile values are distinguishable
-  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
-
   const isPlayer = userPlayerIndex >= 0;
   const myView = isPlayer ? view.players[userPlayerIndex] : null;
+
+  const [orderedHand, setOrderedHand] = useState<string[]>(myView?.hand ?? []);
+  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+  const [prevHandComposition, setPrevHandComposition] = useState<string>("");
+  // index of the tile currently being dragged
+  const dragIndexRef = useRef<number | null>(null);
+
+  // sync orderedHand during render when hand composition changes (tiles added or removed)
+  // this is the React-recommended pattern for deriving state from props changes:
+  // https://react.dev/reference/react/useState#storing-information-from-previous-renders
+  const handComposition = myView?.hand.slice().sort().join(",") ?? "";
+  if (myView && handComposition !== prevHandComposition) {
+    setPrevHandComposition(handComposition);
+    setOrderedHand(syncOrderedHand(orderedHand, myView.hand));
+    setSelectedIndices([]);
+  }
+
   const isMyTurn = view.phase === "discard" && view.currentPlayer === userPlayerIndex;
   const isMeldWindow = view.phase === "meld_window";
   const myResponse = isPlayer ? view.meldResponses[userPlayerIndex] : null;
@@ -75,35 +112,65 @@ export default function MahjongGame({
     isMeldWindow && isPlayer && myResponse === null && userPlayerIndex !== view.currentPlayer;
   const discard = view.lastDiscard;
 
-  // tile values currently selected (derived from indices)
-  const selectedTiles = myView ? selectedIndices.map((i) => myView.hand[i]) : [];
+  const selectedTiles = selectedIndices.map((i) => orderedHand[i]);
 
   function handleTileClick(index: number) {
     if (isMyTurn) {
-      // discard phase: single selection — toggle or replace
       setSelectedIndices((prev) => (prev[0] === index ? [] : [index]));
     } else if (needToRespond) {
-      // meld window: multi-selection — toggle
       setSelectedIndices((prev) =>
         prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
       );
     }
   }
 
+  // ── drag handlers ──────────────────────────────────────────────────────────
+
+  function handleDragStart(index: number) {
+    dragIndexRef.current = index;
+  }
+
+  function handleDragOver(e: React.DragEvent, index: number) {
+    e.preventDefault(); // allow drop
+    const from = dragIndexRef.current;
+    if (from === null || from === index) return;
+
+    // reorder in place as the tile is dragged over targets
+    setOrderedHand((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(from, 1);
+      next.splice(index, 0, moved);
+      return next;
+    });
+    // update selected indices to follow the moved tile
+    setSelectedIndices((prev) =>
+      prev.map((si) => {
+        if (si === from) return index;
+        if (from < index && si > from && si <= index) return si - 1;
+        if (from > index && si >= index && si < from) return si + 1;
+        return si;
+      }),
+    );
+    dragIndexRef.current = index;
+  }
+
+  function handleDragEnd() {
+    dragIndexRef.current = null;
+  }
+
+  // ── submit ─────────────────────────────────────────────────────────────────
+
   function submitMove(move: MahjongMove) {
     makeMove(move);
     setSelectedIndices([]);
   }
 
-  // player indices other than the current user, in seat order
   const otherPlayerIndices = [0, 1, 2, 3].filter((i) => i !== userPlayerIndex);
 
-  /** Display name for a player, defaulting to "Player N" */
   function playerName(i: number) {
     return players[i]?.display ?? `Player ${i + 1}`;
   }
 
-  // ── status text ──
   let statusText: string;
   if (view.phase === "done") {
     statusText =
@@ -222,15 +289,30 @@ export default function MahjongGame({
               ))}
             </div>
           )}
+          <div className="handControls">
+            <button
+              className="secondary narrow"
+              onClick={() => {
+                setOrderedHand(myView.hand);
+                setSelectedIndices([]);
+              }}
+            >
+              Sort
+            </button>
+          </div>
           <div className="hand">
-            {myView.hand.map((tile, i) => (
-              <TileImage
+            {orderedHand.map((tile, i) => (
+              <div
                 key={`${tile}-${i}`}
-                tile={tile}
-                size="md"
-                selected={selectedIndices.includes(i)}
+                className="draggableTile"
+                draggable
+                onDragStart={() => handleDragStart(i)}
+                onDragOver={(e) => handleDragOver(e, i)}
+                onDragEnd={handleDragEnd}
                 onClick={isMyTurn || needToRespond ? () => handleTileClick(i) : undefined}
-              />
+              >
+                <TileImage tile={tile} size="md" selected={selectedIndices.includes(i)} />
+              </div>
             ))}
           </div>
         </div>
@@ -239,28 +321,27 @@ export default function MahjongGame({
       {/* ── action panel ── */}
       {view.phase !== "done" && isPlayer && (
         <div className="actionPanel">
-          {/* discard phase — my turn */}
           {isMyTurn && (
             <div className="actionButtons">
               <button
                 className="primary narrow"
                 disabled={selectedIndices.length === 0}
                 onClick={() => {
-                  if (myView && selectedIndices[0] !== undefined) {
-                    submitMove({ type: "discard", tile: myView.hand[selectedIndices[0]] });
+                  if (selectedIndices[0] !== undefined) {
+                    submitMove({ type: "discard", tile: orderedHand[selectedIndices[0]] });
                   }
                 }}
               >
-                {selectedIndices.length > 0 && myView
-                  ? `Discard ${myView.hand[selectedIndices[0]]}`
+                {selectedIndices.length > 0
+                  ? `Discard ${orderedHand[selectedIndices[0]]}`
                   : "Select a tile"}
               </button>
               <button
                 className="secondary narrow"
                 disabled={selectedIndices.length === 0}
                 onClick={() => {
-                  if (myView && selectedIndices[0] !== undefined) {
-                    submitMove({ type: "kong", tile: myView.hand[selectedIndices[0]] });
+                  if (selectedIndices[0] !== undefined) {
+                    submitMove({ type: "kong", tile: orderedHand[selectedIndices[0]] });
                   }
                 }}
               >
@@ -272,7 +353,6 @@ export default function MahjongGame({
             </div>
           )}
 
-          {/* meld window — need to respond */}
           {needToRespond && (
             <div className="actionButtons">
               <button className="secondary narrow" onClick={() => submitMove({ type: "pass" })}>
@@ -291,7 +371,6 @@ export default function MahjongGame({
             </div>
           )}
 
-          {/* meld window — already responded */}
           {isMeldWindow && myResponse !== null && (
             <div className="responseStatus">
               You chose to {myResponse.type}. Waiting for other players…
