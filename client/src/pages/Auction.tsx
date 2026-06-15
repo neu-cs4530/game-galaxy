@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { AuctionListing } from "@gamenite/shared";
 import useLoginContext from "../hooks/useLoginContext.ts";
 import useAuth from "../hooks/useAuth.ts";
 import useAccessory from "../hooks/useAccessory.ts";
 import useAuctions from "../hooks/useAuctions.ts";
+import { getUserById } from "../services/userService.ts";
 
 const ACCESSORY_SIZE = 160;
 
@@ -94,13 +95,21 @@ function SellForm({ myListings }: { myListings: AuctionListing[] }) {
   const auth = useAuth();
   const { accessories: catalog } = useAccessory();
 
+  const [ownedIds, setOwnedIds] = useState<string[]>(() => Object.keys(user.avatar.accessories));
+
+  useEffect(() => {
+    getUserById(user.username)
+      .then((u) => setOwnedIds(Object.keys(u.avatar.accessories)))
+      .catch(() => {});
+  }, [user.username]);
+
   const listedIds = useMemo(
     () => new Set(myListings.map((l) => l.accessory.accessoryId)),
     [myListings],
   );
 
   // Owned accessories the user isn't already auctioning
-  const sellable = Object.keys(user.avatar.accessories).filter((id) => !listedIds.has(id));
+  const sellable = ownedIds.filter((id) => !listedIds.has(id));
 
   const [accessoryId, setAccessoryId] = useState("");
   const [startingPrice, setStartingPrice] = useState(0);
