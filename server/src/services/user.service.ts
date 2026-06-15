@@ -6,11 +6,23 @@ const disallowedUsernames = new Set(["login", "signup", "list"]);
 
 /**
  * Retrieves a single user from the database.
+ * If the userId is a bot placeholder (starts with "bot:"), returns a
+ * synthetic SafeUserInfo without a DB lookup.
  *
- * @param userId - Valid user id.
+ * @param userId - Valid user id, or a bot placeholder like "bot:0".
  * @returns the found user object (without the password).
  */
 export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo> {
+  if (userId.startsWith("bot:")) {
+    return {
+      username: userId,
+      display: "Bot",
+      createdAt: new Date(0),
+      avatar: createDefaultAvatar(),
+      balance: 0,
+      wins: 0,
+    };
+  }
   const record = await UserRepo.get(userId);
   return {
     username: record.username,

@@ -1,6 +1,7 @@
 import { type GameInfo, withAuth, zGameKey, zGameMakeMovePayload } from "@gamenite/shared";
 import { type RestAPI, type GameViewUpdates, type SocketAPI, type GameServer } from "../types.ts";
 import {
+  addBotToGame,
   createGame,
   findActiveGameForUser,
   gameServices,
@@ -194,6 +195,33 @@ export const socketMakeMove: SocketAPI = (socket, io) => async (body) => {
     const viewUpdates = await updateGame(gameId, user, move);
     sendViewUpdates(io, gameId, viewUpdates);
     await rewardWins(gameId, io);
+  } catch (err) {
+    logSocketError(socket, err);
+  }
+};
+
+/**
+ * Handle a request to add a bot player to a waiting game.
+ * The requesting user must already be in the game.
+ * Auto-starts the game if adding the bot fills the last seat.
+ */
+export const socketAddBot: SocketAPI = (socket, io) => async (body) => {
+  try {
+    const { auth, payload: gameId } = withAuth(z.string()).parse(body);
+    const user = await enforceAuth(auth);
+
+    const gameRecord = await GameRepo.get(gameId);
+    if (!gameRecord.players.includes(user.userId)) {
+      throw new Error(`user ${user.username} tried to add a bot to a game they are not in`);
+    }
+
+    const game = await addBotToGame(gameId);
+    io.to(gameId).emit("gamePlayersUpdated", game.players);
+
+    // auto-start if adding the bot filled the last seat
+    if (game.players.length === gameServices[game.type].maxPlayers) {
+      sendViewUpdates(io, gameId, await startGame(gameId, user));
+    }
   } catch (err) {
     logSocketError(socket, err);
   }

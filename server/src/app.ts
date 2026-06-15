@@ -88,6 +88,7 @@ io.on("connection", (socket) => {
   socket.on("lobbyJoin", lobby.socketJoin(socket, io));
   socket.on("lobbyLeave", lobby.socketLeave(socket, io));
 
+  socket.on("gameAddBot", game.socketAddBot(socket, io));
   socket.on("gameJoinAsPlayer", game.socketJoinAsPlayer(socket, io));
   socket.on("gameMakeMove", game.socketMakeMove(socket, io));
   socket.on("gameStart", game.socketStart(socket, io));

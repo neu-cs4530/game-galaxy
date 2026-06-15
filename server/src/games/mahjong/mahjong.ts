@@ -229,7 +229,7 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
    */
   viewAs: (state, playerIndex) => {
     const players = state.hands.map((hand, i) => ({
-      hand: i === playerIndex ? [...hand] : [],
+      hand: i === playerIndex || state.phase === "done" ? [...hand] : [],
       handSize: hand.length,
       melds: [...state.melds[i]],
       flowers: [...state.flowers[i]],
