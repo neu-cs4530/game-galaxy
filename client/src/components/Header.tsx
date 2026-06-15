@@ -80,7 +80,7 @@ export default function Header() {
 
   return (
     <div id="header" className="header">
-      <div className="title">GameNite!</div>
+      <img src={`GameGalaxy.png`} style={{ width: "13em", height: "2.5em" }}></img>
       <button
         className="narrowcenter secondary"
         onClick={() => void navigate(`/profile/${user.username}`)}
