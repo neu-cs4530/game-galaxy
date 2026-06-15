@@ -5,11 +5,13 @@ import useLoginContext from "../hooks/useLoginContext";
 import { getUserById } from "../services/userService.ts";
 import type { Avatar } from "@gamenite/shared";
 import { ColorPicker } from "../components/ColorPicker.tsx";
+import useRoomPresence from "../hooks/useRoomPresence.ts";
 
 /**
  * render the accessories owned by this user, and allow them to wear/ remove accessories and change color.
  */
 export default function Closet() {
+  useRoomPresence("closet");
   const { user } = useLoginContext();
   const [accessories, setAccessories] = useState(user.avatar.accessories);
   const [avatar, setAvatar] = useState<Avatar>(user.avatar);
