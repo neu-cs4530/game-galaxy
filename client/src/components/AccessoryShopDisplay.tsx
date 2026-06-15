@@ -1,7 +1,7 @@
 import type { Accessory } from "@gamenite/shared";
 import { BuyButton } from "./BuyButton";
 import useLoginContext from "../hooks/useLoginContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 
 interface AccessoryDisplayProps {
@@ -16,6 +16,17 @@ export function AccessoryShopDisplay({ accessories = [], size = 100 }: Accessory
   const { user, socket } = useLoginContext();
   const auth = useAuth();
   const [ownedAccessories, setOwnedAccessories] = useState(user.avatar.accessories);
+  const [balance, setBalance] = useState(user.balance);
+
+  useEffect(() => {
+    const handleBalanceUpdated = ({ balance }: { balance: number }) => {
+      setBalance(balance);
+    };
+    socket.on("balanceUpdated", handleBalanceUpdated);
+    return () => {
+      socket.off("balanceUpdated", handleBalanceUpdated);
+    };
+  }, [socket]);
 
   const handleBuy = (accessoryId: string) => {
     socket.emit("shopBuyAccessory", { auth, payload: accessoryId });
@@ -41,6 +52,8 @@ export function AccessoryShopDisplay({ accessories = [], size = 100 }: Accessory
             accessoryId={accessory.accessoryId}
             owned={accessory.accessoryId in ownedAccessories}
             onBuy={handleBuy}
+            cost={accessory.cost}
+            balance={balance}
           />
         </p>
       </div>
