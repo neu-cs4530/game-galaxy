@@ -163,9 +163,10 @@ export default function MahjongGame({
     setSelectedIndices([]);
   }
 
-  const otherPlayerIndices = isPlayer
-    ? [3, 2, 1].map((offset) => (userPlayerIndex + offset) % 4)
-    : [0, 1, 2, 3];
+  // FIX THIS (make it counter clockwise)
+  const otherPlayerIndices = Array.from({ length: players.length }, (_, i) => i).filter(
+    (i) => i !== userPlayerIndex,
+  );
 
   function playerName(i: number) {
     return players[i]?.display ?? `Player ${i + 1}`;
@@ -241,6 +242,7 @@ export default function MahjongGame({
       <div className="otherPlayers">
         {otherPlayerIndices.map((p) => {
           const pView = view.players[p];
+          if (!pView) return null;
           const response = view.meldResponses[p];
           const isDiscarder = isMeldWindow && view.currentPlayer === p;
           const isCurrentTurn = view.phase === "discard" && view.currentPlayer === p;

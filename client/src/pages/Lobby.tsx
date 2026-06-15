@@ -162,7 +162,15 @@ export default function Lobby() {
           left="43%"
           width="25%"
           height="20%"
-          tableId="table:mahjong"
+          tableId="table:mahjong4p"
+        />
+        <GameTable
+          sprite="/sprites/lobby/Table1_frame1.png"
+          top="55%"
+          left="55%"
+          width="25%"
+          height="20%"
+          tableId="table:mahjong3p"
         />
       </div>
       <div style={{ position: "relative", width: "40%" }}>

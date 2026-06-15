@@ -32,7 +32,9 @@ export default function GameDispatch({
       return <NimGame {...{ ...childProps, view: view.view }} />;
     case "guess":
       return <GuessGame {...{ ...childProps, view: view.view }} />;
-    case "mahjong":
+    case "mahjong3p":
+      return <MahjongGame {...{ ...childProps, view: view.view }} />;
+    case "mahjong4p":
       return <MahjongGame {...{ ...childProps, view: view.view }} />;
   }
 }
