@@ -20,6 +20,7 @@ export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo
       createdAt: new Date(0),
       avatar: createDefaultAvatar(),
       balance: 0,
+      wins: 0,
     };
   }
   const record = await UserRepo.get(userId);
