@@ -4,7 +4,7 @@
   display: grid;
   grid-template-rows: max-content 1fr;
   color: #b5c9c9;
-  overflow-y:auto;
+  overflow-y: auto;
 }
 
 .gameRoster {
