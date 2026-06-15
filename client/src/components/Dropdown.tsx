@@ -48,10 +48,10 @@ export function DropdownContent({ children }: { children: React.ReactNode }) {
       style={{
         position: "absolute",
         zIndex: 100,
-        backgroundColor: "white",
-        border: "1px solid #ccc",
+        backgroundColor: "#2d475e",
+        border: "1px solid #b5c9c9",
         borderRadius: "4px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+        boxShadow: "0 2px 8px #bfe3e3",
         minWidth: "220px",
         right: 0,
       }}

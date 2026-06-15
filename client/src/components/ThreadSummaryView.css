@@ -1,7 +1,7 @@
 .threadSummary {
   display: flex;
   flex-direction: row;
-  border-top: 1px dashed black;
+  border-top: 1px dashed #b5c9c9;
   color: var(--gray-foreground);
   padding-block: 0.25rem;
   gap: 1rem;
@@ -20,5 +20,5 @@
 
 .threadSummary .mid {
   flex-grow: 1;
-  color: cornflowerblue;
+  color: #acacef;
 }

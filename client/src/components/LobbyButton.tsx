@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 export function LobbyButton() {
   const navigate = useNavigate();
   return (
-    <button className="primary narrow" onClick={() => void navigate("/")}>
+    <button className="secondary narrow" onClick={() => void navigate("/")}>
       Lobby
     </button>
   );

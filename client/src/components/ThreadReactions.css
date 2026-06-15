@@ -9,22 +9,22 @@ button.reactionButton {
   align-items: center;
   gap: 0.35rem;
   border-radius: 999px;
-  border: 1px solid oklch(0.85 0 0);
-  background-color: oklch(0.97 0 0);
+  border: 1px solid #9682ff59;
+  background-color: #424167;
   padding-inline: 0.7rem;
 }
 
 button.reactionButton:hover {
-  background-color: oklch(0.92 0 0);
+  background-color: #9682ff59 ;
 }
 
 button.reactionButton.reacted {
-  border-color: oklch(0.55 0.1 260);
-  background-color: oklch(0.92 0.05 260);
+  border-color: #9682ff59;
+  background-color: #1d163c;
 }
 
 .reactionCount {
   font-size: 0.85rem;
   font-weight: 600;
-  color: oklch(0.4 0 0);
+  color: #b5c9c9;
 }

@@ -3,7 +3,7 @@
   padding-right: 0;
   display: grid;
   grid-template-rows: max-content 1fr;
-  color: #1a1a1a;
+  color: #b5c9c9;
 }
 
 .gameRoster {
@@ -21,7 +21,7 @@
 }
 
 .gameFrame {
-  border: 1px solid black;
+  border: 1px solid #e8e6ff;
   border-radius: 0.5rem;
   margin-top: 0.5rem;
 }
