@@ -165,7 +165,10 @@ export default function MahjongGame({
     setSelectedIndices([]);
   }
 
-  const otherPlayerIndices = [0, 1, 2, 3].filter((i) => i !== userPlayerIndex);
+  // display other players counter-clockwise: next to play, across, previous
+  const otherPlayerIndices = isPlayer
+    ? [3, 2, 1].map((offset) => (userPlayerIndex + offset) % 4)
+    : [0, 1, 2, 3];
 
   function playerName(i: number) {
     return players[i]?.display ?? `Player ${i + 1}`;
