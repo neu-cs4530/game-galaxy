@@ -1,12 +1,13 @@
 import {
   type CreateThreadMessage,
+  type EditThreadMessage,
   type ReactionEmoji,
   type ReactionInfo,
   type ThreadInfo,
   type ThreadSummary,
 } from "@gamenite/shared";
 import { populateSafeUserInfo } from "./user.service.ts";
-import { createComment, populateCommentInfo } from "./comment.service.ts";
+import { createComment, editComment, populateCommentInfo } from "./comment.service.ts";
 import { type UserWithId } from "../types.ts";
 import { ThreadRepo, TagRepo } from "../repository.ts";
 import { type ReactionEntry } from "../models.ts";
@@ -38,6 +39,7 @@ async function populateThreadInfo(threadId: string): Promise<ThreadInfo> {
     comments: await Promise.all(thread.comments.map(populateCommentInfo)),
     tags: thread.tags,
     reactions: await Promise.all((thread.reactions ?? []).map(populateReactionInfo)),
+    editedAt: thread.editedAt ? new Date(thread.editedAt) : undefined,
   };
 }
 
@@ -135,6 +137,60 @@ export async function addCommentToThread(
   const newThread = { ...oldThread, comments: [...oldThread.comments, comment.commentId] };
   await ThreadRepo.set(possibleThreadId, newThread);
   return populateThreadInfo(threadId);
+}
+
+/**
+ * Edit a thread's title and text. Only the thread's original poster may edit
+ * it.
+ *
+ * @param possibleThreadId - Ostensible thread ID
+ * @param user - editing user
+ * @param contents - new title and text for the post
+ * @param editedAt - time of the edit
+ * @returns the updated thread, or null if the thread does not exist or the user
+ * is not its original poster
+ */
+export async function editThread(
+  possibleThreadId: string,
+  user: UserWithId,
+  { title, text }: EditThreadMessage,
+  editedAt: Date,
+): Promise<ThreadInfo | null> {
+  const oldThread = await ThreadRepo.find(possibleThreadId);
+  if (!oldThread || oldThread.createdBy !== user.userId) return null;
+  await ThreadRepo.set(possibleThreadId, {
+    ...oldThread,
+    title,
+    text,
+    editedAt: editedAt.toISOString(),
+  });
+  return populateThreadInfo(possibleThreadId);
+}
+
+/**
+ * Edit one of a thread's comments. Only the comment's original author may
+ * edit it.
+ *
+ * @param possibleThreadId - Ostensible thread ID
+ * @param commentId - id of the comment to edit
+ * @param user - editing user
+ * @param text - new comment contents
+ * @param editedAt - time of the edit
+ * @returns the updated thread, or null if the thread/comment does not exist or
+ * the user is not the comment's author
+ */
+export async function editCommentInThread(
+  possibleThreadId: string,
+  commentId: string,
+  user: UserWithId,
+  text: string,
+  editedAt: Date,
+): Promise<ThreadInfo | null> {
+  const thread = await ThreadRepo.find(possibleThreadId);
+  if (!thread || !thread.comments.includes(commentId)) return null;
+  const edited = await editComment(commentId, user, text, editedAt);
+  if (!edited) return null;
+  return populateThreadInfo(possibleThreadId);
 }
 
 /**

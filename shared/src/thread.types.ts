@@ -15,6 +15,7 @@ import { zReactionEmoji, type ReactionEmoji, type ReactionInfo } from "./reactio
  * - `comments`: replies to the thread
  * - `tags`: categories the creator determines apply to this thread
  * - `reactions`: emoji reactions to the thread
+ * - `editedAt`: when the post was last edited (if, indeed, it was)
  */
 export interface ThreadInfo {
   threadId: string;
@@ -25,6 +26,7 @@ export interface ThreadInfo {
   comments: CommentInfo[];
   tags: string[];
   reactions: ReactionInfo[];
+  editedAt?: Date;
 }
 
 /**
@@ -44,6 +46,15 @@ export const zCreateThreadMessage = z.object({
   title: z.string(),
   text: z.string(),
   tags: z.array(z.string()),
+});
+
+/**
+ * Relevant information for editing an existing discussion thread
+ */
+export type EditThreadMessage = z.infer<typeof zEditThreadMessage>;
+export const zEditThreadMessage = z.object({
+  title: z.string(),
+  text: z.string(),
 });
 
 /*** Types used in websocket notifications */

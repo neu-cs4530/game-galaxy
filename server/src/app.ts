@@ -41,7 +41,9 @@ app.use(
         .post("/create", thread.postCreate)
         .get("/list", thread.getList)
         .get("/:id", thread.getById)
+        .post("/:id", thread.postByIdEdit)
         .post("/:id/comment", thread.postByIdComment)
+        .post("/:id/comment/:commentId", thread.postByIdCommentEdit)
         .post("/:id/react", thread.postByIdReaction),
     )
     .use(
