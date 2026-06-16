@@ -60,11 +60,27 @@ function TileImage({ tile, size = "md", selected, onClick }: TileImageProps) {
         .filter(Boolean)
         .join(" ")}
       src={`/tiles/${tile}.png`}
-      alt={tile}
-      title={tile}
+      alt={translateTile(tile)}
+      title={translateTile(tile)}
       onClick={onClick}
     />
   );
+}
+
+/** Converts the shorthand representation into English description of a tile */
+function translateTile(tile: string) {
+  const [a, b] = [tile.charAt(0), tile.charAt(1)];
+
+  const suit: Record<string, string> = { b: "Bamboo", c: "Character", d: "Dot" };
+  const wind: Record<string, string> = { e: "East", s: "South", n: "North", w: "West" };
+  const dragon: Record<string, string> = { r: "Red", g: "Green", w: "White" };
+
+  if (suit[b] && !isNaN(Number(a))) return `${a} ${suit[b]}`;
+  if (b === "w" && wind[a]) return `${wind[a]} Wind`;
+  if (b === "d" && dragon[a]) return `${dragon[a]} Dragon`;
+  if (a === "f") return "Flower Tile";
+  if (a === "s") return "Season Tile";
+  return "Unknown Tile";
 }
 
 function MeldDisplay({ meld }: { meld: MahjongMeld }) {
