@@ -68,36 +68,52 @@ interface HandDecomposition {
 }
 
 /**
- * Recursively find all valid decompositions of `tiles` into
- * `setsNeeded` sets (triplets or sequences) plus one pair.
- * Always processes the lexicographically smallest remaining tile first
- * to avoid redundant branches.
+ * Find all valid decompositions of `hand` into `setsNeeded` sets plus one pair.
+ *
+ * Uses a pair-first strategy: for each candidate pair tile, remove it and try
+ * to form the required sets from the remainder. This avoids the pitfall of the
+ * old approach where the lexicographically-first tile happened to be the pair
+ * (e.g. "1d") and blocked detection of later honour-tile pongs.
  */
-function findDecompositions(
-  tiles: MahjongTile[],
-  setsNeeded: number,
-  built: ConcealedSet[],
-): HandDecomposition[] {
-  if (setsNeeded === 0) {
-    if (tiles.length === 2 && tiles[0] === tiles[1]) {
-      return [{ concealedSets: built, pair: [tiles[0], tiles[1]] }];
+function findDecompositions(hand: MahjongTile[], setsNeeded: number): HandDecomposition[] {
+  const results: HandDecomposition[] = [];
+  const triedPairs = new Set<string>();
+
+  for (const tile of hand) {
+    if (triedPairs.has(tile)) continue;
+    triedPairs.add(tile);
+
+    if (hand.filter((t) => t === tile).length >= 2) {
+      const remainder = removeOne(removeOne([...hand], tile), tile);
+      if (remainder.length === setsNeeded * 3) {
+        for (const sets of findSets(remainder, setsNeeded, [])) {
+          results.push({ concealedSets: sets, pair: [tile, tile] });
+        }
+      }
     }
-    return [];
   }
-  if (tiles.length < setsNeeded * 3 + 2) return [];
+
+  return results;
+}
+
+/**
+ * Recursively find all ways to decompose `tiles` into exactly `count` sets
+ * (triplets or sequences). Always processes the lexicographically smallest
+ * remaining tile first to prune redundant branches.
+ */
+function findSets(tiles: MahjongTile[], count: number, built: ConcealedSet[]): ConcealedSet[][] {
+  if (count === 0) return tiles.length === 0 ? [built] : [];
+  if (tiles.length < count * 3) return [];
 
   const sorted = [...tiles].sort();
   const first = sorted[0];
-  const results: HandDecomposition[] = [];
+  const results: ConcealedSet[][] = [];
 
   // try pong (3 identical tiles)
   if (sorted.filter((t) => t === first).length >= 3) {
     const rest = removeOne(removeOne(removeOne([...sorted], first), first), first);
     results.push(
-      ...findDecompositions(rest, setsNeeded - 1, [
-        ...built,
-        { type: "pong", tiles: [first, first, first] },
-      ]),
+      ...findSets(rest, count - 1, [...built, { type: "pong", tiles: [first, first, first] }]),
     );
   }
 
@@ -110,10 +126,7 @@ function findDecompositions(
     if (sorted.includes(t2) && sorted.includes(t3)) {
       const rest = removeOne(removeOne(removeOne([...sorted], first), t2), t3);
       results.push(
-        ...findDecompositions(rest, setsNeeded - 1, [
-          ...built,
-          { type: "seung", tiles: [first, t2, t3] },
-        ]),
+        ...findSets(rest, count - 1, [...built, { type: "seung", tiles: [first, t2, t3] }]),
       );
     }
   }
@@ -384,7 +397,7 @@ export function scoreHand(ctx: ScoringContext): MahjongScoring {
 
   // ── standard hand ─────────────────────────────────────────────────────────
   const setsNeeded = 4 - melds.length;
-  const decompositions = findDecompositions(hand, setsNeeded, []);
+  const decompositions = findDecompositions(hand, setsNeeded);
 
   const sharedEntries: FanEntry[] = [
     ...flowerFan(flowers, seatWind),

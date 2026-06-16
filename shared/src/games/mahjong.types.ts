@@ -47,7 +47,7 @@ export interface MahjongScoring {
  * - `'discard'`:     currentPlayer has a full hand and must act.
  * - `'meld_window'`: currentPlayer just discarded; others must respond.
  * - `'voting'`:      hand ended; players vote to play again or stop.
- * - `'ended'`:       someone voted no; game is fully over.
+ * - `'done'`:       someone voted no; game is fully over.
  */
 export interface MahjongState {
   wall: MahjongTile[];
