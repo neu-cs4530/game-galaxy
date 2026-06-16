@@ -41,11 +41,20 @@ export default function GameTable({ sprite, top, left, width, height, tableId }:
   }
 
   return (
-    <img
-      data-testid={`table-${tableId}`}
-      src={sprite}
-      style={{ position: "absolute", top, left, width, height, cursor: "pointer" }}
-      onClick={handleClick}
-    />
+    <div style={{ position: "absolute", top, left, width, height }}>
+      <img src={sprite} style={{ width: "100%", height: "100%", pointerEvents: "none" }} />
+      <div
+        data-testid={`table-${tableId}`}
+        style={{
+          position: "absolute",
+          top: "25%",
+          left: "25%",
+          width: "50%",
+          height: "50%",
+          cursor: "pointer",
+        }}
+        onClick={handleClick}
+      />
+    </div>
   );
 }

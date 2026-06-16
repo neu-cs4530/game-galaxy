@@ -15,12 +15,15 @@ const LOBBY_AVATAR_POSITIONS = [
   { top: "64%", left: "11%" },
   { top: "68%", left: "7%" },
 
+  { top: "65%", left: "20%" },
   { top: "69%", left: "16%" },
   { top: "73%", left: "12%" },
 
+  { top: "70%", left: "25%" },
   { top: "74%", left: "21%" },
   { top: "78%", left: "17%" },
 
+  { top: "75%", left: "30%" },
   { top: "79%", left: "26%" },
   { top: "83%", left: "22%" },
 ];
@@ -56,16 +59,16 @@ const NUMBER_GUESSER_POSITIONS = [
 ];
 
 const MAHJONG_3P_POSITIONS = [
-  { top: "46%", left: "50%" },
-  { top: "47%", left: "42%" },
+  { top: "50%", left: "53%" },
+  { top: "45.5%", left: "43%" },
   { top: "49%", left: "50%" },
 ];
 
 const MAHJONG_4P_POSITIONS = [
-  { top: "37%", left: "53%" },
-  { top: "38%", left: "50%" },
-  { top: "39%", left: "52%" },
-  { top: "48%", left: "63%" },
+  { top: "39%", left: "53%" },
+  { top: "37%", left: "56%" },
+  { top: "41%", left: "62%" },
+  { top: "43%", left: "63%" },
 ];
 
 const roomPositions: Record<string, { top: string; left: string }[]> = {
@@ -88,7 +91,7 @@ export default function Lobby() {
   const lobbyUsernames = new Set(players.map((player) => player.username));
   const groups: Record<string, SafeUserInfo[]> = {
     lobby: players,
-    ...roomPlayers,
+    ...(roomPlayers as Record<string, SafeUserInfo[]>),
   };
   for (const table of tablePlayers) {
     groups[table.tableId] = table.players.filter((player) => !lobbyUsernames.has(player.username));
