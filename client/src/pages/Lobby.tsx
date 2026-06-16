@@ -1,12 +1,12 @@
-import GameTable from "../components/gameTable";
-import LobbyDisplay from "../components/LobbyDisplay";
-import RoomLink from "../components/RoomLink";
-import useAuth from "../hooks/useAuth";
-import ChatPanel from "../components/ChatPanel";
-import AvatarDisplayLobby from "../components/AvatarLobby";
-import useSocketsForLobbyPlayers from "../hooks/useSocketsForLobbyPlayers";
+import GameTable from "@gamegalaxy/client/src/components/gameTable";
+import LobbyDisplay from "@gamegalaxy/client/src/components/LobbyDisplay";
+import RoomLink from "@gamegalaxy/client/src/components/RoomLink";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth";
+import ChatPanel from "@gamegalaxy/client/src/components/ChatPanel";
+import AvatarDisplayLobby from "@gamegalaxy/client/src/components/AvatarLobby";
+import useSocketsForLobbyPlayers from "@gamegalaxy/client/src/hooks/useSocketsForLobbyPlayers";
 import { useNavigate } from "react-router-dom";
-import type { SafeUserInfo } from "@gamenite/shared";
+import type { SafeUserInfo } from "@gamegalaxy/shared";
 
 // Where each player's avatar is placed in the lobby, in join order. Add an
 // entry here to make room for more simultaneous players.

@@ -1,6 +1,6 @@
 import "./NewForumComment.css";
-import type { ThreadInfo } from "@gamenite/shared";
-import useNewCommentForm from "../hooks/useNewCommentForm.ts";
+import type { ThreadInfo } from "@gamegalaxy/shared";
+import useNewCommentForm from "@gamegalaxy/client/src/hooks/useNewCommentForm.ts";
 
 interface NewForumCommentProps {
   threadId: string;

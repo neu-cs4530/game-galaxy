@@ -1,8 +1,8 @@
-import useThreadList from "../hooks/useThreadList.ts";
-import ThreadSummaryView from "../components/ThreadSummaryView.tsx";
+import useThreadList from "@gamegalaxy/client/src/hooks/useThreadList.ts";
+import ThreadSummaryView from "@gamegalaxy/client/src/components/ThreadSummaryView.tsx";
 import { useNavigate } from "react-router-dom";
-import useGameList from "../hooks/useGameList.ts";
-import GameSummaryView from "../components/GameSummaryView.tsx";
+import useGameList from "@gamegalaxy/client/src/hooks/useGameList.ts";
+import GameSummaryView from "@gamegalaxy/client/src/components/GameSummaryView.tsx";
 
 export default function Home() {
   const threadList = useThreadList(4);

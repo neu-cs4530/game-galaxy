@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useState, useContext, createContext } from "react";
-import { type ReactionEmoji } from "@gamenite/shared";
+import { type ReactionEmoji } from "@gamegalaxy/shared";
 
 /*** Dropdown code primarily from tutorial: https://www.codemzy.com/blog/reactjs-dropdown-component  */
 

@@ -1,4 +1,4 @@
-import type { Accessory } from "@gamenite/shared";
+import type { Accessory } from "@gamegalaxy/shared";
 import { createRepo } from "./keyv.ts";
 import type {
   AuctionRecord,

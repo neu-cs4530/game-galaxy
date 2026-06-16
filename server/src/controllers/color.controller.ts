@@ -1,4 +1,4 @@
-import { withAuth } from "@gamenite/shared";
+import { withAuth } from "@gamegalaxy/shared";
 import { z } from "zod";
 import { enforceAuth } from "../services/auth.service.ts";
 import type { SocketAPI } from "../types.ts";

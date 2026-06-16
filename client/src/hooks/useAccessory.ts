@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { Accessory } from "@gamenite/shared";
-import { getAccessories } from "../services/accessoryService.ts";
+import type { Accessory } from "@gamegalaxy/shared";
+import { getAccessories } from "@gamegalaxy/client/src/services/accessoryService.ts";
 
 /**
  * Custom hook to fetch the full accessory catalog from the server.

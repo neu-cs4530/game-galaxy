@@ -1,13 +1,13 @@
 import "./GamePanel.css";
 import { Link } from "react-router-dom";
-import type { GameInfo } from "@gamenite/shared";
-import { gameNames } from "../util/consts.ts";
-import useLoginContext from "../hooks/useLoginContext.ts";
-import useAuth from "../hooks/useAuth.ts";
-import GameDispatch from "../games/GameDispatch.tsx";
-import useSocketsForGame from "../hooks/useSocketsForGame.ts";
-import useTimeSince from "../hooks/useTimeSince.ts";
-import AvatarDisplay from "./Avatar.tsx";
+import type { GameInfo } from "@gamegalaxy/shared";
+import { gameNames } from "@gamegalaxy/client/src/util/consts.ts";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth.ts";
+import GameDispatch from "@gamegalaxy/client/src/games/GameDispatch.tsx";
+import useSocketsForGame from "@gamegalaxy/client/src/hooks/useSocketsForGame.ts";
+import useTimeSince from "@gamegalaxy/client/src/hooks/useTimeSince.ts";
+import AvatarDisplay from "@gamegalaxy/client/src/components/Avatar.tsx";
 
 /**
  * A game panel allows viewing the status and players of a live game

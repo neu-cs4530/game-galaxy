@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { LoginContext } from "../contexts/LoginContext.ts";
-import type { GameSocket } from "../util/types.ts";
-import type { SafeUserInfo } from "@gamenite/shared";
+import { LoginContext } from "@gamegalaxy/client/src/contexts/LoginContext.ts";
+import type { GameSocket } from "@gamegalaxy/client/src/util/types.ts";
+import type { SafeUserInfo } from "@gamegalaxy/shared";
 
 /**
  * Custom hook to access the LoginContext.

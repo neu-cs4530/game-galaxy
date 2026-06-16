@@ -3,7 +3,7 @@ import type {
   MessageInfo,
   SafeUserInfo,
   ServerToClientEvents,
-} from "@gamenite/shared";
+} from "@gamegalaxy/shared";
 import type { Socket } from "socket.io-client";
 
 export type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;

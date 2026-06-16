@@ -4,7 +4,7 @@ import {
   zCreateAuctionMessage,
   zMakeOfferMessage,
   type AuctionListing,
-} from "@gamenite/shared";
+} from "@gamegalaxy/shared";
 import type { RestAPI, SocketAPI } from "../types.ts";
 import {
   acceptOffer,

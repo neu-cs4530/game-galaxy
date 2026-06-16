@@ -13,7 +13,7 @@ import { createRepo, setDbInitializer } from "./keyv.ts";
 // If a MONGO_STR environment variable is given (or set in `server/.env`),
 // then use MongoDB to create the repository.
 const MONGO_STR = process.env.MONGO_STR || null;
-const MONGO_DB_NAME = process.env.MONGO_DB_NAME || "GameNite";
+const MONGO_DB_NAME = process.env.MONGO_DB_NAME || "gamegalaxy";
 if (MONGO_STR) {
   setDbInitializer(<T>(name: string) => {
     const mongoConnection = new KeyvMongo(MONGO_STR, { collection: name, db: MONGO_DB_NAME });

@@ -1,5 +1,5 @@
 import { GameService } from "./gameServiceManager.ts";
-import { type NimState, type NimView, zNimMove } from "@gamenite/shared";
+import { type NimState, type NimView, zNimMove } from "@gamegalaxy/shared";
 import { type GameLogic } from "./gameLogic.ts";
 
 const START_NIM_OBJECTS = 21;

@@ -1,4 +1,4 @@
-import { type MahjongTile } from "@gamenite/shared/src/games/mahjong.types.ts";
+import { type MahjongTile } from "@gamegalaxy/shared/src/games/mahjong.types.ts";
 
 // ─────────────────────────────────────────────────
 // Constants

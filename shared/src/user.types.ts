@@ -20,7 +20,7 @@ export interface SafeUserInfo {
 }
 
 /**
- * represents a user's avatar representation in GameNite
+ * represents a user's avatar representation in gamegalaxy
  * color - the color of the avatar
  * accessories - the list of accessories owned by the avatar with a boolean indicating if they are being worn
  */

@@ -1,7 +1,7 @@
 import "./ChatPanel.css";
-import MessageCreation from "./MessageCreation.tsx";
-import MessageList from "./MessageList.tsx";
-import useSocketsForChat from "../hooks/useSocketsForChat.ts";
+import MessageCreation from "@gamegalaxy/client/src/components/MessageCreation.tsx";
+import MessageList from "@gamegalaxy/client/src/components/MessageList.tsx";
+import useSocketsForChat from "@gamegalaxy/client/src/hooks/useSocketsForChat.ts";
 
 interface ChatProps {
   chatId: string;

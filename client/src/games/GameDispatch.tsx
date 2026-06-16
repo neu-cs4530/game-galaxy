@@ -1,10 +1,10 @@
-import type { SafeUserInfo, TaggedGameView } from "@gamenite/shared";
-import NimGame from "./NimGame.tsx";
-import GuessGame from "./GuessGame.tsx";
+import type { SafeUserInfo, TaggedGameView } from "@gamegalaxy/shared";
+import NimGame from "@gamegalaxy/client/src/games/NimGame.tsx";
+import GuessGame from "@gamegalaxy/client/src/games/GuessGame.tsx";
 import type { JSX } from "react";
-import useLoginContext from "../hooks/useLoginContext.ts";
-import useAuth from "../hooks/useAuth.ts";
-import MahjongGame from "./MahjongGame.tsx";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth.ts";
+import MahjongGame from "@gamegalaxy/client/src/games/MahjongGame.tsx";
 
 interface GameDispatchProps {
   userPlayerIndex: number;

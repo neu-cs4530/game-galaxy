@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import type { AuctionListing } from "@gamenite/shared";
-import { getAuctions } from "../services/auctionService.ts";
-import useLoginContext from "./useLoginContext.ts";
+import type { AuctionListing } from "@gamegalaxy/shared";
+import { getAuctions } from "@gamegalaxy/client/src/services/auctionService.ts";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
 
 /**
  * Custom hook to fetch the open auction listings and keep them in sync.

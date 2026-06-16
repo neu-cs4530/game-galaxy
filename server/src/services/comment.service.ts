@@ -1,4 +1,4 @@
-import { type CommentInfo } from "@gamenite/shared";
+import { type CommentInfo } from "@gamegalaxy/shared";
 import { populateSafeUserInfo } from "./user.service.ts";
 import { type UserWithId } from "../types.ts";
 import { CommentRepo } from "../repository.ts";

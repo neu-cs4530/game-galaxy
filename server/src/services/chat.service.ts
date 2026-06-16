@@ -1,4 +1,4 @@
-import { type ChatInfo } from "@gamenite/shared";
+import { type ChatInfo } from "@gamegalaxy/shared";
 import { getMessagesById } from "./message.service.ts";
 import { type UserWithId } from "../types.ts";
 import type { ChatRecord, RecordId } from "../models.ts";

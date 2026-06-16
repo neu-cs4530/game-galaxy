@@ -1,8 +1,8 @@
 import { type ChangeEvent, type KeyboardEvent, useState, type SubmitEvent } from "react";
-import useAuth from "./useAuth.ts";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth.ts";
 import { useNavigate } from "react-router-dom";
-import { createThread } from "../services/threadService.ts";
-import useLoginContext from "./useLoginContext.ts";
+import { createThread } from "@gamegalaxy/client/src/services/threadService.ts";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
 
 /**
  * Custom hook to manage thread creation form logic

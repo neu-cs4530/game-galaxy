@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import useLoginContext from "../hooks/useLoginContext.ts";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
 import "./Header.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import { LobbyButton } from "./LobbyButton.tsx";
+import { LobbyButton } from "@gamegalaxy/client/src/components/LobbyButton.tsx";
 import {
   type AuctionAcceptNotification,
   type AuctionOfferNotification,
   type ThreadEvent,
-} from "@gamenite/shared";
+} from "@gamegalaxy/shared";
 import {
   Dropdown,
   DropdownButton,
@@ -15,7 +15,7 @@ import {
   DropdownItem,
   DropdownLinkItem,
   DropdownList,
-} from "./Dropdown.tsx";
+} from "@gamegalaxy/client/src/components/Dropdown.tsx";
 
 /**
  * Header component that renders the main title.

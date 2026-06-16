@@ -4,7 +4,7 @@ import {
   type MahjongMeldResponse,
   type WinInfo,
   zMahjongMove,
-} from "@gamenite/shared/src/games/mahjong.types.ts";
+} from "@gamegalaxy/shared/src/games/mahjong.types.ts";
 import type { GameLogic } from "../gameLogic.ts";
 import { GameService } from "../gameServiceManager.ts";
 import { removeOne, createDeck, shuffle } from "./mahjongTiles.ts";

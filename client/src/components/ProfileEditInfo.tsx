@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { SafeUserInfo } from "@gamenite/shared";
-import useEditProfileForm from "../hooks/useEditProfileForm.ts";
+import type { SafeUserInfo } from "@gamegalaxy/shared";
+import useEditProfileForm from "@gamegalaxy/client/src/hooks/useEditProfileForm.ts";
 
 export default function ProfileEditInfo({ user }: { user: SafeUserInfo }) {
   const [showPass, setShowPass] = useState(false);

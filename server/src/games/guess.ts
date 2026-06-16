@@ -3,7 +3,7 @@ import {
   type GuessView,
   type GuessState,
   type UnfinishedGuessView,
-} from "@gamenite/shared";
+} from "@gamegalaxy/shared";
 import { GameService } from "./gameServiceManager.ts";
 import { type GameLogic } from "./gameLogic.ts";
 

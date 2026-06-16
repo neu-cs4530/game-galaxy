@@ -4,7 +4,7 @@ import {
   type ClientToServerEvents,
   type ServerToClientEvents,
   type TaggedGameView,
-} from "@gamenite/shared";
+} from "@gamegalaxy/shared";
 
 export type SocketAPI = (
   socket: GameServerSocket,

@@ -1,6 +1,6 @@
 import { AuthRepo } from "../repository.ts";
 import type { UserWithId } from "../types.ts";
-import type { UserAuth } from "@gamenite/shared";
+import type { UserAuth } from "@gamegalaxy/shared";
 
 /**
  * Retrieves a single user from the database.

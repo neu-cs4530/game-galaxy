@@ -1,6 +1,6 @@
-import type { ErrorMsg, GameInfo } from "@gamenite/shared";
+import type { ErrorMsg, GameInfo } from "@gamegalaxy/shared";
 import { useEffect, useState } from "react";
-import { gameList } from "../services/gameService.ts";
+import { gameList } from "@gamegalaxy/client/src/services/gameService.ts";
 
 /**
  * Custom hook to get the list of all thread summaries and decide on an

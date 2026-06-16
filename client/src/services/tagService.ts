@@ -1,5 +1,5 @@
-import { api } from "./api.ts";
-import type { ErrorMsg } from "@gamenite/shared";
+import { api } from "@gamegalaxy/client/src/services/api.ts";
+import type { ErrorMsg } from "@gamegalaxy/shared";
 
 const TAG_API_URL = `/api/tag`;
 

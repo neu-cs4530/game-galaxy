@@ -1,5 +1,5 @@
-import type { ErrorMsg, ThreadInfo } from "@gamenite/shared";
-import { threadInfo } from "../services/threadService.ts";
+import type { ErrorMsg, ThreadInfo } from "@gamegalaxy/shared";
+import { threadInfo } from "@gamegalaxy/client/src/services/threadService.ts";
 import { useEffect, useState } from "react";
 
 /**

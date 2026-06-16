@@ -14,7 +14,7 @@ import {
   TagRepo,
 } from "./repository.ts";
 import type { GameRecord, ThreadRecord } from "./models.ts";
-import { createDefaultAvatar } from "@gamenite/shared";
+import { createDefaultAvatar } from "@gamegalaxy/shared";
 import { createChat } from "./services/chat.service.ts";
 import { createUser, updateUser } from "./services/user.service.ts";
 
@@ -121,7 +121,7 @@ async function resetStoredThreads() {
       createdBy: user0id,
       createdAt: new Date(new Date().getTime() - 1.5 * 24 * 60 * 60 * 1000).toISOString(),
       title: "New game: multiplayer number guesser!",
-      text: "GameNite now has an exciting new game: guess! Try it out today: multiple people can join this exciting game, and guess a number between 1 and 100!",
+      text: "gamegalaxy now has an exciting new game: guess! Try it out today: multiple people can join this exciting game, and guess a number between 1 and 100!",
       comments: [],
       tags: ["guess", "multiplayer"],
       reactions: [],

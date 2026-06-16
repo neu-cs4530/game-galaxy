@@ -1,6 +1,6 @@
-import { AccessoryShopDisplay } from "../components/AccessoryShopDisplay";
-import useAccessory from "../hooks/useAccessory";
-import useRoomPresence from "../hooks/useRoomPresence";
+import { AccessoryShopDisplay } from "@gamegalaxy/client/src/components/AccessoryShopDisplay";
+import useAccessory from "@gamegalaxy/client/src/hooks/useAccessory";
+import useRoomPresence from "@gamegalaxy/client/src/hooks/useRoomPresence";
 
 /**
  * renders the shop with all accessories available for purchase.

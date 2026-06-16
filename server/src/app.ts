@@ -14,7 +14,7 @@ import * as auction from "./controllers/auction.controller.ts";
 import * as tag from "./controllers/tag.controller.ts";
 import * as color from "./controllers/color.controller.ts";
 import { type GameServer } from "./types.ts";
-import { withAuth, zThreadEvent } from "@gamenite/shared";
+import { withAuth, zThreadEvent } from "@gamegalaxy/shared";
 
 export const app = express();
 export const httpServer = http.createServer(app);

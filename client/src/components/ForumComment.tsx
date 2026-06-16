@@ -1,9 +1,9 @@
 import "./NewForumComment.css";
 import { type SubmitEvent, useState } from "react";
-import type { CommentInfo, ThreadInfo } from "@gamenite/shared";
-import useAuth from "../hooks/useAuth.ts";
-import useTimeSince from "../hooks/useTimeSince.ts";
-import { editComment } from "../services/threadService.ts";
+import type { CommentInfo, ThreadInfo } from "@gamegalaxy/shared";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth.ts";
+import useTimeSince from "@gamegalaxy/client/src/hooks/useTimeSince.ts";
+import { editComment } from "@gamegalaxy/client/src/services/threadService.ts";
 
 interface ForumCommentProps {
   comment: CommentInfo;

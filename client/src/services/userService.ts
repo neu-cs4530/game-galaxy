@@ -1,5 +1,5 @@
-import { api } from "./api.ts";
-import type { ErrorMsg, SafeUserInfo, UserAuth, UserUpdateRequest } from "@gamenite/shared";
+import { api } from "@gamegalaxy/client/src/services/api.ts";
+import type { ErrorMsg, SafeUserInfo, UserAuth, UserUpdateRequest } from "@gamegalaxy/shared";
 
 const USER_API_URL = `/api/user`;
 

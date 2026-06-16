@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { AccessoryClosetDisplay } from "../components/AccessoryClosetDisplay";
-import AvatarDisplay from "../components/Avatar";
-import useLoginContext from "../hooks/useLoginContext";
-import { getUserById } from "../services/userService.ts";
-import type { Avatar } from "@gamenite/shared";
-import { ColorPicker } from "../components/ColorPicker.tsx";
-import useRoomPresence from "../hooks/useRoomPresence.ts";
+import { AccessoryClosetDisplay } from "@gamegalaxy/client/src/components/AccessoryClosetDisplay.tsx";
+import AvatarDisplay from "@gamegalaxy/client/src/components/Avatar.tsx";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
+import { getUserById } from "@gamegalaxy/client/src/services/userService.ts";
+import type { Avatar } from "@gamegalaxy/shared";
+import { ColorPicker } from "@gamegalaxy/client/src/components/ColorPicker.tsx";
+import useRoomPresence from "@gamegalaxy/client/src/hooks/useRoomPresence.ts";
 
 /**
  * render the accessories owned by this user, and allow them to wear/ remove accessories and change color.

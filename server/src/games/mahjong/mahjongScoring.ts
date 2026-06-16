@@ -5,7 +5,7 @@ import type {
   WinInfo,
   FanEntry,
   MahjongScoring,
-} from "@gamenite/shared/src/games/mahjong.types.ts";
+} from "@gamegalaxy/shared/src/games/mahjong.types.ts";
 import { getSuit, getValue, isWind, isDragon, removeOne } from "./mahjongTiles.ts";
 
 // ── fan point table ───────────────────────────────────────────────────────────

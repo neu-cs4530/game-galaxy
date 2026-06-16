@@ -1,8 +1,8 @@
 import { type ChangeEvent, type SubmitEvent, useState } from "react";
-import { loginUser, signupUser } from "../services/userService.ts";
-import type { AuthContext } from "../contexts/LoginContext.ts";
+import { loginUser, signupUser } from "@gamegalaxy/client/src/services/userService.ts";
+import type { AuthContext } from "@gamegalaxy/client/src/contexts/LoginContext.ts";
 import { useNavigate } from "react-router-dom";
-import type { SafeUserInfo } from "@gamenite/shared";
+import type { SafeUserInfo } from "@gamegalaxy/shared";
 
 /**
  * Custom hook to manage login page logic.

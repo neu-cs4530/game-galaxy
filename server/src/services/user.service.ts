@@ -1,4 +1,4 @@
-import { createDefaultAvatar, type SafeUserInfo, type UserUpdateRequest } from "@gamenite/shared";
+import { createDefaultAvatar, type SafeUserInfo, type UserUpdateRequest } from "@gamegalaxy/shared";
 import { getUserByUsername, updateAuth } from "./auth.service.ts";
 import { UserRepo } from "../repository.ts";
 

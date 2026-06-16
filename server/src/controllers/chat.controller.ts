@@ -1,4 +1,4 @@
-import { withAuth, zNewMessageRequest } from "@gamenite/shared";
+import { withAuth, zNewMessageRequest } from "@gamegalaxy/shared";
 import { type SocketAPI } from "../types.ts";
 import { z } from "zod";
 import { addMessageToChat, forceChatById } from "../services/chat.service.ts";

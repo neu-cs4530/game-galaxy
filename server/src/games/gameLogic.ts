@@ -1,4 +1,4 @@
-import { type TaggedGameView } from "@gamenite/shared";
+import { type TaggedGameView } from "@gamegalaxy/shared";
 
 /**
  * The description of a game's internal logic

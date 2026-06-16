@@ -1,6 +1,6 @@
 import "./ThreadReactions.css";
-import type { ThreadInfo } from "@gamenite/shared";
-import useThreadReactions from "../hooks/useThreadReactions.ts";
+import type { ThreadInfo } from "@gamegalaxy/shared";
+import useThreadReactions from "@gamegalaxy/client/src/hooks/useThreadReactions.ts";
 
 interface ThreadReactionsProps {
   thread: ThreadInfo;

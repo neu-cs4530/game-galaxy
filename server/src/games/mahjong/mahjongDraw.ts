@@ -1,4 +1,4 @@
-import type { MahjongState, MahjongTile } from "@gamenite/shared/src/games/mahjong.types.ts";
+import type { MahjongState, MahjongTile } from "@gamegalaxy/shared/src/games/mahjong.types.ts";
 import { isFlower, sortBySuit } from "./mahjongTiles.ts";
 
 /**

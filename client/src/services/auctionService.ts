@@ -1,5 +1,5 @@
-import { api } from "./api.ts";
-import type { AuctionListing, ErrorMsg } from "@gamenite/shared";
+import { api } from "@gamegalaxy/client/src/services/api.ts";
+import type { AuctionListing, ErrorMsg } from "@gamegalaxy/shared";
 const AUCTION_API_URL = `/api/auction`;
 
 /**

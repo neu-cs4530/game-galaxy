@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import type { AuctionListing } from "@gamenite/shared";
-import useLoginContext from "../hooks/useLoginContext.ts";
-import useAuth from "../hooks/useAuth.ts";
-import useAccessory from "../hooks/useAccessory.ts";
-import useAuctions from "../hooks/useAuctions.ts";
-import { getUserById } from "../services/userService.ts";
-import useRoomPresence from "../hooks/useRoomPresence.ts";
+import type { AuctionListing } from "@gamegalaxy/shared";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth.ts";
+import useAccessory from "@gamegalaxy/client/src/hooks/useAccessory.ts";
+import useAuctions from "@gamegalaxy/client/src/hooks/useAuctions.ts";
+import { getUserById } from "@gamegalaxy/client/src/services/userService.ts";
+import useRoomPresence from "@gamegalaxy/client/src/hooks/useRoomPresence.ts";
 
 const ACCESSORY_SIZE = 160;
 

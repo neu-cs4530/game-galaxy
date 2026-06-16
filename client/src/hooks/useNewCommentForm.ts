@@ -1,8 +1,8 @@
 import { type ChangeEvent, type SubmitEvent, useState } from "react";
-import useAuth from "./useAuth.ts";
-import { addCommentToThread } from "../services/threadService.ts";
-import type { ThreadInfo } from "@gamenite/shared";
-import useLoginContext from "./useLoginContext.ts";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth.ts";
+import { addCommentToThread } from "@gamegalaxy/client/src/services/threadService.ts";
+import type { ThreadInfo } from "@gamegalaxy/shared";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
 
 /**
  * Custom hook to manage comment creation form logic

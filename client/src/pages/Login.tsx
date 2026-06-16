@@ -1,7 +1,7 @@
-import useLoginForm from "../hooks/useLoginForm.ts";
+import useLoginForm from "@gamegalaxy/client/src/hooks/useLoginForm.ts";
 import "./Login.css";
 import { useState } from "react";
-import type { AuthContext } from "../contexts/LoginContext.ts";
+import type { AuthContext } from "@gamegalaxy/client/src/contexts/LoginContext.ts";
 
 interface LoginProps {
   setAuth: (s: AuthContext | null) => void;

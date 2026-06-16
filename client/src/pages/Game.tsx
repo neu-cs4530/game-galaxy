@@ -1,10 +1,10 @@
 import "./Game.css";
 import { useParams } from "react-router-dom";
-import { getGameById } from "../services/gameService.ts";
+import { getGameById } from "@gamegalaxy/client/src/services/gameService.ts";
 import { useEffect, useState } from "react";
-import type { GameInfo } from "@gamenite/shared";
-import ChatPanel from "../components/ChatPanel.tsx";
-import GamePanel from "../components/GamePanel.tsx";
+import type { GameInfo } from "@gamegalaxy/shared";
+import ChatPanel from "@gamegalaxy/client/src/components/ChatPanel.tsx";
+import GamePanel from "@gamegalaxy/client/src/components/GamePanel.tsx";
 
 export default function Game() {
   const { gameId } = useParams();

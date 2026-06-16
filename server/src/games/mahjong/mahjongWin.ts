@@ -1,4 +1,4 @@
-import { type MahjongTile, type MahjongMeld } from "@gamenite/shared/src/games/mahjong.types.ts";
+import { type MahjongTile, type MahjongMeld } from "@gamegalaxy/shared/src/games/mahjong.types.ts";
 import { nextTile, removeOne, sortBySuit, getSuit, getValue } from "./mahjongTiles.ts";
 
 /**

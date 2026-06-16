@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { AuctionListing } from "@gamenite/shared";
+import type { AuctionListing } from "@gamegalaxy/shared";
 import { AccessoryRepo, AuctionRepo, UserRepo } from "../repository.ts";
 import { populateSafeUserInfo, updateCoinCount } from "./user.service.ts";
 

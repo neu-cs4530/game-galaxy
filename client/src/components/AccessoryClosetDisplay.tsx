@@ -1,5 +1,5 @@
-import useAccessory from "../hooks/useAccessory";
-import { WearButton } from "./WearButton";
+import useAccessory from "@gamegalaxy/client/src/hooks/useAccessory";
+import { WearButton } from "@gamegalaxy/client/src/components/WearButton";
 
 interface AccessoryDisplayProps {
   accessories: Record<string, boolean>;

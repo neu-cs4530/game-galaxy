@@ -1,5 +1,5 @@
-import type { UserAuth } from "@gamenite/shared";
-import useLoginContext from "./useLoginContext.ts";
+import type { UserAuth } from "@gamegalaxy/shared";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
 import { useMemo } from "react";
 
 /**

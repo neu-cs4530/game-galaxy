@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { REACTION_EMOJIS, type ReactionEmoji, type ThreadInfo } from "@gamenite/shared";
-import useAuth from "./useAuth.ts";
-import useLoginContext from "./useLoginContext.ts";
-import { reactToThread } from "../services/threadService.ts";
+import { REACTION_EMOJIS, type ReactionEmoji, type ThreadInfo } from "@gamegalaxy/shared";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth.ts";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
+import { reactToThread } from "@gamegalaxy/client/src/services/threadService.ts";
 
 /**
  * A single reaction emoji's aggregate state for display.

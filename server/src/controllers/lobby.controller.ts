@@ -1,4 +1,4 @@
-import { withAuth, type SafeUserInfo } from "@gamenite/shared";
+import { withAuth, type SafeUserInfo } from "@gamegalaxy/shared";
 import { z } from "zod";
 import { type GameServer, type GameServerSocket, type SocketAPI } from "../types.ts";
 import { populateSafeUserInfo } from "../services/user.service.ts";

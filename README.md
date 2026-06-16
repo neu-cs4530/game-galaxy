@@ -3,8 +3,8 @@ The individual and team project for this class are designed to mirror the
 experiences of a software engineer joining a new development team: you will be
 “onboarded” to our codebase, make several individual contributions, and then
 form a team to propose, develop and implement new features. The codebase that
-we'll be developing is GameNite, a website that answers the question "what if
-Twitch, but for correspondence chess?"
+we'll be developing is gamegalaxy, a website that answers the question "what
+if Twitch, but for correspondence chess?"
 
 You will get an opportunity to work with the starter code which provides basic
 skeleton for the app and then additional features will be proposed and
@@ -22,7 +22,7 @@ While you're working on the application, it's useful to run it in "development
 mode" locally. Development mode watches files for changes and updates the
 application when changes happen.
 
-To run gamenite locally in development mode, do one of the following:
+To run gamegalaxy locally in development mode, do one of the following:
 
 1. Run `npm run dev` in the top-level directory
 2. Open two terminal windows

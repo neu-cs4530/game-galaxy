@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import ThreadSummaryView from "../components/ThreadSummaryView.tsx";
-import useThreadList from "../hooks/useThreadList.ts";
+import ThreadSummaryView from "@gamegalaxy/client/src/components/ThreadSummaryView.tsx";
+import useThreadList from "@gamegalaxy/client/src/hooks/useThreadList.ts";
 import { useState } from "react";
-import useTagList from "../hooks/useTagList.ts";
-import useRoomPresence from "../hooks/useRoomPresence.ts";
+import useTagList from "@gamegalaxy/client/src/hooks/useTagList.ts";
+import useRoomPresence from "@gamegalaxy/client/src/hooks/useRoomPresence.ts";
 
 export default function ThreadList() {
   useRoomPresence("forum");

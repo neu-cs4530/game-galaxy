@@ -14,7 +14,7 @@ import {
   zCreateThreadMessage,
   zEditThreadMessage,
   zReactMessage,
-} from "@gamenite/shared";
+} from "@gamegalaxy/shared";
 import { type RestAPI } from "../types.ts";
 import { z } from "zod";
 import { checkAuth } from "../services/auth.service.ts";

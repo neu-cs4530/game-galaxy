@@ -1,4 +1,4 @@
-import { api } from "./api.ts";
+import { api } from "@gamegalaxy/client/src/services/api.ts";
 import type {
   CreateThreadMessage,
   EditThreadMessage,
@@ -7,7 +7,7 @@ import type {
   ThreadInfo,
   ThreadSummary,
   UserAuth,
-} from "@gamenite/shared";
+} from "@gamegalaxy/shared";
 
 const THREAD_API_URL = `/api/thread`;
 

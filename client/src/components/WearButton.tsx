@@ -1,5 +1,5 @@
-import useAuth from "../hooks/useAuth";
-import useLoginContext from "../hooks/useLoginContext";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext";
 
 interface WearButtonProps {
   accessoryId: string;

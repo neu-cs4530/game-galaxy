@@ -1,8 +1,8 @@
-import type { GameKey } from "@gamenite/shared";
+import type { GameKey } from "@gamegalaxy/shared";
 import { type ChangeEvent, type SubmitEvent, useState } from "react";
-import useAuth from "./useAuth.ts";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth.ts";
 import { useNavigate } from "react-router-dom";
-import { createGame } from "../services/gameService.ts";
+import { createGame } from "@gamegalaxy/client/src/services/gameService.ts";
 
 /**
  * Custom hook to manage game creation form logic

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import useLoginContext from "./useLoginContext.ts";
-import useAuth from "./useAuth.ts";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth.ts";
 
 /**
  * Announce that the user is in a specific room, and move their avatar in the lobby

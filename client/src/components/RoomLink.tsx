@@ -10,7 +10,7 @@ interface RoomLinkProps {
 }
 
 /**
- * links this component to a room in GameNite
+ * links this component to a room in gamegalaxy
  * @param sprite - the image to be rendered
  * @param route - the location to which the component should take the user.
  * @param top - the y coordinate of the top left of the sprite, as a % of the total img size

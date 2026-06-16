@@ -1,8 +1,8 @@
 import { useState, type SubmitEvent } from "react";
-import useLoginContext from "./useLoginContext.ts";
-import useAuth from "./useAuth.ts";
-import { updateUser } from "../services/userService.ts";
-import type { UserUpdateRequest } from "@gamenite/shared";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth.ts";
+import { updateUser } from "@gamegalaxy/client/src/services/userService.ts";
+import type { UserUpdateRequest } from "@gamegalaxy/shared";
 
 /**
  * Custom hook to manage profile form logic

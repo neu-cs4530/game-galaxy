@@ -1,5 +1,5 @@
 import { type JSX, useEffect, useRef, useState } from "react";
-import { TimeContext } from "../contexts/TimeContext.tsx";
+import { TimeContext } from "@gamegalaxy/client/src/contexts/TimeContext.tsx";
 
 interface TimeContextKeeperProps {
   updateFrequency: number;

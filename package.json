@@ -1,5 +1,5 @@
 {
-  "name": "gamenite",
+  "name": "gamegalaxy",
   "version": "1.0.0",
   "private": true,
   "workspaces": [
@@ -20,5 +20,9 @@
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
+  },
+  "dependencies": {
+    "@gamegalaxy/client": "^1.0.0",
+    "@gamegalaxy/shared": "^1.0.0"
   }
 }

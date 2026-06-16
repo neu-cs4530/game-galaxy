@@ -2,7 +2,7 @@ import type {
   MahjongState,
   MahjongMeldResponse,
   WinInfo,
-} from "@gamenite/shared/src/games/mahjong.types.ts";
+} from "@gamegalaxy/shared/src/games/mahjong.types.ts";
 import { removeOne, sortBySuit, getSuit, getValue } from "./mahjongTiles.ts";
 import { drawForPlayer } from "./mahjongDraw.ts";
 import { resolveHandWin } from "./mahjongScoring.ts";

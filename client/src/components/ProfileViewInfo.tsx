@@ -1,6 +1,6 @@
-import type { SafeUserInfo } from "@gamenite/shared";
-import useTimeSince from "../hooks/useTimeSince.ts";
-import AvatarDisplay from "./Avatar.tsx";
+import type { SafeUserInfo } from "@gamegalaxy/shared";
+import useTimeSince from "@gamegalaxy/client/src/hooks/useTimeSince.ts";
+import AvatarDisplay from "@gamegalaxy/client/src/components/Avatar.tsx";
 
 export default function ViewInfo({ user }: { user: SafeUserInfo }) {
   const timeSince = useTimeSince();

@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { logInUser } from "./testUtils.ts";
+import { logInUser } from "@gamegalaxy/client/tests/e2e/testUtils.ts";
 
 test.describe("User profile and account", () => {
   const username = "user3";

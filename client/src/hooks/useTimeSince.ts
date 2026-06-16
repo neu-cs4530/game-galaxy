@@ -1,5 +1,5 @@
 import { useCallback, useContext } from "react";
-import { TimeContext } from "../contexts/TimeContext.tsx";
+import { TimeContext } from "@gamegalaxy/client/src/contexts/TimeContext.tsx";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
 import dayjs from "dayjs";

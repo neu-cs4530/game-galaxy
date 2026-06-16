@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import type { SafeUserInfo } from "@gamenite/shared";
-import useLoginContext from "../hooks/useLoginContext.ts";
-import { getUserById } from "../services/userService.ts";
-import ProfileViewInfo from "../components/ProfileViewInfo.tsx";
-import ProfileEditInfo from "../components/ProfileEditInfo.tsx";
+import type { SafeUserInfo } from "@gamegalaxy/shared";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
+import { getUserById } from "@gamegalaxy/client/src/services/userService.ts";
+import ProfileViewInfo from "@gamegalaxy/client/src/components/ProfileViewInfo.tsx";
+import ProfileEditInfo from "@gamegalaxy/client/src/components/ProfileEditInfo.tsx";
 
 export default function Profile() {
   const { user } = useLoginContext();

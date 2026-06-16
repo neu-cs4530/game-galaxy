@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import GameSummaryView from "../components/GameSummaryView.tsx";
-import useGameList from "../hooks/useGameList.ts";
+import GameSummaryView from "@gamegalaxy/client/src/components/GameSummaryView.tsx";
+import useGameList from "@gamegalaxy/client/src/hooks/useGameList.ts";
 
 export default function GameList() {
   const gameList = useGameList();

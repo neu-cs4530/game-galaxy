@@ -5,7 +5,7 @@ import {
   type ReactionInfo,
   type ThreadInfo,
   type ThreadSummary,
-} from "@gamenite/shared";
+} from "@gamegalaxy/shared";
 import { populateSafeUserInfo } from "./user.service.ts";
 import { createComment, editComment, populateCommentInfo } from "./comment.service.ts";
 import { type UserWithId } from "../types.ts";

@@ -1,4 +1,4 @@
-import { type GameInfo, withAuth, zGameKey, zGameMakeMovePayload } from "@gamenite/shared";
+import { type GameInfo, withAuth, zGameKey, zGameMakeMovePayload } from "@gamegalaxy/shared";
 import { type RestAPI, type GameViewUpdates, type SocketAPI, type GameServer } from "../types.ts";
 import {
   addBotToGame,

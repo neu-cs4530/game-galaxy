@@ -1,8 +1,8 @@
 import "./GameSummaryView.css";
-import type { GameInfo } from "@gamenite/shared";
+import type { GameInfo } from "@gamegalaxy/shared";
 import { NavLink, useNavigate } from "react-router-dom";
-import { gameNames } from "../util/consts.ts";
-import useTimeSince from "../hooks/useTimeSince.ts";
+import { gameNames } from "@gamegalaxy/client/src/util/consts.ts";
+import useTimeSince from "@gamegalaxy/client/src/hooks/useTimeSince.ts";
 
 /**
  * Summarizes information for a single game as part of a list of games

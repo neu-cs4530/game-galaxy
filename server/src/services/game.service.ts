@@ -1,4 +1,4 @@
-import { type GameInfo, type GameKey, type TaggedGameView } from "@gamenite/shared";
+import { type GameInfo, type GameKey, type TaggedGameView } from "@gamegalaxy/shared";
 import { createChat } from "./chat.service.ts";
 import { populateSafeUserInfo } from "./user.service.ts";
 import { type GameServicer } from "../games/gameServiceManager.ts";
@@ -8,7 +8,7 @@ import { type GameViewUpdates, type UserWithId } from "../types.ts";
 import { GameRepo } from "../repository.ts";
 import { mahjongGameService } from "../games/mahjong/mahjong.ts";
 import { getBotMove as mahjongBotMove } from "../games/mahjong/mahjongBot.ts";
-import type { MahjongState } from "@gamenite/shared/src/games/mahjong.types.ts";
+import type { MahjongState } from "@gamegalaxy/shared/src/games/mahjong.types.ts";
 
 /**
  * The service interface for individual games

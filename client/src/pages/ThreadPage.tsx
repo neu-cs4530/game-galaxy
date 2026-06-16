@@ -2,14 +2,14 @@ import "./ThreadPage.css";
 import "../components/NewForumComment.css";
 import { useParams } from "react-router-dom";
 import { type SubmitEvent, useState } from "react";
-import useThreadInfo from "../hooks/useThreadInfo.ts";
-import NewForumComment from "../components/NewForumComment.tsx";
-import ForumComment from "../components/ForumComment.tsx";
-import ThreadReactions from "../components/ThreadReactions.tsx";
-import useTimeSince from "../hooks/useTimeSince.ts";
-import useAuth from "../hooks/useAuth.ts";
-import { editThread } from "../services/threadService.ts";
-import useRoomPresence from "../hooks/useRoomPresence.ts";
+import useThreadInfo from "@gamegalaxy/client/src/hooks/useThreadInfo.ts";
+import NewForumComment from "@gamegalaxy/client/src/components/NewForumComment.tsx";
+import ForumComment from "@gamegalaxy/client/src/components/ForumComment.tsx";
+import ThreadReactions from "@gamegalaxy/client/src/components/ThreadReactions.tsx";
+import useTimeSince from "@gamegalaxy/client/src/hooks/useTimeSince.ts";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth.ts";
+import { editThread } from "@gamegalaxy/client/src/services/threadService.ts";
+import useRoomPresence from "@gamegalaxy/client/src/hooks/useRoomPresence.ts";
 
 export default function ThreadPage() {
   useRoomPresence("forum");

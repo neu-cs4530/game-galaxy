@@ -1,7 +1,7 @@
-import useNewThreadForm from "../hooks/useNewThreadForm.ts";
+import useNewThreadForm from "@gamegalaxy/client/src/hooks/useNewThreadForm.ts";
 import { useState } from "react";
-import useTagList from "../hooks/useTagList.ts";
-import useRoomPresence from "../hooks/useRoomPresence.ts";
+import useTagList from "@gamegalaxy/client/src/hooks/useTagList.ts";
+import useRoomPresence from "@gamegalaxy/client/src/hooks/useRoomPresence.ts";
 
 export default function NewThread() {
   useRoomPresence("forum");

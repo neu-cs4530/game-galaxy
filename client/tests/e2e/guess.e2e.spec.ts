@@ -1,5 +1,5 @@
 import { test, expect, type BrowserContext, type Page } from "@playwright/test";
-import { createAndLoadGame } from "./testUtils.ts";
+import { createAndLoadGame } from "@gamegalaxy/client/tests/e2e/testUtils.ts";
 
 let userContext1: BrowserContext;
 let userContext2: BrowserContext;

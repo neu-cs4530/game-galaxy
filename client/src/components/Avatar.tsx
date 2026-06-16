@@ -1,4 +1,4 @@
-import type { Avatar } from "@gamenite/shared";
+import type { Avatar } from "@gamegalaxy/shared";
 
 interface AvatarDisplayProps {
   avatar: Avatar;

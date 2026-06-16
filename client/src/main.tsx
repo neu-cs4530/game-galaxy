@@ -1,7 +1,7 @@
 import "./reset.css";
 import "./main.css";
 import { StrictMode } from "react";
-import App from "./App.tsx";
+import App from "@gamegalaxy/client/src/App.tsx";
 import { createRoot } from "react-dom/client";
 
 // non-nullish assertion is okay here: index.html defines a div with id #root

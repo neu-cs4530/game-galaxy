@@ -1,6 +1,6 @@
-import type { ErrorMsg } from "@gamenite/shared";
+import type { ErrorMsg } from "@gamegalaxy/shared";
 import { useEffect, useState } from "react";
-import { tagList } from "../services/tagService.ts";
+import { tagList } from "@gamegalaxy/client/src/services/tagService.ts";
 
 /**
  * Custom hook to get the list of tags

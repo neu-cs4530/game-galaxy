@@ -1,6 +1,6 @@
-import type { SafeUserInfo } from "@gamenite/shared";
+import type { SafeUserInfo } from "@gamegalaxy/shared";
 import { createContext } from "react";
-import type { GameSocket } from "../util/types.ts";
+import type { GameSocket } from "@gamegalaxy/client/src/util/types.ts";
 
 /**
  * The user information held as part of a login context

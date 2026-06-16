@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import useLoginContext from "./useLoginContext.ts";
-import type { ChatInfo, ChatNewMessagePayload, ChatUserJoinedPayload } from "@gamenite/shared";
-import type { ChatMessage } from "../util/types.ts";
-import useAuth from "./useAuth.ts";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
+import type { ChatInfo, ChatNewMessagePayload, ChatUserJoinedPayload } from "@gamegalaxy/shared";
+import type { ChatMessage } from "@gamegalaxy/client/src/util/types.ts";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth.ts";
 
 /**
  * Custom hook to manage the socket connection for a chat.

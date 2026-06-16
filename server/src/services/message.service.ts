@@ -1,4 +1,4 @@
-import { type MessageInfo } from "@gamenite/shared";
+import { type MessageInfo } from "@gamegalaxy/shared";
 import { populateSafeUserInfo } from "./user.service.ts";
 import { type UserWithId } from "../types.ts";
 import { MessageRepo } from "../repository.ts";

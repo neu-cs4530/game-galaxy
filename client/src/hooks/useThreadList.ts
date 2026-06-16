@@ -1,6 +1,6 @@
-import type { ErrorMsg, ThreadSummary } from "@gamenite/shared";
+import type { ErrorMsg, ThreadSummary } from "@gamegalaxy/shared";
 import { useEffect, useState } from "react";
-import { threadList } from "../services/threadService.ts";
+import { threadList } from "@gamegalaxy/client/src/services/threadService.ts";
 
 /**
  * Custom hook to get the list of all thread summaries

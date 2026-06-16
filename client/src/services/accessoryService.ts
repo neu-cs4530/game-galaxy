@@ -1,5 +1,5 @@
-import { api } from "./api.ts";
-import type { Accessory, ErrorMsg } from "@gamenite/shared";
+import { api } from "@gamegalaxy/client/src/services/api.ts";
+import type { Accessory, ErrorMsg } from "@gamegalaxy/shared";
 const ACCESSORY_API_URL = `/api/accessory`;
 
 /**

@@ -4,8 +4,8 @@ import type {
   MahjongMove,
   MahjongView,
   MahjongMeld,
-} from "@gamenite/shared/src/games/mahjong.types.ts";
-import type { GameProps } from "../util/types.ts";
+} from "@gamegalaxy/shared/src/games/mahjong.types.ts";
+import type { GameProps } from "@gamegalaxy/client/src/util/types.ts";
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 

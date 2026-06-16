@@ -1,4 +1,4 @@
-import type { GameKey, ReactionEmoji, Avatar } from "@gamenite/shared";
+import type { GameKey, ReactionEmoji, Avatar } from "@gamegalaxy/shared";
 
 /**
  * Record identifiers used to look up records in a database. This type

@@ -1,5 +1,5 @@
-import type { NimMove, NimView } from "@gamenite/shared";
-import type { GameProps } from "../util/types.ts";
+import type { NimMove, NimView } from "@gamegalaxy/shared";
+import type { GameProps } from "@gamegalaxy/client/src/util/types.ts";
 
 export default function NimGame({
   view,

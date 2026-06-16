@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import useLoginContext from "./useLoginContext.ts";
-import type { LobbyTablePlayers, SafeUserInfo } from "@gamenite/shared";
-import useAuth from "./useAuth.ts";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
+import type { LobbyTablePlayers, SafeUserInfo } from "@gamegalaxy/shared";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth.ts";
 
 /**
  * Custom hook to manage the socket connection for the players present in a

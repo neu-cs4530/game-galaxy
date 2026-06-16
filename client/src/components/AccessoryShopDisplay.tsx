@@ -1,8 +1,8 @@
-import type { Accessory } from "@gamenite/shared";
-import { BuyButton } from "./BuyButton";
-import useLoginContext from "../hooks/useLoginContext";
+import type { Accessory } from "@gamegalaxy/shared";
+import { BuyButton } from "@gamegalaxy/client/src/components/BuyButton";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext";
 import { useEffect, useState } from "react";
-import useAuth from "../hooks/useAuth";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth";
 
 interface AccessoryDisplayProps {
   accessories: Accessory[];

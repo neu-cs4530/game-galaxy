@@ -3,7 +3,7 @@ import type {
   MahjongMeld,
   MahjongMove,
   MahjongState,
-} from "@gamenite/shared/src/games/mahjong.types.ts";
+} from "@gamegalaxy/shared/src/games/mahjong.types.ts";
 import { getSuit, getValue, removeOne } from "./mahjongTiles.ts";
 import { isWinningHand } from "./mahjongWin.ts";
 

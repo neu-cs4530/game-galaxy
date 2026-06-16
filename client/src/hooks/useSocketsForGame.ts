@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import useAuth from "./useAuth.ts";
-import type { GamePlayInfo, SafeUserInfo, TaggedGameView } from "@gamenite/shared";
-import useLoginContext from "./useLoginContext.ts";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth.ts";
+import type { GamePlayInfo, SafeUserInfo, TaggedGameView } from "@gamegalaxy/shared";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
 
 /**
  * Custom hook to manage socket connection for a game

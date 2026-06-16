@@ -1,6 +1,6 @@
 import { type JSX, useMemo } from "react";
-import { type AuthContext, LoginContext } from "../contexts/LoginContext.ts";
-import type { GameSocket } from "../util/types.ts";
+import { type AuthContext, LoginContext } from "@gamegalaxy/client/src/contexts/LoginContext.ts";
+import type { GameSocket } from "@gamegalaxy/client/src/util/types.ts";
 import { Navigate } from "react-router-dom";
 
 interface LoggedInRouteParams {

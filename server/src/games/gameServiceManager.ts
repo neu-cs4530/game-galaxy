@@ -4,7 +4,7 @@
 // will only receive the same states they send. But we're on our own here:
 // TypeScript isn't helping us make sure types don't get mismatched anymore.
 
-import { type TaggedGameView } from "@gamenite/shared";
+import { type TaggedGameView } from "@gamegalaxy/shared";
 import { type GameViewUpdates } from "../types.ts";
 import { type GameLogic } from "./gameLogic.ts";
 

@@ -1,5 +1,5 @@
-import useNewGameForm from "../hooks/useNewGameForm.ts";
-import { gameNames } from "../util/consts.ts";
+import useNewGameForm from "@gamegalaxy/client/src/hooks/useNewGameForm.ts";
+import { gameNames } from "@gamegalaxy/client/src/util/consts.ts";
 
 export default function NewGame() {
   const { gameKey, handleInputChange, err, handleSubmit } = useNewGameForm();

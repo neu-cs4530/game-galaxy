@@ -1,4 +1,4 @@
-import { type SafeUserInfo, withAuth, zUserAuth, zUserUpdateRequest } from "@gamenite/shared";
+import { type SafeUserInfo, withAuth, zUserAuth, zUserUpdateRequest } from "@gamegalaxy/shared";
 import {
   createUser,
   getUsersByUsername,

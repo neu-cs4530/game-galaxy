@@ -1,4 +1,4 @@
-import { withAuth, type Accessory } from "@gamenite/shared";
+import { withAuth, type Accessory } from "@gamegalaxy/shared";
 import { AccessoryRepo, UserRepo } from "../repository.ts";
 import type { RestAPI, SocketAPI } from "../types.ts";
 import { buyAccessory, removeAccessory, wearAccessory } from "../services/accessory.service.ts";

@@ -1,5 +1,5 @@
 {
-  "name": "@gamenite/client",
+  "name": "@gamegalaxy/client",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -13,7 +13,7 @@
     "playwright": "playwright test --ui"
   },
   "dependencies": {
-    "@gamenite/shared": "^1.0.0",
+    "@gamegalaxy/shared": "^1.0.0",
     "axios": "^1.13.6",
     "dayjs": "^1.11.20",
     "express": "^5.2.1",

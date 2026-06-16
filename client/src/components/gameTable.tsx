@@ -1,5 +1,5 @@
-import useLoginContext from "../hooks/useLoginContext";
-import useAuth from "../hooks/useAuth";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext";
+import useAuth from "@gamegalaxy/client/src/hooks/useAuth";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 

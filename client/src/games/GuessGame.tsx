@@ -1,5 +1,5 @@
-import type { GuessMove, GuessView } from "@gamenite/shared";
-import type { GameProps } from "../util/types.ts";
+import type { GuessMove, GuessView } from "@gamegalaxy/shared";
+import type { GameProps } from "@gamegalaxy/client/src/util/types.ts";
 import { useState } from "react";
 
 export default function GuessGame({

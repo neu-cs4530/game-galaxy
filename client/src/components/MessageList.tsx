@@ -1,8 +1,8 @@
 import "./MessageList.css";
-import useLoginContext from "../hooks/useLoginContext.ts";
-import type { ChatMessage } from "../util/types.ts";
+import useLoginContext from "@gamegalaxy/client/src/hooks/useLoginContext.ts";
+import type { ChatMessage } from "@gamegalaxy/client/src/util/types.ts";
 import { useEffect, useRef } from "react";
-import useTimeSince from "../hooks/useTimeSince.ts";
+import useTimeSince from "@gamegalaxy/client/src/hooks/useTimeSince.ts";
 
 interface MessageListProps {
   messages: ChatMessage[];
