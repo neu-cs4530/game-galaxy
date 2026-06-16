@@ -32,13 +32,13 @@
 }
 
 .tileImage--sm {
-  height: 41px;
+  height: 49px;
 }
 .tileImage--md {
-  height: 50px;
+  height: 59px;
 }
 .tileImage--lg {
-  height: 58px;
+  height: 69px;
 }
 
 .tileImage--clickable {
