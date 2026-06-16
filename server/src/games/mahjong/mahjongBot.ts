@@ -92,7 +92,7 @@ export function getBotMeldResponse(
  * @returns the move to submit, or null if the bot need not act
  */
 export function getBotMove(state: MahjongState, playerIndex: number): MahjongMove | null {
-  if (state.phase === "ended") return null;
+  if (state.phase === "done") return null;
 
   // auto-vote yes during voting phase
   if (state.phase === "voting") {

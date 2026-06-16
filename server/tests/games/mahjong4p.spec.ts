@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mahjongLogic } from "../../src/games/mahjong/mahjong3p.ts";
+import { mahjongLogic } from "../../src/games/mahjong/mahjong4p.ts";
 import type { MahjongState } from "@gamenite/shared/src/games/mahjong.types.ts";
 
 // new required fields shared by all test states
@@ -7,8 +7,8 @@ const BASE = {
   roundWind: "ew" as const,
   afterKong: false,
   consecutiveKongsThisTurn: 0,
-  scores: [0, 0, 0],
-  playAgainVotes: [null, null, null] as (boolean | null)[],
+  scores: [0, 0, 0, 0],
+  playAgainVotes: [null, null, null, null] as (boolean | null)[],
   initialDealer: 0,
 };
 
@@ -19,14 +19,15 @@ const discardState: MahjongState = {
     ["1c", "2c", "3c", "4c", "5c", "6c", "7c", "8c", "9c", "1d", "2d", "3d", "4d", "5d"],
     ["1b", "2b", "3b", "4b", "5b", "6b", "7b", "8b", "9b", "1c", "2c", "3c", "4c"],
     ["1d", "2d", "3d", "4d", "5d", "6d", "7d", "8d", "9d", "1b", "2b", "3b", "4b"],
+    ["ew", "sw", "ww", "nw", "rd", "gd", "wd", "1c", "2c", "3c", "4c", "5c", "6c"],
   ],
-  melds: [[], [], []],
-  flowers: [[], [], []],
+  melds: [[], [], [], []],
+  flowers: [[], [], [], []],
   discardPile: [],
   currentPlayer: 0,
   lastDiscard: null,
   phase: "discard",
-  meldResponses: [null, null, null],
+  meldResponses: [null, null, null, null],
   dealer: 0,
   winner: null,
 };
@@ -38,14 +39,15 @@ const meldWindowState: MahjongState = {
     ["1c", "2c", "4c", "5c", "6c", "7c", "8c", "9c", "1d", "2d", "3d", "4d", "5d"],
     ["1c", "2c", "4b", "5b", "6b", "7b", "8b", "9b", "1d", "2d", "3d", "4d", "5d"],
     ["3c", "3c", "4d", "5d", "6d", "7d", "8d", "9d", "1b", "2b", "3b", "4b", "5b"],
+    ["3c", "3c", "3c", "ew", "sw", "ww", "nw", "rd", "gd", "wd", "1d", "2d", "3d"],
   ],
-  melds: [[], [], []],
-  flowers: [[], [], []],
+  melds: [[], [], [], []],
+  flowers: [[], [], [], []],
   discardPile: [],
   currentPlayer: 0,
   lastDiscard: "3c",
   phase: "meld_window",
-  meldResponses: [{ type: "pass" }, null, null],
+  meldResponses: [{ type: "pass" }, null, null, null],
   dealer: 0,
   winner: null,
 };
@@ -54,36 +56,37 @@ const meldWindowState: MahjongState = {
 
 describe("mahjongLogic.start", () => {
   it("should deal 14 tiles to the dealer and 13 to each other player", () => {
-    const state = mahjongLogic.start(3);
+    const state = mahjongLogic.start(4);
     expect(state.hands[0]).toHaveLength(14);
     expect(state.hands[1]).toHaveLength(13);
     expect(state.hands[2]).toHaveLength(13);
+    expect(state.hands[3]).toHaveLength(13);
   });
 
   it("should start in discard phase with the dealer as current player", () => {
-    const state = mahjongLogic.start(3);
+    const state = mahjongLogic.start(4);
     expect(state.phase).toBe("discard");
     expect(state.currentPlayer).toBe(0);
     expect(state.dealer).toBe(0);
   });
 
   it("should start with empty melds, flowers, and discard pile", () => {
-    const state = mahjongLogic.start(3);
-    expect(state.melds).toStrictEqual([[], [], []]);
+    const state = mahjongLogic.start(4);
+    expect(state.melds).toStrictEqual([[], [], [], []]);
     expect(state.discardPile).toHaveLength(0);
     expect(state.lastDiscard).toBeNull();
     expect(state.winner).toBeNull();
   });
 
   it("should initialise scores, votes, and round wind", () => {
-    const state = mahjongLogic.start(3);
-    expect(state.scores).toStrictEqual([0, 0, 0]);
-    expect(state.playAgainVotes).toStrictEqual([null, null, null]);
+    const state = mahjongLogic.start(4);
+    expect(state.scores).toStrictEqual([0, 0, 0, 0]);
+    expect(state.playAgainVotes).toStrictEqual([null, null, null, null]);
     expect(state.roundWind).toBe("ew");
   });
 
   it("should place any flower tiles drawn during the deal into flowers, not hands", () => {
-    const state = mahjongLogic.start(3);
+    const state = mahjongLogic.start(4);
     const flowerIds = ["f1", "f2", "f3", "f4", "s1", "s2", "s3", "s4"];
     for (const hand of state.hands) {
       for (const tile of hand) {
@@ -114,6 +117,7 @@ describe("mahjongLogic.update — discard phase", () => {
     expect(result?.meldResponses[0]).toStrictEqual({ type: "pass" });
     expect(result?.meldResponses[1]).toBeNull();
     expect(result?.meldResponses[2]).toBeNull();
+    expect(result?.meldResponses[3]).toBeNull();
   });
 
   it("should reject a discard from a player who is not the current player", () => {
@@ -135,6 +139,7 @@ describe("mahjongLogic.update — discard phase", () => {
         ["1c", "2c", "3c", "4c", "5c", "6c", "7c", "8c", "9c", "1d", "2d", "3d", "4d", "4d"],
         discardState.hands[1],
         discardState.hands[2],
+        discardState.hands[3],
       ],
     };
     const result = mahjongLogic.update(winState, { type: "win" }, 0);
@@ -158,6 +163,7 @@ describe("mahjongLogic.update — discard phase", () => {
         ["1c", "1c", "1c", "1c", "2c", "3c", "4c", "5c", "6c", "7c", "8c", "9c", "1d", "2d"],
         discardState.hands[1],
         discardState.hands[2],
+        discardState.hands[3],
       ],
     };
     const result = mahjongLogic.update(kongState, { type: "kong", tile: "1c" }, 0);
@@ -174,8 +180,9 @@ describe("mahjongLogic.update — discard phase", () => {
         ["1c", "2c", "3c", "4c", "5c", "6c", "7c", "8c", "9c", "1d", "2d", "3d", "4d", "5d"],
         discardState.hands[1],
         discardState.hands[2],
+        discardState.hands[3],
       ],
-      melds: [[{ type: "pong", tiles: ["4d", "4d", "4d"], concealed: false }], [], []],
+      melds: [[{ type: "pong", tiles: ["4d", "4d", "4d"], concealed: false }], [], [], []],
     };
     const result = mahjongLogic.update(promotedKongState, { type: "kong", tile: "4d" }, 0);
     expect(result?.melds[0][0].type).toBe("kong");
@@ -204,7 +211,7 @@ describe("mahjongLogic.update — meld window", () => {
   it("should reject a response from a player who already responded", () => {
     const alreadyResponded: MahjongState = {
       ...meldWindowState,
-      meldResponses: [{ type: "pass" }, { type: "pass" }, null],
+      meldResponses: [{ type: "pass" }, { type: "pass" }, null, null],
     };
     expect(mahjongLogic.update(alreadyResponded, { type: "pass" }, 1)).toBeNull();
   });
@@ -214,8 +221,9 @@ describe("mahjongLogic.update — meld window", () => {
       ...meldWindowState,
       hands: [
         meldWindowState.hands[0],
-        ["1c", "2c", "4b", "5b", "6b", "7b", "8b", "9b", "1d", "2d", "3d", "1d", "1d"],
+        ["1b", "2b", "3b", "4b", "5b", "6b", "7b", "8b", "9b", "1c", "2c", "1d", "1d"],
         meldWindowState.hands[2],
+        meldWindowState.hands[3],
       ],
       lastDiscard: "3c",
     };
@@ -229,7 +237,8 @@ describe("mahjongLogic.update — meld window", () => {
 
   it("should resolve and add discard to pile when all players pass", () => {
     const after1 = mahjongLogic.update(meldWindowState, { type: "pass" }, 1)!;
-    const result = mahjongLogic.update(after1, { type: "pass" }, 2)!;
+    const after2 = mahjongLogic.update(after1, { type: "pass" }, 2)!;
+    const result = mahjongLogic.update(after2, { type: "pass" }, 3)!;
     expect(result.phase).toBe("discard");
     expect(result.discardPile).toContain("3c");
     expect(result.lastDiscard).toBeNull();
@@ -239,25 +248,29 @@ describe("mahjongLogic.update — meld window", () => {
 
   it("should resolve a pong when all players respond", () => {
     const after1 = mahjongLogic.update(meldWindowState, { type: "pass" }, 1)!;
-    const result = mahjongLogic.update(after1, { type: "meld", with: ["3c", "3c"] }, 2)!;
+    const after2 = mahjongLogic.update(after1, { type: "meld", with: ["3c", "3c"] }, 2)!;
+    const result = mahjongLogic.update(after2, { type: "pass" }, 3)!;
     expect(result.phase).toBe("discard");
     expect(result.currentPlayer).toBe(2);
     expect(result.melds[2][0].type).toBe("pong");
     expect(result.melds[2][0].tiles).toStrictEqual(["3c", "3c", "3c"]);
     expect(result.hands[2]).toHaveLength(meldWindowState.hands[2].length - 2);
+    expect(result.discardPile).toHaveLength(meldWindowState.discardPile.length);
   });
 
   it("should resolve a seung for the player immediately left of the discarder", () => {
     const after1 = mahjongLogic.update(meldWindowState, { type: "meld", with: ["1c", "2c"] }, 1)!;
-    const result = mahjongLogic.update(after1, { type: "pass" }, 2)!;
+    const after2 = mahjongLogic.update(after1, { type: "pass" }, 2)!;
+    const result = mahjongLogic.update(after2, { type: "pass" }, 3)!;
     expect(result.phase).toBe("discard");
     expect(result.currentPlayer).toBe(1);
     expect(result.melds[1][0].type).toBe("seung");
+    expect(result.discardPile).toHaveLength(meldWindowState.discardPile.length);
   });
 
   it("should reject a seung from a player who is not left of the discarder", () => {
     expect(
-      mahjongLogic.update(meldWindowState, { type: "meld", with: ["1c", "2c"] }, 2),
+      mahjongLogic.update(meldWindowState, { type: "meld", with: ["1c", "2c"] }, 3),
     ).toBeNull();
   });
 
@@ -269,34 +282,34 @@ describe("mahjongLogic.update — meld window", () => {
 
   it("should reject a 2-tile meld that is neither a valid pong nor a valid seung", () => {
     expect(
-      mahjongLogic.update(meldWindowState, { type: "meld", with: ["4b", "5b"] }, 2),
+      mahjongLogic.update(meldWindowState, { type: "meld", with: ["ew", "sw"] }, 3),
+    ).toBeNull();
+  });
+
+  it("should reject a 3-tile meld where the tiles don't all match the discard", () => {
+    expect(
+      mahjongLogic.update(meldWindowState, { type: "meld", with: ["3c", "3c", "1d"] }, 3),
     ).toBeNull();
   });
 
   it("should prefer pong over seung when both are claimed", () => {
     const after1 = mahjongLogic.update(meldWindowState, { type: "meld", with: ["1c", "2c"] }, 1)!;
-    const result = mahjongLogic.update(after1, { type: "meld", with: ["3c", "3c"] }, 2)!;
+    const after2 = mahjongLogic.update(after1, { type: "meld", with: ["3c", "3c"] }, 2)!;
+    const result = mahjongLogic.update(after2, { type: "pass" }, 3)!;
     expect(result.currentPlayer).toBe(2);
     expect(result.melds[2][0].type).toBe("pong");
     expect(result.melds[1]).toHaveLength(0);
   });
 
   it("should resolve a kong from discard and draw a replacement", () => {
-    const kongState: MahjongState = {
-      ...meldWindowState,
-      hands: [
-        meldWindowState.hands[0],
-        meldWindowState.hands[1],
-        ["3c", "3c", "3c", "5d", "6d", "7d", "8d", "9d", "1b", "2b", "3b", "4b", "5b"],
-      ],
-    };
-    const after1 = mahjongLogic.update(kongState, { type: "pass" }, 1)!;
-    const result = mahjongLogic.update(after1, { type: "meld", with: ["3c", "3c", "3c"] }, 2)!;
+    const after1 = mahjongLogic.update(meldWindowState, { type: "pass" }, 1)!;
+    const after2 = mahjongLogic.update(after1, { type: "pass" }, 2)!;
+    const result = mahjongLogic.update(after2, { type: "meld", with: ["3c", "3c", "3c"] }, 3)!;
     expect(result.phase).toBe("discard");
-    expect(result.currentPlayer).toBe(2);
-    expect(result.melds[2][0].type).toBe("kong");
-    expect(result.melds[2][0].tiles).toStrictEqual(["3c", "3c", "3c", "3c"]);
-    expect(result.hands[2]).toHaveLength(kongState.hands[2].length - 2);
+    expect(result.currentPlayer).toBe(3);
+    expect(result.melds[3][0].type).toBe("kong");
+    expect(result.melds[3][0].tiles).toStrictEqual(["3c", "3c", "3c", "3c"]);
+    expect(result.hands[3]).toHaveLength(meldWindowState.hands[3].length - 2);
   });
 
   it("should return null when in done phase", () => {
@@ -312,7 +325,7 @@ describe("mahjongLogic.update — voting phase", () => {
     ...discardState,
     phase: "voting",
     winner: 0,
-    playAgainVotes: [null, null, null],
+    playAgainVotes: [null, null, null, null],
   };
 
   it("should record a yes vote without starting a new hand", () => {
@@ -324,14 +337,16 @@ describe("mahjongLogic.update — voting phase", () => {
   it("should end the game immediately on a no vote", () => {
     const result = mahjongLogic.update(votingState, { type: "playAgain", vote: false }, 1);
     expect(result?.phase).toBe("done");
+    expect(result?.playAgainVotes[1]).toBe(false);
   });
 
-  it("should start a new hand when all three players vote yes", () => {
+  it("should start a new hand when all players vote yes", () => {
     let s = mahjongLogic.update(votingState, { type: "playAgain", vote: true }, 0)!;
     s = mahjongLogic.update(s, { type: "playAgain", vote: true }, 1)!;
-    const result = mahjongLogic.update(s, { type: "playAgain", vote: true }, 2)!;
+    s = mahjongLogic.update(s, { type: "playAgain", vote: true }, 2)!;
+    const result = mahjongLogic.update(s, { type: "playAgain", vote: true }, 3)!;
     expect(result.phase).toBe("discard");
-    expect(result.playAgainVotes).toStrictEqual([null, null, null]);
+    expect(result.playAgainVotes).toStrictEqual([null, null, null, null]);
   });
 
   it("should reject a non-playAgain move during voting", () => {
@@ -366,6 +381,7 @@ describe("mahjongLogic.viewAs", () => {
     expect(view.players[0].hand).toStrictEqual(discardState.hands[0]);
     expect(view.players[1].hand).toHaveLength(0);
     expect(view.players[2].hand).toHaveLength(0);
+    expect(view.players[3].hand).toHaveLength(0);
   });
 
   it("should show no hands to a watcher (playerIndex -1)", () => {
@@ -382,20 +398,27 @@ describe("mahjongLogic.viewAs", () => {
     expect(view.lastDiscard).toBe("3c");
   });
 
+  it("should expose wall size, discard pile, melds, and flowers", () => {
+    const view = mahjongLogic.viewAs(meldWindowState, 0);
+    expect(view.wallSize).toBe(meldWindowState.wall.length);
+    expect(view.discardPile).toStrictEqual(meldWindowState.discardPile);
+    expect(view.meldResponses).toStrictEqual(meldWindowState.meldResponses);
+  });
+
   it("should expose scores, seatWinds, and playAgainVotes", () => {
     const view = mahjongLogic.viewAs(discardState, 0);
-    expect(view.scores).toStrictEqual([0, 0, 0]);
-    expect(view.seatWinds).toHaveLength(3);
-    expect(view.playAgainVotes).toStrictEqual([null, null, null]);
+    expect(view.scores).toStrictEqual([0, 0, 0, 0]);
+    expect(view.seatWinds).toHaveLength(4);
+    expect(view.playAgainVotes).toStrictEqual([null, null, null, null]);
   });
 });
 
 // ── tagView and getWinners ────────────────────────────────────────────────────
 
 describe("mahjongLogic.tagView", () => {
-  it("should tag the view with type mahjong3p", () => {
+  it("should tag the view with type mahjong4p", () => {
     const view = mahjongLogic.viewAs(discardState, 0);
-    expect(mahjongLogic.tagView(view)).toStrictEqual({ type: "mahjong3p", view });
+    expect(mahjongLogic.tagView(view)).toStrictEqual({ type: "mahjong4p", view });
   });
 });
 
