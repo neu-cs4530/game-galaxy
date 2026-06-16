@@ -131,6 +131,7 @@ export interface ThreadRecord {
  * - `avatar` : the avatar representing this user.
  * - `balance`: the user's coin amount
  * - `wins`: the amount of games the user won
+ * - `losses`: the amount of games the user lost
  */
 export interface UserRecord {
   username: string; // References Auth records
@@ -139,6 +140,7 @@ export interface UserRecord {
   avatar: Avatar;
   balance: number;
   wins: number;
+  losses: number;
 }
 
 /**

@@ -11,7 +11,14 @@ const baseAvatar = {
   },
 };
 const auth1 = { username: "user1", password: "pwd1111" };
-const user1 = { username: "user1", display: "Yāo", avatar: baseAvatar, balance: 100, wins: 0 };
+const user1 = {
+  username: "user1",
+  display: "Yāo",
+  avatar: baseAvatar,
+  balance: 100,
+  wins: 0,
+  losses: 0,
+};
 const auth2 = { username: "user2", password: "pwd2222" };
 const user2 = {
   username: "user2",
@@ -19,6 +26,7 @@ const user2 = {
   avatar: baseAvatar,
   balance: 100,
   wins: 0,
+  losses: 0,
 };
 
 describe("GET /api/user/:id", () => {
@@ -178,6 +186,7 @@ describe("POST /api/user/signup", () => {
       },
       balance: 0,
       wins: 0,
+      losses: 0,
     });
   });
 

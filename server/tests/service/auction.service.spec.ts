@@ -56,4 +56,78 @@ describe("auction.service", () => {
 
     await expect(acceptOffer(auctioneer, SEEDED_AUCTION, offerId)).rejects.toThrow();
   });
+  it("createAuction rejects duplicate listing for same item", async () => {
+    const auctioneer = await idOf("auctioneer");
+    // auctioneer already has SEEDED_AUCTION open for hat-01
+    await expect(createAuction(auctioneer, "hat-01", 20)).rejects.toThrow("already up for auction");
+  });
+
+  it("makeOffer rejects bidder who already owns the item", async () => {
+    // auctioneer owns hat-01 and SEEDED_AUCTION is listing hat-01
+    // need a user who already owns hat-01 — seed one or use auctioneer's item on another auction
+    const user1 = await idOf("user1");
+    // give user1 hat-01 directly then try to bid
+    const user1Record = await UserRepo.get(user1);
+    user1Record.avatar.accessories["hat-01"] = false;
+    await UserRepo.set(user1, user1Record);
+    await expect(makeOffer(user1, SEEDED_AUCTION, 10)).rejects.toThrow("already own");
+  });
+
+  it("makeOffer rejects bid on a closed auction", async () => {
+    const user1 = await idOf("user1");
+    const auctioneer = await idOf("auctioneer");
+
+    await makeOffer(user1, SEEDED_AUCTION, 30);
+    const listing = (await getOpenAuctions()).find((l) => l.auctionId === SEEDED_AUCTION)!;
+    await acceptOffer(auctioneer, SEEDED_AUCTION, listing.offers[0].offerId);
+
+    const user2 = await idOf("user2"); // any other user
+    await expect(makeOffer(user2, SEEDED_AUCTION, 10)).rejects.toThrow("no longer open");
+  });
+
+  it("acceptOffer rejects when caller is not the seller", async () => {
+    const user1 = await idOf("user1");
+    await makeOffer(user1, SEEDED_AUCTION, 10);
+    const listing = (await getOpenAuctions()).find((l) => l.auctionId === SEEDED_AUCTION)!;
+    const offerId = listing.offers[0].offerId;
+
+    await expect(acceptOffer(user1, SEEDED_AUCTION, offerId)).rejects.toThrow("your own listing");
+  });
+
+  it("acceptOffer rejects when the auction is already closed", async () => {
+    const user1 = await idOf("user1");
+    const auctioneer = await idOf("auctioneer");
+
+    await makeOffer(user1, SEEDED_AUCTION, 30);
+    const listing = (await getOpenAuctions()).find((l) => l.auctionId === SEEDED_AUCTION)!;
+    const offerId = listing.offers[0].offerId;
+    await acceptOffer(auctioneer, SEEDED_AUCTION, offerId);
+
+    await expect(acceptOffer(auctioneer, SEEDED_AUCTION, offerId)).rejects.toThrow(
+      "no longer open",
+    );
+  });
+
+  it("acceptOffer rejects a nonexistent offer id", async () => {
+    const auctioneer = await idOf("auctioneer");
+    await expect(acceptOffer(auctioneer, SEEDED_AUCTION, "bad-offer-id")).rejects.toThrow(
+      "no longer exists",
+    );
+  });
+
+  it("acceptOffer rejects when the seller no longer owns the item", async () => {
+    const user1 = await idOf("user1");
+    const auctioneer = await idOf("auctioneer");
+
+    await makeOffer(user1, SEEDED_AUCTION, 30);
+    const listing = (await getOpenAuctions()).find((l) => l.auctionId === SEEDED_AUCTION)!;
+    const offerId = listing.offers[0].offerId;
+
+    // remove hat-01 from auctioneer's closet directly
+    const auctioneerRecord = await UserRepo.get(auctioneer);
+    delete auctioneerRecord.avatar.accessories["hat-01"];
+    await UserRepo.set(auctioneer, auctioneerRecord);
+
+    await expect(acceptOffer(auctioneer, SEEDED_AUCTION, offerId)).rejects.toThrow("no longer own");
+  });
 });

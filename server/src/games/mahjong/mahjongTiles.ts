@@ -4,10 +4,10 @@ import { type MahjongTile } from "@gamenite/shared/src/games/mahjong.types.ts";
 // Constants
 // ─────────────────────────────────────────────────
 
-const SUITS = ["d", "b", "c"] as const; // dots, bamboo, characters
-const WINDS = ["ew", "sw", "ww", "nw"] as const;
-const DRAGONS = ["rd", "gd", "wd"] as const;
-const FLOWERS = ["f1", "f2", "f3", "f4", "s1", "s2", "s3", "s4"] as const;
+const SUITS = ["d", "b", "c"] as const; // dots, bamboo, characters letter followed by number
+const WINDS = ["ew", "sw", "ww", "nw"] as const; // first letter is the cardinal direction
+const DRAGONS = ["rd", "gd", "wd"] as const; // red dragon, green dragon, white dragon
+const FLOWERS = ["f1", "f2", "f3", "f4", "s1", "s2", "s3", "s4"] as const; // flowers and seasons
 
 // ─────────────────────────────────────────────────
 // Helpers

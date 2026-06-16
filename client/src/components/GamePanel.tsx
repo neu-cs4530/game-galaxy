@@ -1,4 +1,5 @@
 import "./GamePanel.css";
+import { Link } from "react-router-dom";
 import type { GameInfo } from "@gamenite/shared";
 import { gameNames } from "../util/consts.ts";
 import useLoginContext from "../hooks/useLoginContext.ts";
@@ -57,7 +58,7 @@ export default function GamePanel({
             gap: "0.5rem",
           }}
         >
-          {userPlayerIndex >= 0 && !view && (
+          {userPlayerIndex >= 0 && !view && type === "mahjong" && (
             <button className="secondary narrow" onClick={addBot}>
               Add Bot
             </button>
@@ -80,6 +81,24 @@ export default function GamePanel({
         </div>
       ) : (
         <div className="gameFrame waiting content">waiting for game to begin</div>
+      )}
+      {type === "mahjong" && (
+        <div>
+          <div>
+            If you are new to mahjong, feel free to check out the game rules{" "}
+            <Link to="/mahjongRules" style={{ color: "white" }}>
+              here
+            </Link>
+            !
+          </div>
+          <div>
+            For more details on scoring, click{" "}
+            <Link to="/mahjongScoring" style={{ color: "white" }}>
+              here
+            </Link>
+            !
+          </div>
+        </div>
       )}
     </div>
   ) : (

@@ -3,8 +3,10 @@ import ThreadSummaryView from "../components/ThreadSummaryView.tsx";
 import useThreadList from "../hooks/useThreadList.ts";
 import { useState } from "react";
 import useTagList from "../hooks/useTagList.ts";
+import useRoomPresence from "../hooks/useRoomPresence.ts";
 
 export default function ThreadList() {
+  useRoomPresence("forum");
   const threadList = useThreadList();
   const navigate = useNavigate();
   const [newestFirst, setNewestFirst] = useState(true);

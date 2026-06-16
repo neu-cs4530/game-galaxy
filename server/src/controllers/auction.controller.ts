@@ -70,11 +70,13 @@ export const socketAcceptOffer: SocketAPI = (socket, io) => async (body) => {
   try {
     const { auth, payload } = withAuth(zAcceptOfferMessage).parse(body);
     const user = await enforceAuth(auth);
-    const { buyerUsername, accessoryName, sellerNewBalance, buyerNewBalance } = await acceptOffer(
-      user.userId,
-      payload.auctionId,
-      payload.offerId,
-    );
+    const {
+      buyerUsername,
+      accessoryName,
+      sellerNewBalance,
+      buyerNewBalance,
+      losingBidderUsernames,
+    } = await acceptOffer(user.userId, payload.auctionId, payload.offerId);
     socket.emit("balanceUpdated", { balance: sellerNewBalance });
     io.emit("auctionsUpdated");
     io.emit("auctionOfferAccepted", {
@@ -82,6 +84,7 @@ export const socketAcceptOffer: SocketAPI = (socket, io) => async (body) => {
       auctionId: payload.auctionId,
       accessoryName,
       newBalance: buyerNewBalance,
+      losingBidders: losingBidderUsernames,
     });
   } catch (err) {
     logSocketError(socket, err);

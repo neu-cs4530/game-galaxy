@@ -23,7 +23,7 @@ export const nimLogic: GameLogic<NimState, NimView> = {
   tagView: (view) => ({ type: "nim", view }),
   getWinners: ({ remaining, nextPlayer }) => {
     if (!nimLogic.isDone({ remaining, nextPlayer })) return [-1];
-    return nextPlayer === 1 ? [0] : [1];
+    return [nextPlayer];
   },
 };
 

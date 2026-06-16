@@ -59,10 +59,13 @@ export default function Header() {
       winner,
       accessoryName,
       newBalance,
+      losingBidders,
     }: AuctionAcceptNotification) => {
       if (winner === user.username) {
         pushAuctionNotif(`Your offer on ${accessoryName} was accepted!`);
         setCoins(newBalance);
+      } else if (losingBidders.includes(user.username)) {
+        pushAuctionNotif(`The ${accessoryName} was sold to someone else`);
       }
     };
 

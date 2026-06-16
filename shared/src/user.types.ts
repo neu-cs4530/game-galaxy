@@ -7,6 +7,7 @@ import { z } from "zod";
  * - `display`: A display name
  * - `createdAt`: when this when the user registered.
  * - `wins`: the amount of games the user won
+ * - `losses`: the amount of games the user lost
  */
 export interface SafeUserInfo {
   username: string;
@@ -15,6 +16,7 @@ export interface SafeUserInfo {
   avatar: Avatar;
   balance: number;
   wins: number;
+  losses: number;
 }
 
 /**

@@ -34,6 +34,8 @@ export interface ClientToServerEvents {
   shopBuyAccessory: (payload: WithAuth<string>) => void;
   lobbyJoin: (payload: WithAuth<string>) => void;
   lobbyLeave: (payload: WithAuth<string>) => void;
+  roomJoin: (payload: WithAuth<string>) => void;
+  roomLeave: (payload: WithAuth<string>) => void;
   wearAccessory: (payload: WithAuth<string>) => void;
   removeAccessory: (payload: WithAuth<string>) => void;
   changeColor: (payload: WithAuth<string>) => void;
@@ -58,6 +60,7 @@ export interface ServerToClientEvents {
   threadUpdate: (payload: ThreadEvent) => void;
   lobbyPlayersUpdated: (payload: SafeUserInfo[]) => void;
   lobbyTablesUpdated: (payload: LobbyTablePlayers[]) => void;
+  roomPresenceUpdated: (payload: Record<string, SafeUserInfo[]>) => void;
   auctionsUpdated: () => void;
   auctionOfferReceived: (payload: AuctionOfferNotification) => void;
   auctionOfferAccepted: (payload: AuctionAcceptNotification) => void;

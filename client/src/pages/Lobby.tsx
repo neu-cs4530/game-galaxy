@@ -6,6 +6,7 @@ import ChatPanel from "../components/ChatPanel";
 import AvatarDisplayLobby from "../components/AvatarLobby";
 import useSocketsForLobbyPlayers from "../hooks/useSocketsForLobbyPlayers";
 import { useNavigate } from "react-router-dom";
+import type { SafeUserInfo } from "@gamenite/shared";
 
 // Where each player's avatar is placed in the lobby, in join order. Add an
 // entry here to make room for more simultaneous players.
@@ -13,9 +14,35 @@ const LOBBY_AVATAR_POSITIONS = [
   { top: "60%", left: "15%" },
   { top: "64%", left: "11%" },
   { top: "68%", left: "7%" },
+
   { top: "65%", left: "20%" },
   { top: "69%", left: "16%" },
   { top: "73%", left: "12%" },
+
+  { top: "70%", left: "25%" },
+  { top: "74%", left: "21%" },
+  { top: "78%", left: "17%" },
+
+  { top: "75%", left: "30%" },
+  { top: "79%", left: "26%" },
+  { top: "83%", left: "22%" },
+];
+
+const FORUM_POSITIONS = [
+  { top: "20%", left: "50%" },
+  { top: "22%", left: "49%" },
+  { top: "22%", left: "46%" },
+];
+
+const AUCTION_POSITIONS = [
+  { top: "24%", left: "72%" },
+  { top: "23%", left: "65%" },
+  { top: "21%", left: "68%" },
+];
+
+const SHOP_CLOSET_POSITIONS = [
+  { top: "24%", left: "18%" },
+  { top: "26%", left: "22%" },
 ];
 
 const NIM_POSITIONS = [
@@ -30,50 +57,48 @@ const NUMBER_GUESSER_POSITIONS = [
   { top: "50%", left: "70%" },
 ];
 
-// Where seated players are placed, per table
-const tablePositions: Record<string, { top: string; left: string }[]> = {
+const MAHJONG_POSITIONS = [
+  { top: "37%", left: "52.5%" },
+  { top: "40%", left: "55%" },
+  { top: "40%", left: "48%" },
+  { top: "39%", left: "54.5%" },
+  { top: "39%", left: "50.5%" },
+];
+
+const roomPositions: Record<string, { top: string; left: string }[]> = {
+  lobby: LOBBY_AVATAR_POSITIONS,
+  forum: FORUM_POSITIONS,
+  auction: AUCTION_POSITIONS,
+  shop: SHOP_CLOSET_POSITIONS,
+  closet: SHOP_CLOSET_POSITIONS,
   "table:nim": NIM_POSITIONS,
   "table:guess": NUMBER_GUESSER_POSITIONS,
+  "table:mahjong": MAHJONG_POSITIONS,
 };
 
 export default function Lobby() {
   const username = useAuth().username;
   const navigate = useNavigate();
-  const { players, tablePlayers } = useSocketsForLobbyPlayers("lobby");
+  const { players, tablePlayers, roomPlayers } = useSocketsForLobbyPlayers("lobby");
 
-  // Players seated at a table are shown there, not roaming the lobby floor.
-  const seatedUsernames = new Set(
-    tablePlayers.flatMap((table) => table.players.map((player) => player.username)),
-  );
-  const floorPlayers = players.filter((player) => !seatedUsernames.has(player.username));
+  const lobbyUsernames = new Set(players.map((player) => player.username));
+  const groups: Record<string, SafeUserInfo[]> = { lobby: players, ...roomPlayers };
+  for (const table of tablePlayers) {
+    groups[table.tableId] = table.players.filter((player) => !lobbyUsernames.has(player.username));
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
       <div style={{ position: "relative", width: "60%" }}>
         <LobbyDisplay />
-        {floorPlayers.map((player, index) => {
-          const position =
-            LOBBY_AVATAR_POSITIONS[index] ??
-            LOBBY_AVATAR_POSITIONS[LOBBY_AVATAR_POSITIONS.length - 1];
-          return (
-            <AvatarDisplayLobby
-              key={`${player.username}-${index}`}
-              avatar={player.avatar}
-              top={position.top}
-              left={position.left}
-              size="30%"
-              onClick={() => navigate(`/profile/${player.username}`)}
-            />
-          );
-        })}
-        {tablePlayers.flatMap((table) => {
-          const positions = tablePositions[table.tableId] ?? [];
-          return table.players.map((player, index) => {
+        {Object.entries(groups).flatMap(([roomId, group]) => {
+          const positions = roomPositions[roomId] ?? [];
+          return group.map((player, index) => {
             const position = positions[index] ?? positions[positions.length - 1];
             if (!position) return null;
             return (
               <AvatarDisplayLobby
-                key={`${table.tableId}-${player.username}-${index}`}
+                key={`${roomId}-${player.username}-${index}`}
                 avatar={player.avatar}
                 top={position.top}
                 left={position.left}
@@ -108,12 +133,12 @@ export default function Lobby() {
           height="13%"
         />
         <RoomLink
-          sprite="/sprites/lobby/Forum_frame1.png"
+          sprite="/sprites/lobby/Table1_frame1.png"
           route="/auction"
-          top="25%"
-          left="65%"
-          width="10%"
-          height="13%"
+          top="21%"
+          left="60%"
+          width="25%"
+          height="20%"
         />
         <GameTable
           sprite="/sprites/lobby/Nim_frame1.png"
