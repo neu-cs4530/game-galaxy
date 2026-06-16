@@ -89,7 +89,10 @@ export default function Lobby() {
   const { players, tablePlayers, roomPlayers } = useSocketsForLobbyPlayers("lobby");
 
   const lobbyUsernames = new Set(players.map((player) => player.username));
-  const groups: Record<string, SafeUserInfo[]> = { lobby: players, ...roomPlayers };
+  const groups: Record<string, SafeUserInfo[]> = {
+    lobby: players,
+    ...(roomPlayers as Record<string, SafeUserInfo[]>),
+  };
   for (const table of tablePlayers) {
     groups[table.tableId] = table.players.filter((player) => !lobbyUsernames.has(player.username));
   }
