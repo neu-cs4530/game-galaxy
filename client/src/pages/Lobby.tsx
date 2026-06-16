@@ -91,7 +91,7 @@ export default function Lobby() {
   const lobbyUsernames = new Set(players.map((player) => player.username));
   const groups: Record<string, SafeUserInfo[]> = {
     lobby: players,
-    ...(roomPlayers as Record<string, SafeUserInfo[]>),
+    ...roomPlayers,
   };
   for (const table of tablePlayers) {
     groups[table.tableId] = table.players.filter((player) => !lobbyUsernames.has(player.username));
