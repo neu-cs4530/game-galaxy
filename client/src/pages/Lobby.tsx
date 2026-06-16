@@ -164,10 +164,10 @@ export default function Lobby() {
         />
         <GameTable
           sprite="/sprites/lobby/Table1_frame1.png"
-          top="37%"
-          left="48%"
-          width="25%"
-          height="20%"
+          top="38%"
+          left="50%"
+          width="20%"
+          height="15%"
           tableId="table:mahjong4p"
         />
         <GameTable
