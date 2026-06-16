@@ -110,7 +110,7 @@ describe("socketMakeOffer", () => {
       seller: "auctioneer",
       auctionId: SEEDED_AUCTION,
       accessoryName: "Hat",
-      bidderDisplay: "Yāo",
+      bidderDisplay: "MrMango",
       price: 30,
     });
   });

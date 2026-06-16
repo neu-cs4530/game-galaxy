@@ -29,7 +29,7 @@ describe("GET /api/thread/list", () => {
       title: "Nim?",
       createdBy: {
         createdAt: expect.anything(),
-        display: "Yāo",
+        display: "MrMango",
         balance: expect.anything(),
         wins: expect.anything(),
         losses: expect.anything(),
@@ -57,7 +57,7 @@ describe("GET /api/thread/:id", () => {
       comments: [],
       createdBy: {
         username: "user1",
-        display: "Yāo",
+        display: "MrMango",
         createdAt: expect.anything(),
         avatar: baseAvatar,
         balance: expect.anything(),
@@ -76,7 +76,7 @@ describe("GET /api/thread/:id", () => {
             wins: expect.anything(),
             losses: expect.anything(),
             createdAt: expect.anything(),
-            display: "The Knight Of Games",
+            display: "Nim Master",
             username: "user0",
           },
         },
@@ -165,7 +165,7 @@ describe("POST /api/thread/:id/comment", () => {
         text: "FIRST!",
         createdBy: {
           username: "user2",
-          display: "Sénior Dos",
+          display: "Rice_Crispy_Lover3674",
           createdAt: expect.anything(),
           balance: expect.anything(),
           wins: expect.anything(),
@@ -215,7 +215,7 @@ describe("POST /api/thread/:id/react", () => {
         wins: expect.anything(),
         losses: expect.anything(),
         username: "user1",
-        display: "Yāo",
+        display: "MrMango",
         createdAt: expect.anything(),
       },
     });
@@ -254,7 +254,7 @@ describe("POST /api/thread/:id/react", () => {
         wins: expect.anything(),
         losses: expect.anything(),
         username: "user0",
-        display: "The Knight Of Games",
+        display: "Nim Master",
         createdAt: expect.anything(),
       },
     });
@@ -266,7 +266,7 @@ describe("POST /api/thread/:id/react", () => {
         wins: expect.anything(),
         losses: expect.anything(),
         username: "user0",
-        display: "The Knight Of Games",
+        display: "Nim Master",
         createdAt: expect.anything(),
       },
     });

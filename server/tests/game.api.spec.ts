@@ -42,7 +42,7 @@ describe("POST /api/game/create", () => {
       status: "waiting",
       createdBy: {
         username: "user3",
-        display: "Frau Drei",
+        display: "Sushiiiiii",
         balance: expect.anything(),
         wins: expect.anything(),
         losses: expect.anything(),
@@ -57,7 +57,7 @@ describe("POST /api/game/create", () => {
       players: [
         {
           username: "user3",
-          display: "Frau Drei",
+          display: "Sushiiiiii",
           balance: expect.anything(),
           wins: expect.anything(),
           losses: expect.anything(),
