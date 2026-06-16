@@ -122,7 +122,7 @@ erDiagram
         string display ""
         Date createdAt ""
         Avatar avatar
-        number balance 
+        number balance
         number wins
     }
     User ||--|| Auth: "User.username"
@@ -134,7 +134,7 @@ erDiagram
     Accessory {
         string accessoryId "unique"
         string name
-        number cost 
+        number cost
     }
     User ||--|| Avatar: "User.avatar"
     Avatar ||--|{ Accessory: "Avatar.accessories"
