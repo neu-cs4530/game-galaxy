@@ -161,6 +161,7 @@ describe("socketAcceptOffer", () => {
       auctionId: SEEDED_AUCTION,
       accessoryName: "Hat",
       newBalance: 70,
+      losingBidders: [],
     });
   });
 

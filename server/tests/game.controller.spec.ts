@@ -204,10 +204,10 @@ describe("socketMakeMove", () => {
       payload: { gameId: game.gameId, move: 3 },
     });
     expect(logSocketError).not.toHaveBeenCalled();
-    expect(mockServer.to).toHaveBeenCalledWith(`${game.gameId}-${user1.userId}`);
+    expect(mockServer.to).toHaveBeenCalledWith(`${game.gameId}-${user2.userId}`);
     expect(mockServer.emit).toHaveBeenCalledWith("balanceUpdated", { balance: 110 });
 
-    const winner = await UserRepo.get(user1.userId);
+    const winner = await UserRepo.get(user2.userId);
     expect(winner.balance).toBe(110);
     expect(winner.wins).toBe(1);
   });

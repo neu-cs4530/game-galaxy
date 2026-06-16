@@ -45,6 +45,7 @@ describe("POST /api/game/create", () => {
         display: "Frau Drei",
         balance: expect.anything(),
         wins: expect.anything(),
+        losses: expect.anything(),
         createdAt: expect.anything(),
         avatar: {
           color: "blue",
@@ -59,6 +60,7 @@ describe("POST /api/game/create", () => {
           display: "Frau Drei",
           balance: expect.anything(),
           wins: expect.anything(),
+          losses: expect.anything(),
           createdAt: expect.anything(),
           avatar: {
             color: "blue",

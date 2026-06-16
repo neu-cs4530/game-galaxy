@@ -83,7 +83,6 @@ function AccessoryThumbnail({ accessoryId, name }: { accessoryId: string; name: 
     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
       <img
         src={`/sprites/display/${accessoryId}-display.png`}
-        //TODO IN UI OVERHALL: make alternate, centered versions of the images to put here so that everything looks nicer
         style={{ width: ACCESSORY_SIZE, height: ACCESSORY_SIZE }}
       />
       <b>{name}</b>
