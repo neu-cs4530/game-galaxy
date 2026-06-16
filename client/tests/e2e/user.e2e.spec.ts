@@ -4,7 +4,7 @@ import { logInUser } from "./testUtils.ts";
 test.describe("User profile and account", () => {
   const username = "user3";
   const password = "pwd3333";
-  const display = "Frau Drei";
+  const display = "Sushiiiiii";
 
   test("should show the logged-in user's name and coin balance in the header", async ({ page }) => {
     await logInUser(page, username, password);

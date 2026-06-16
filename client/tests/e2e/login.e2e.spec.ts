@@ -47,7 +47,7 @@ test.describe("The login page", () => {
     await page.getByRole("button", { name: "Log In" }).click();
 
     await page.waitForURL("/");
-    await expect(page.getByText("User: Frau Drei")).toBeVisible();
+    await expect(page.getByText("User: Sushiiiiii")).toBeVisible();
   });
 
   test("should reject an incorrect password with a message, and allow correction", async ({
@@ -65,7 +65,7 @@ test.describe("The login page", () => {
     await page.getByLabel("Password", { exact: true }).fill(password);
     await page.getByRole("button", { name: "Log In" }).click();
     await page.waitForURL("/");
-    await expect(page.getByText("User: Frau Drei")).toBeVisible();
+    await expect(page.getByText("User: Sushiiiiii")).toBeVisible();
   });
 
   test("should reject creating an account for an existing user, and allow correction", async ({
