@@ -21,12 +21,21 @@ import { createUser, updateUser } from "./services/user.service.ts";
 /** The coin balance given to every seeded user. */
 const STARTING_COINS = 100;
 
-/** Give a seeded user a base avatar and starting coin balance. */
-async function setupSeededUser(username: string) {
+/** Give a seeded user a base avatar and starting low coin balance. */
+async function setupPoorSeededUser(username: string) {
   const auth = (await getUserByUsername(username))!;
   const record = await UserRepo.get(auth.userId);
   record.avatar = createDefaultAvatar(); // fresh object per user
   record.balance = STARTING_COINS;
+  await UserRepo.set(auth.userId, record);
+}
+
+/** Give a seeded user a base avatar and high starting coin balance. */
+async function setupRichSeededUser(username: string) {
+  const auth = (await getUserByUsername(username))!;
+  const record = await UserRepo.get(auth.userId);
+  record.avatar = createDefaultAvatar(); // fresh object per user
+  record.balance = 1000;
   await UserRepo.set(auth.userId, record);
 }
 
@@ -145,16 +154,19 @@ async function resetStoredUsers() {
   await createUser("user1", "pwd1111", new Date());
   await createUser("user2", "pwd2222", new Date());
   await createUser("user3", "pwd3333", new Date());
+  await createUser("user4", "pwd4444", new Date());
 
-  await updateUser("user0", { display: "The Knight Of Games" });
-  await updateUser("user1", { display: "Yāo" });
-  await updateUser("user2", { display: "Sénior Dos" });
-  await updateUser("user3", { display: "Frau Drei" });
+  await updateUser("user0", { display: "Nim Master" });
+  await updateUser("user1", { display: "MrMango" });
+  await updateUser("user2", { display: "Rice_Crispy_Lover3674" });
+  await updateUser("user3", { display: "Sushiiiiii" });
+  await updateUser("user4", { display: "Richy Richpants" });
 
-  await setupSeededUser("user0");
-  await setupSeededUser("user1");
-  await setupSeededUser("user2");
-  await setupSeededUser("user3");
+  await setupPoorSeededUser("user0");
+  await setupPoorSeededUser("user1");
+  await setupPoorSeededUser("user2");
+  await setupPoorSeededUser("user3");
+  await setupRichSeededUser("user4");
 }
 
 async function resetTables() {
