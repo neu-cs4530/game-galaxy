@@ -89,4 +89,5 @@ export type AuctionAcceptNotification = {
   auctionId: string;
   accessoryName: string;
   newBalance: number;
+  losingBidders: string[];
 };

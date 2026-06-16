@@ -16,6 +16,7 @@ export default function ViewInfo({ user }: { user: SafeUserInfo }) {
           <li>Username: {user.username}</li>
           <li>Account created {timeSince(user.createdAt)}</li>
           <li>Games won: {user.wins}</li>
+          <li>Games lost: {user.losses}</li>
         </ul>
       </div>
       <hr />

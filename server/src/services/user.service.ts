@@ -21,6 +21,7 @@ export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo
       avatar: createDefaultAvatar(),
       balance: 0,
       wins: 0,
+      losses: 0,
     };
   }
   const record = await UserRepo.get(userId);
@@ -31,6 +32,7 @@ export async function populateSafeUserInfo(userId: string): Promise<SafeUserInfo
     avatar: record.avatar,
     balance: record.balance,
     wins: record.wins ?? 0,
+    losses: record.losses ?? 0,
   };
 }
 
@@ -59,6 +61,7 @@ export async function createUser(
     avatar: defaultAvatar,
     balance: 0,
     wins: 0,
+    losses: 0,
   });
   await updateAuth(username, password, id);
   return {
@@ -68,6 +71,7 @@ export async function createUser(
     avatar: defaultAvatar,
     balance: 0,
     wins: 0,
+    losses: 0,
   };
 }
 
@@ -136,4 +140,17 @@ export async function incrementWins(userId: string) {
   newUser.wins = (newUser.wins ?? 0) + 1;
   await UserRepo.set(userId, newUser);
   return newUser.wins;
+}
+
+/**
+ * Updates the database to record that a player lost a game.
+ *
+ * @param userId the user whose loss count should be incremented
+ * @returns the user's new total loss count
+ */
+export async function incrementLosses(userId: string) {
+  const newUser = await UserRepo.get(userId);
+  newUser.losses = (newUser.losses ?? 0) + 1;
+  await UserRepo.set(userId, newUser);
+  return newUser.losses;
 }

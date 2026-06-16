@@ -146,6 +146,7 @@ export async function acceptOffer(
   accessoryName: string;
   sellerNewBalance: number;
   buyerNewBalance: number;
+  losingBidderUsernames: string[];
 }> {
   const auction = await AuctionRepo.get(auctionId);
   if (auction.seller !== sellerUserId) {
@@ -181,12 +182,22 @@ export async function acceptOffer(
   auction.status = "sold";
   await AuctionRepo.set(auctionId, auction);
 
+  // Collect the unique bidders whose offers were not accepted so they can be
+  // told the item was sold to someone else.
+  const losingBidderIds = [
+    ...new Set(auction.offers.map((o) => o.bidder).filter((id) => id !== offer.bidder)),
+  ];
+  const losingBidderUsernames = await Promise.all(
+    losingBidderIds.map(async (id) => (await UserRepo.get(id)).username),
+  );
+
   const accessory = await AccessoryRepo.get(auction.accessoryId);
   return {
     buyerUsername: buyer.username,
     accessoryName: accessory.name,
     sellerNewBalance,
     buyerNewBalance,
+    losingBidderUsernames,
   };
 }
 
