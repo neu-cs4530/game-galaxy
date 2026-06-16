@@ -22,9 +22,33 @@ export default function LobbyDisplay() {
         src="/sprites/lobby/Stool_frame1.png"
         style={{ position: "absolute", top: "50%", left: "70%", width: "5%", height: "5%" }}
       />
-      <img
+      <img //mahjong 3p table stool
         src="/sprites/lobby/Stool_frame1.png"
-        style={{ position: "absolute", top: "50%", left: "50%", width: "5%", height: "5%" }}
+        style={{ position: "absolute", top: "54%", left: "53%", width: "5%", height: "5%" }}
+      />
+      <img //mahjong 3p table stool
+        src="/sprites/lobby/Stool_frame1.png"
+        style={{ position: "absolute", top: "48.5%", left: "43%", width: "5%", height: "5%" }}
+      />
+      <img //mahjong 3p table stool
+        src="/sprites/lobby/Stool_frame1.png"
+        style={{ position: "absolute", top: "49%", left: "50%", width: "5%", height: "5%" }}
+      />
+      <img //mahjong 4p table stool
+        src="/sprites/lobby/Stool_frame1.png"
+        style={{ position: "absolute", top: "43%", left: "53%", width: "5%", height: "5%" }}
+      />
+      <img //mahjong 4p table stool
+        src="/sprites/lobby/Stool_frame1.png"
+        style={{ position: "absolute", top: "41%", left: "58%", width: "5%", height: "5%" }}
+      />
+      <img //mahjong 4p table stool
+        src="/sprites/lobby/Stool_frame1.png"
+        style={{ position: "absolute", top: "43%", left: "62%", width: "5%", height: "5%" }}
+      />
+      <img //mahjong 4p table stool
+        src="/sprites/lobby/Stool_frame1.png"
+        style={{ position: "absolute", top: "48%", left: "63%", width: "5%", height: "5%" }}
       />
       <img
         src="/sprites/lobby/Stool_frame1.png"

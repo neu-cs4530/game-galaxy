@@ -57,23 +57,25 @@ const NUMBER_GUESSER_POSITIONS = [
   { top: "50%", left: "70%" },
 ];
 
-const MAHJONG_POSITIONS = [
-  { top: "37%", left: "52.5%" },
-  { top: "40%", left: "55%" },
-  { top: "40%", left: "48%" },
-  { top: "39%", left: "54.5%" },
-  { top: "39%", left: "50.5%" },
+const MAHJONG_3P_POSITIONS = [
+  { top: "54%", left: "53%" },
+  { top: "48.5%", left: "43%" },
+  { top: "49%", left: "50%" },
 ];
 
-const roomPositions: Record<string, { top: string; left: string }[]> = {
-  lobby: LOBBY_AVATAR_POSITIONS,
-  forum: FORUM_POSITIONS,
-  auction: AUCTION_POSITIONS,
-  shop: SHOP_CLOSET_POSITIONS,
-  closet: SHOP_CLOSET_POSITIONS,
+const MAHJONG_4P_POSITIONS = [
+  { top: "43%", left: "53%" },
+  { top: "41%", left: "58%" },
+  { top: "43%", left: "62%" },
+  { top: "48%", left: "63%" },
+];
+
+// Where seated players are placed, per table
+const tablePositions: Record<string, { top: string; left: string }[]> = {
   "table:nim": NIM_POSITIONS,
   "table:guess": NUMBER_GUESSER_POSITIONS,
-  "table:mahjong": MAHJONG_POSITIONS,
+  "table:mahjong3p": MAHJONG_3P_POSITIONS,
+  "table:mahjong4p": MAHJONG_4P_POSITIONS,
 };
 
 export default function Lobby() {
@@ -158,16 +160,16 @@ export default function Lobby() {
         />
         <GameTable
           sprite="/sprites/lobby/Table1_frame1.png"
-          top="36%"
-          left="43%"
+          top="37%"
+          left="48%"
           width="25%"
           height="20%"
           tableId="table:mahjong4p"
         />
         <GameTable
           sprite="/sprites/lobby/Table1_frame1.png"
-          top="55%"
-          left="55%"
+          top="44%"
+          left="37%"
           width="25%"
           height="20%"
           tableId="table:mahjong3p"
