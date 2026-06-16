@@ -58,7 +58,7 @@ export default function GamePanel({
             gap: "0.5rem",
           }}
         >
-          {userPlayerIndex >= 0 && !view && type === "mahjong" && (
+          {userPlayerIndex >= 0 && !view && type.startsWith("mahjong") && (
             <button className="secondary narrow" onClick={addBot}>
               Add Bot
             </button>
@@ -82,7 +82,7 @@ export default function GamePanel({
       ) : (
         <div className="gameFrame waiting content">waiting for game to begin</div>
       )}
-      {type === "mahjong" && (
+      {type.startsWith("mahjong") && (
         <div>
           <div>
             If you are new to mahjong, feel free to check out the game rules{" "}

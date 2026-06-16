@@ -108,7 +108,7 @@ export default function MahjongGame({
     setSelectedIndices([]);
   }
 
-  const isGameOver = view.phase === "voting" || view.phase === "ended";
+  const isGameOver = view.phase === "voting" || view.phase === "done";
   const isMyTurn = view.phase === "discard" && view.currentPlayer === userPlayerIndex;
   const isMeldWindow = view.phase === "meld_window";
   const myResponse = isPlayer ? view.meldResponses[userPlayerIndex] : null;
@@ -163,9 +163,12 @@ export default function MahjongGame({
     setSelectedIndices([]);
   }
 
+  const numPlayers = players.length;
   const otherPlayerIndices = isPlayer
-    ? [3, 2, 1].map((offset) => (userPlayerIndex + offset) % 4)
-    : [0, 1, 2, 3];
+    ? Array.from({ length: numPlayers - 1 }, (_, i) => numPlayers - 1 - i).map(
+        (offset) => (userPlayerIndex + offset) % numPlayers,
+      )
+    : Array.from({ length: numPlayers }, (_, i) => i);
 
   function playerName(i: number) {
     return players[i]?.display ?? `Player ${i + 1}`;
@@ -182,7 +185,7 @@ export default function MahjongGame({
           ? "You won!"
           : `${playerName(view.winner)} won!`
         : "Draw — wall exhausted";
-  } else if (view.phase === "ended") {
+  } else if (view.phase === "done") {
     statusText = "Game over";
   } else if (view.phase === "discard") {
     statusText = isMyTurn
@@ -241,6 +244,7 @@ export default function MahjongGame({
       <div className="otherPlayers">
         {otherPlayerIndices.map((p) => {
           const pView = view.players[p];
+          if (!pView) return null;
           const response = view.meldResponses[p];
           const isDiscarder = isMeldWindow && view.currentPlayer === p;
           const isCurrentTurn = view.phase === "discard" && view.currentPlayer === p;
@@ -369,7 +373,7 @@ export default function MahjongGame({
       )}
 
       {/* ── action panel ── */}
-      {view.phase !== "voting" && view.phase !== "ended" && isPlayer && (
+      {view.phase !== "voting" && view.phase !== "done" && isPlayer && (
         <div className="actionPanel">
           {isMyTurn && (
             <div className="actionButtons">
@@ -492,11 +496,11 @@ export default function MahjongGame({
           {/* cumulative scores */}
           <div className="cumulativeScores">
             <div className="cumulativeScoresTitle">
-              {view.phase === "ended" ? "Final Scores" : "Scores"}
+              {view.phase === "done" ? "Final Scores" : "Scores"}
             </div>
             <table className="scoresTable">
               <tbody>
-                {[0, 1, 2, 3].map((i) => {
+                {players.map((_, i) => {
                   const score = view.scores?.[i] ?? 0;
                   const isHandWinner = i === view.winner;
                   return (
@@ -517,7 +521,7 @@ export default function MahjongGame({
             <div className="playAgainSection">
               <div className="playAgainTitle">Play another hand?</div>
               <div className="voteStatuses">
-                {[0, 1, 2, 3].map((i) => {
+                {players.map((_, i) => {
                   const vote = view.playAgainVotes?.[i];
                   return (
                     <span

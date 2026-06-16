@@ -59,7 +59,12 @@ export * from "./games/guess.types.ts";
  * add a new game.
  */
 export type GameKey = z.infer<typeof zGameKey>;
-export const zGameKey = z.union([z.literal("nim"), z.literal("guess"), z.literal("mahjong")]);
+export const zGameKey = z.union([
+  z.literal("nim"),
+  z.literal("guess"),
+  z.literal("mahjong4p"),
+  z.literal("mahjong3p"),
+]);
 
 /**
  * The TaggedGameView type allows the views for different game to be
@@ -71,4 +76,5 @@ export const zGameKey = z.union([z.literal("nim"), z.literal("guess"), z.literal
 export type TaggedGameView =
   | { type: "nim"; view: NimView }
   | { type: "guess"; view: GuessView }
-  | { type: "mahjong"; view: MahjongView };
+  | { type: "mahjong4p"; view: MahjongView }
+  | { type: "mahjong3p"; view: MahjongView };

@@ -80,7 +80,12 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
   const discarder = state.currentPlayer;
   const discard = state.lastDiscard as string;
 
-  const turnOrder = [1, 2, 3].map((offset) => (discarder + offset) % 4);
+  // counter-clockwise turn order from the player after the discarder (depends on # players)
+  const numPlayers = state.meldResponses.length;
+  const turnOrder = Array.from(
+    { length: numPlayers - 1 },
+    (_, i) => (discarder + i + 1) % numPlayers,
+  );
 
   // ── win ──────────────────────────────────────────────────────────────────
   for (const p of turnOrder) {
@@ -170,16 +175,14 @@ export function resolveMeldWindow(state: MahjongState): MahjongState {
     };
   }
 
-  const nextPlayer = (discarder + 1) % 4;
+  const nextPlayer = (discarder + 1) % numPlayers;
   let next: MahjongState = {
     ...state,
     discardPile: [...state.discardPile, discard],
     lastDiscard: null,
     currentPlayer: nextPlayer,
     phase: "discard",
-    meldResponses: [null, null, null, null],
-    afterKong: false,
-    consecutiveKongsThisTurn: 0,
+    meldResponses: Array<MahjongMeldResponse | null>(numPlayers).fill(null),
   };
   next = drawForPlayer(next, nextPlayer);
   return next;
@@ -202,7 +205,10 @@ export function isValidSeung(
   t2: string,
   t3: string,
 ): boolean {
-  if (playerIndex !== (state.currentPlayer + 1) % 4) return false;
+  // seung is only available to the player immediately left of the discarder
+  const numPlayers = state.meldResponses.length;
+  if (playerIndex !== (state.currentPlayer + 1) % numPlayers) return false;
+  // verify that {discard, t1, t2} form a valid same-suit sequence
   const three = [t1, t2, t3].sort();
   const suit = getSuit(three[0]);
   return (

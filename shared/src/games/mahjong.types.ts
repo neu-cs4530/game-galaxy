@@ -47,7 +47,7 @@ export interface MahjongScoring {
  * - `'discard'`:     currentPlayer has a full hand and must act.
  * - `'meld_window'`: currentPlayer just discarded; others must respond.
  * - `'voting'`:      hand ended; players vote to play again or stop.
- * - `'ended'`:       someone voted no; game is fully over.
+ * - `'done'`:       someone voted no; game is fully over.
  */
 export interface MahjongState {
   wall: MahjongTile[];
@@ -57,7 +57,7 @@ export interface MahjongState {
   discardPile: MahjongTile[];
   currentPlayer: number;
   lastDiscard: MahjongTile | null;
-  phase: "discard" | "meld_window" | "voting" | "ended";
+  phase: "discard" | "meld_window" | "voting" | "done";
   meldResponses: (MahjongMeldResponse | null)[];
   dealer: number;
   winner: number | null;
@@ -87,7 +87,7 @@ export interface MahjongView {
   wallSize: number;
   currentPlayer: number;
   lastDiscard: MahjongTile | null;
-  phase: "discard" | "meld_window" | "voting" | "ended";
+  phase: "discard" | "meld_window" | "voting" | "done";
   meldResponses: (MahjongMeldResponse | null)[];
   dealer: number;
   winner: number | null;

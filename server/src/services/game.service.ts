@@ -6,7 +6,8 @@ import { nimGameService } from "../games/nim.ts";
 import { guessGameService } from "../games/guess.ts";
 import { type GameViewUpdates, type UserWithId } from "../types.ts";
 import { GameRepo } from "../repository.ts";
-import { mahjongGameService } from "../games/mahjong/mahjong.ts";
+import { mahjong4pGameService } from "../games/mahjong/mahjong4p.ts";
+import { mahjong3pGameService } from "../games/mahjong/mahjong3p.ts";
 import { getBotMove as mahjongBotMove } from "../games/mahjong/mahjongBot.ts";
 import type { MahjongState } from "@gamenite/shared/src/games/mahjong.types.ts";
 
@@ -16,7 +17,8 @@ import type { MahjongState } from "@gamenite/shared/src/games/mahjong.types.ts";
 export const gameServices: { [key in GameKey]: GameServicer } = {
   nim: nimGameService,
   guess: guessGameService,
-  mahjong: mahjongGameService,
+  mahjong4p: mahjong4pGameService,
+  mahjong3p: mahjong3pGameService,
 };
 
 /**
@@ -35,7 +37,7 @@ async function runBotLoop(gameId: string, views: GameViewUpdates): Promise<GameV
   while (madeMove) {
     madeMove = false;
     const game = await GameRepo.find(gameId);
-    if (!game?.state || game.done || game.type !== "mahjong") break;
+    if (!game?.state || game.done || !game.type.startsWith("mahjong")) break;
 
     const botIndices = game.players
       .map((id, i) => ({ id, i }))
