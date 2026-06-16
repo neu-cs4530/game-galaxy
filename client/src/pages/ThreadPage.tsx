@@ -9,8 +9,10 @@ import ThreadReactions from "../components/ThreadReactions.tsx";
 import useTimeSince from "../hooks/useTimeSince.ts";
 import useAuth from "../hooks/useAuth.ts";
 import { editThread } from "../services/threadService.ts";
+import useRoomPresence from "../hooks/useRoomPresence.ts";
 
 export default function ThreadPage() {
+  useRoomPresence("forum");
   const formatTimeSince = useTimeSince();
   const auth = useAuth();
   const { threadId } = useParams();

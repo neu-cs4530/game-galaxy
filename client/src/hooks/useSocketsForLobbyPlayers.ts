@@ -11,12 +11,14 @@ import useAuth from "./useAuth.ts";
  * @returns an object containing
  * - `players`: all players idling in the lobby
  * - `tablePlayers`: all players waiting for a game
+ * - `roomPlayers`: players in each room
  */
 export default function useSocketsForLobbyPlayers(lobbyId: string) {
   const auth = useAuth();
   const { socket } = useLoginContext();
   const [players, setPlayers] = useState<SafeUserInfo[]>([]);
   const [tablePlayers, setTablePlayers] = useState<LobbyTablePlayers[]>([]);
+  const [roomPlayers, setRoomPlayers] = useState<Record<string, SafeUserInfo[]>>({});
 
   useEffect(() => {
     const handlePlayersUpdated = (updatedPlayers: SafeUserInfo[]) => {
@@ -27,16 +29,22 @@ export default function useSocketsForLobbyPlayers(lobbyId: string) {
       setTablePlayers(updatedTables);
     };
 
+    const handleRoomsUpdated = (updatedRooms: Record<string, SafeUserInfo[]>) => {
+      setRoomPlayers(updatedRooms);
+    };
+
     socket.on("lobbyPlayersUpdated", handlePlayersUpdated);
     socket.on("lobbyTablesUpdated", handleTablesUpdated);
+    socket.on("roomPresenceUpdated", handleRoomsUpdated);
     socket.emit("lobbyJoin", { auth, payload: lobbyId });
 
     return () => {
       socket.off("lobbyPlayersUpdated", handlePlayersUpdated);
       socket.off("lobbyTablesUpdated", handleTablesUpdated);
+      socket.off("roomPresenceUpdated", handleRoomsUpdated);
       socket.emit("lobbyLeave", { auth, payload: lobbyId });
     };
   }, [socket, auth, lobbyId]);
 
-  return { players, tablePlayers };
+  return { players, tablePlayers, roomPlayers };
 }

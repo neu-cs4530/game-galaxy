@@ -5,6 +5,7 @@ import useAuth from "../hooks/useAuth.ts";
 import useAccessory from "../hooks/useAccessory.ts";
 import useAuctions from "../hooks/useAuctions.ts";
 import { getUserById } from "../services/userService.ts";
+import useRoomPresence from "../hooks/useRoomPresence.ts";
 
 const ACCESSORY_SIZE = 160;
 
@@ -12,6 +13,7 @@ const ACCESSORY_SIZE = 160;
  * Renders auction
  */
 export default function Auction() {
+  useRoomPresence("auction");
   const { user } = useLoginContext();
   const { listings, err } = useAuctions();
 

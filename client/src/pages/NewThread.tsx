@@ -1,8 +1,10 @@
 import useNewThreadForm from "../hooks/useNewThreadForm.ts";
 import { useState } from "react";
 import useTagList from "../hooks/useTagList.ts";
+import useRoomPresence from "../hooks/useRoomPresence.ts";
 
 export default function NewThread() {
+  useRoomPresence("forum");
   const {
     title,
     contents,
