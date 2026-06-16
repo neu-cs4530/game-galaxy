@@ -35,9 +35,10 @@ const FORUM_POSITIONS = [
 ];
 
 const AUCTION_POSITIONS = [
-  { top: "24%", left: "72%" },
-  { top: "23%", left: "65%" },
-  { top: "21%", left: "68%" },
+  { top: "29%", left: "75%" },
+  { top: "31%", left: "72%" },
+  { top: "33%", left: "69%" },
+  { top: "35%", left: "66%" },
 ];
 
 const SHOP_CLOSET_POSITIONS = [
