@@ -10,8 +10,8 @@ import { getSuit, getValue, isWind, isDragon, removeOne } from "./mahjongTiles.t
 
 // ── fan point table ───────────────────────────────────────────────────────────
 
-const LIMIT_FAN = 13;
-const LIMIT_POINTS = 384;
+const LIMIT_FAN = 10;
+const LIMIT_POINTS = 128;
 
 const FanToPoints: Record<number, number> = {
   0: 1,
@@ -25,8 +25,6 @@ const FanToPoints: Record<number, number> = {
   8: 64,
   9: 96,
   10: 128,
-  11: 192,
-  12: 256,
 };
 
 function fanToPoints(fan: number): number {
