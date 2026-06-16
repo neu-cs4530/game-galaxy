@@ -6,6 +6,7 @@ import {
   socketStart,
   socketMakeMove,
   socketJoinAsPlayer,
+  socketAddBot,
 } from "../src/controllers/game.controller.ts";
 import { createGame, joinGame, startGame, getGames } from "../src/services/game.service.ts";
 import { setTableGame } from "../src/services/table.service.ts";
@@ -306,6 +307,65 @@ describe("socketJoinAsPlayer", () => {
     await setTableGame("table:nim", game.gameId);
 
     await socketJoinAsPlayer(mockSocket, mockServer)({ auth: auth3, payload: "table:nim" });
+    expect(logSocketError).toHaveBeenCalledOnce();
+  });
+});
+
+describe("socketAddBot", () => {
+  it("should reject invalid auth", async () => {
+    await socketAddBot(mockSocket, mockServer)({ auth: badAuth, payload: "anything" });
+    expect(logSocketError).toHaveBeenCalledExactlyOnceWith(mockSocket, new Error("Invalid auth"));
+  });
+
+  it("should reject a user who is not in the game", async () => {
+    const user1 = await record("user1");
+    const game = await createGame(user1, "nim", new Date());
+
+    await socketAddBot(mockSocket, mockServer)({ auth: auth2, payload: game.gameId });
+    expect(logSocketError).toHaveBeenCalledOnce();
+  });
+
+  it("should add a bot and broadcast updated player list", async () => {
+    const user1 = await record("user1");
+    const game = await createGame(user1, "nim", new Date());
+
+    await socketAddBot(mockSocket, mockServer)({ auth, payload: game.gameId });
+    expect(logSocketError).not.toHaveBeenCalled();
+    expect(mockServer.emit).toHaveBeenCalledWith("gamePlayersUpdated", expect.any(Array));
+  });
+
+  it("should auto-start when adding a bot fills the last seat", async () => {
+    const user1 = await record("user1");
+    const game = await createGame(user1, "nim", new Date());
+
+    // nim seats 2, so adding one bot fills it and starts the game
+    await socketAddBot(mockSocket, mockServer)({ auth, payload: game.gameId });
+    expect(logSocketError).not.toHaveBeenCalled();
+    expect(mockServer.emit).toHaveBeenCalledWith("gameStateUpdated", expect.anything());
+  });
+});
+
+describe("rewardWins — invalid winner", () => {
+  it("should log an error when a winner userId has no user record", async () => {
+    const user1 = await record("user1");
+    const user2 = await record("user2");
+    const game = await createGame(user1, "nim", new Date());
+    await joinGame(game.gameId, user2);
+    await startGame(game.gameId, user1);
+
+    // set game one move from done, then corrupt the winner's player entry
+    const stored = await GameRepo.get(game.gameId);
+    stored.state = { remaining: 3, nextPlayer: 0 };
+    stored.players[0] = "ghost-user-id"; // valid index but no UserRepo entry
+    await GameRepo.set(game.gameId, stored);
+
+    await socketMakeMove(
+      mockSocket,
+      mockServer,
+    )({
+      auth,
+      payload: { gameId: game.gameId, move: 3 },
+    });
     expect(logSocketError).toHaveBeenCalledOnce();
   });
 });
