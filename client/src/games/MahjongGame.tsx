@@ -500,7 +500,7 @@ export default function MahjongGame({
             </div>
             <table className="scoresTable">
               <tbody>
-                {[0, 1, 2, 3].map((i) => {
+                {players.map((_, i) => {
                   const score = view.scores?.[i] ?? 0;
                   const isHandWinner = i === view.winner;
                   return (
@@ -521,7 +521,7 @@ export default function MahjongGame({
             <div className="playAgainSection">
               <div className="playAgainTitle">Play another hand?</div>
               <div className="voteStatuses">
-                {[0, 1, 2, 3].map((i) => {
+                {players.map((_, i) => {
                   const vote = view.playAgainVotes?.[i];
                   return (
                     <span

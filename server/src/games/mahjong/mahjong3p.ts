@@ -54,7 +54,7 @@ export function createDeck(): MahjongTile[] {
 
 // ── dealer / round wind rotation ──────────────────────────────────────────────
 
-const ROUND_WINDS = ["ew", "sw", "ww", "nw"];
+const ROUND_WINDS = ["ew", "sw", "ww"];
 
 function nextHandMeta(state: MahjongState): { nextDealer: number; nextRoundWind: string } {
   const { dealer, winner, initialDealer, roundWind } = state;

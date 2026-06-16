@@ -470,6 +470,6 @@ export function resolveHandWin(
     winInfo,
     scores: newScores,
     lastScoring: scoring,
-    playAgainVotes: [null, null, null, null],
+    playAgainVotes: state.hands.map(() => null),
   };
 }
