@@ -125,6 +125,8 @@ erDiagram
         number balance 
         number wins
     }
+    User ||--|| Auth: "User.username"
+    Auth ||--|| User: "Auth.userId"
     Avatar {
         string color
         string accessories "Record<string, boolean>"
@@ -134,8 +136,6 @@ erDiagram
         string name
         number cost 
     }
-    User ||--|| Auth: "User.username"
-    Auth ||--|| User: "Auth.userId"
     User ||--|| Avatar: "User.avatar"
     Avatar ||--|{ Accessory: "Avatar.accessories"
 
