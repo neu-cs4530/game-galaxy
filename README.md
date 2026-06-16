@@ -121,9 +121,23 @@ erDiagram
         username username "unique"
         string display ""
         Date createdAt ""
+        Avatar avatar
+        number balance 
+        number wins
+    }
+    Avatar {
+        string color
+        string accessories "Record<string, boolean>"
+    }
+    Accessory {
+        string accessoryId "unique"
+        string name
+        number cost 
     }
     User ||--|| Auth: "User.username"
     Auth ||--|| User: "Auth.userId"
+    User ||--|| Avatar: "User.avatar"
+    Avatar ||--|{ Accessory: "Avatar.accessories"
 
     Thread {
         threadId threadId "generated key"
@@ -132,6 +146,9 @@ erDiagram
         Date createdAt ""
         userId createdBy ""
         commentId[] comments ""
+        string tags "string[]"
+        string reactions "ReactionInfo[]"
+        Date editedAt "can be null"
     }
     Thread ||--|| User: "Thread.createdBy"
     Thread ||--o{ Comment: "Thread.comments"

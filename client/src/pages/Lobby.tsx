@@ -116,7 +116,7 @@ export default function Lobby() {
           height="13%"
         />
         <GameTable
-          sprite="/sprites/lobby/Table1_frame1.png"
+          sprite="/sprites/lobby/Nim_frame1.png"
           top="31%"
           left="30.0%"
           width="25%"
@@ -124,7 +124,7 @@ export default function Lobby() {
           tableId="table:nim"
         />
         <GameTable
-          sprite="/sprites/lobby/Table1_frame1.png"
+          sprite="/sprites/lobby/NumGuesser_frame1.png"
           top="45%"
           left="56%"
           width="25%"
@@ -132,7 +132,7 @@ export default function Lobby() {
           tableId="table:guess"
         />
         <GameTable
-          sprite="/sprites/lobby/Table1_frame1.png"
+          sprite="/sprites/lobby/Mahjong_frame1.png"
           top="38%"
           left="43%"
           width="25%"
