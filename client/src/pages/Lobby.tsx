@@ -35,9 +35,10 @@ const FORUM_POSITIONS = [
 ];
 
 const AUCTION_POSITIONS = [
-  { top: "24%", left: "72%" },
-  { top: "23%", left: "65%" },
-  { top: "21%", left: "68%" },
+  { top: "29%", left: "75%" },
+  { top: "31%", left: "72%" },
+  { top: "33%", left: "69%" },
+  { top: "35%", left: "66%" },
 ];
 
 const SHOP_CLOSET_POSITIONS = [
@@ -133,12 +134,28 @@ export default function Lobby() {
           height="13%"
         />
         <RoomLink
-          sprite="/sprites/lobby/Table1_frame1.png"
+          sprite="/sprites/lobby/gavel_guy.png"
+          route="/auction"
+          top="21%"
+          left="70%"
+          width="10%"
+          height="10%"
+        />
+        <RoomLink
+          sprite="/sprites/lobby/Table1_frame2.png"
           route="/auction"
           top="21%"
           left="60%"
           width="25%"
           height="20%"
+        />
+        <RoomLink
+          sprite="/sprites/accessories/hat-01.png"
+          route="/auction"
+          top="26.1%"
+          left="68%"
+          width="13%"
+          height="13%"
         />
         <GameTable
           sprite="/sprites/lobby/Nim_frame1.png"
