@@ -57,7 +57,7 @@ export interface MahjongState {
   discardPile: MahjongTile[];
   currentPlayer: number;
   lastDiscard: MahjongTile | null;
-  phase: "discard" | "meld_window" | "voting" | "ended";
+  phase: "discard" | "meld_window" | "voting" | "done";
   meldResponses: (MahjongMeldResponse | null)[];
   dealer: number;
   winner: number | null;
@@ -87,7 +87,7 @@ export interface MahjongView {
   wallSize: number;
   currentPlayer: number;
   lastDiscard: MahjongTile | null;
-  phase: "discard" | "meld_window" | "voting" | "ended";
+  phase: "discard" | "meld_window" | "voting" | "done";
   meldResponses: (MahjongMeldResponse | null)[];
   dealer: number;
   winner: number | null;

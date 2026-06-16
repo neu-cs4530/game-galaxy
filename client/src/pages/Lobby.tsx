@@ -70,8 +70,12 @@ const MAHJONG_4P_POSITIONS = [
   { top: "48%", left: "63%" },
 ];
 
-// Where seated players are placed, per table
-const tablePositions: Record<string, { top: string; left: string }[]> = {
+const roomPositions: Record<string, { top: string; left: string }[]> = {
+  lobby: LOBBY_AVATAR_POSITIONS,
+  forum: FORUM_POSITIONS,
+  auction: AUCTION_POSITIONS,
+  shop: SHOP_CLOSET_POSITIONS,
+  closet: SHOP_CLOSET_POSITIONS,
   "table:nim": NIM_POSITIONS,
   "table:guess": NUMBER_GUESSER_POSITIONS,
   "table:mahjong3p": MAHJONG_3P_POSITIONS,

@@ -108,7 +108,7 @@ export default function MahjongGame({
     setSelectedIndices([]);
   }
 
-  const isGameOver = view.phase === "voting" || view.phase === "ended";
+  const isGameOver = view.phase === "voting" || view.phase === "done";
   const isMyTurn = view.phase === "discard" && view.currentPlayer === userPlayerIndex;
   const isMeldWindow = view.phase === "meld_window";
   const myResponse = isPlayer ? view.meldResponses[userPlayerIndex] : null;
@@ -163,10 +163,12 @@ export default function MahjongGame({
     setSelectedIndices([]);
   }
 
-  // FIX THIS (make it counter clockwise)
-  const otherPlayerIndices = Array.from({ length: players.length }, (_, i) => i).filter(
-    (i) => i !== userPlayerIndex,
-  );
+  const numPlayers = players.length;
+  const otherPlayerIndices = isPlayer
+    ? Array.from({ length: numPlayers - 1 }, (_, i) => numPlayers - 1 - i).map(
+        (offset) => (userPlayerIndex + offset) % numPlayers,
+      )
+    : Array.from({ length: numPlayers }, (_, i) => i);
 
   function playerName(i: number) {
     return players[i]?.display ?? `Player ${i + 1}`;
@@ -183,7 +185,7 @@ export default function MahjongGame({
           ? "You won!"
           : `${playerName(view.winner)} won!`
         : "Draw — wall exhausted";
-  } else if (view.phase === "ended") {
+  } else if (view.phase === "done") {
     statusText = "Game over";
   } else if (view.phase === "discard") {
     statusText = isMyTurn
@@ -371,7 +373,7 @@ export default function MahjongGame({
       )}
 
       {/* ── action panel ── */}
-      {view.phase !== "voting" && view.phase !== "ended" && isPlayer && (
+      {view.phase !== "voting" && view.phase !== "done" && isPlayer && (
         <div className="actionPanel">
           {isMyTurn && (
             <div className="actionButtons">
@@ -494,7 +496,7 @@ export default function MahjongGame({
           {/* cumulative scores */}
           <div className="cumulativeScores">
             <div className="cumulativeScoresTitle">
-              {view.phase === "ended" ? "Final Scores" : "Scores"}
+              {view.phase === "done" ? "Final Scores" : "Scores"}
             </div>
             <table className="scoresTable">
               <tbody>

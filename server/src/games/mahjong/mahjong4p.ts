@@ -121,7 +121,7 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
   },
 
   update: (state, payload, playerIndex) => {
-    if (state.phase === "ended") return null;
+    if (state.phase === "done") return null;
 
     const parsed = zMahjongMove.safeParse(payload);
     if (parsed.error) return null;
@@ -138,7 +138,7 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
 
       // any "no" vote immediately ends the game
       if (!move.vote) {
-        return { ...state, phase: "ended", playAgainVotes: newVotes };
+        return { ...state, phase: "done", playAgainVotes: newVotes };
       }
 
       // all voted yes — start next hand
@@ -275,10 +275,10 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
     return null;
   },
 
-  isDone: (state) => state.phase === "ended",
+  isDone: (state) => state.phase === "done",
 
   viewAs: (state, playerIndex) => {
-    const isOver = state.phase === "voting" || state.phase === "ended";
+    const isOver = state.phase === "voting" || state.phase === "done";
     const players = state.hands.map((hand, i) => ({
       hand: i === playerIndex || isOver ? [...hand] : [],
       melds: [...state.melds[i]],
@@ -304,7 +304,7 @@ export const mahjongLogic: GameLogic<MahjongState, MahjongView> = {
       lastScoring: state.lastScoring,
     };
   },
-  tagView: (view) => ({ type: "mahjong", view }),
+  tagView: (view) => ({ type: "mahjong4p", view }),
   getWinners: function (state: MahjongState): number[] {
     return state.winner !== null ? [state.winner] : [];
   },
