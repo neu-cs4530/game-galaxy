@@ -7,21 +7,11 @@ import type {
 } from "@gamenite/shared/src/games/mahjong.types.ts";
 import type { GameProps } from "../util/types.ts";
 
-// ── hand sync helper ──────────────────────────────────────────────────────────
+// ── helpers ───────────────────────────────────────────────────────────────────
 
-/**
- * Merge a server-updated hand into the player's locally ordered hand.
- * Tiles present in both are kept in their current order; newly drawn tiles
- * are appended at the end; discarded or melded tiles are dropped.
- *
- * @param ordered - the player's current display order
- * @param newHand - the authoritative hand from the server
- * @returns a new array with the same tiles as newHand in the best preserved order
- */
 function syncOrderedHand(ordered: string[], newHand: string[]): string[] {
   const remaining = new Map<string, number>();
   for (const t of newHand) remaining.set(t, (remaining.get(t) ?? 0) + 1);
-
   const synced: string[] = [];
   for (const t of ordered) {
     const count = remaining.get(t) ?? 0;
@@ -30,14 +20,14 @@ function syncOrderedHand(ordered: string[], newHand: string[]): string[] {
       remaining.set(t, count - 1);
     }
   }
-
-  // append newly drawn tiles at the end
   for (const [tile, count] of remaining) {
     for (let i = 0; i < count; i++) synced.push(tile);
   }
-
   return synced;
 }
+
+const WindLabel: Record<string, string> = { ew: "E", sw: "S", ww: "W", nw: "N" };
+const WindName: Record<string, string> = { ew: "East", sw: "South", ww: "West", nw: "North" };
 
 // ── sub-components ────────────────────────────────────────────────────────────
 
@@ -108,12 +98,9 @@ export default function MahjongGame({
   const [orderedHand, setOrderedHand] = useState<string[]>(myView?.hand ?? []);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [prevHandComposition, setPrevHandComposition] = useState<string>("");
-  // index of the tile currently being dragged
   const dragIndexRef = useRef<number | null>(null);
+  const [showReference, setShowReference] = useState(false);
 
-  // sync orderedHand during render when hand composition changes (tiles added or removed)
-  // this is the React-recommended pattern for deriving state from props changes:
-  // https://react.dev/reference/react/useState#storing-information-from-previous-renders
   const handComposition = myView?.hand.slice().sort().join(",") ?? "";
   if (myView && handComposition !== prevHandComposition) {
     setPrevHandComposition(handComposition);
@@ -121,14 +108,16 @@ export default function MahjongGame({
     setSelectedIndices([]);
   }
 
+  const isGameOver = view.phase === "voting" || view.phase === "ended";
   const isMyTurn = view.phase === "discard" && view.currentPlayer === userPlayerIndex;
   const isMeldWindow = view.phase === "meld_window";
   const myResponse = isPlayer ? view.meldResponses[userPlayerIndex] : null;
   const needToRespond =
     isMeldWindow && isPlayer && myResponse === null && userPlayerIndex !== view.currentPlayer;
   const discard = view.lastDiscard;
-
   const selectedTiles = selectedIndices.map((i) => orderedHand[i]);
+
+  const myVote = isPlayer ? view.playAgainVotes?.[userPlayerIndex] : null;
 
   function handleTileClick(index: number) {
     if (isMyTurn) {
@@ -140,25 +129,20 @@ export default function MahjongGame({
     }
   }
 
-  // ── drag handlers ──────────────────────────────────────────────────────────
-
   function handleDragStart(index: number) {
     dragIndexRef.current = index;
   }
 
   function handleDragOver(e: React.DragEvent, index: number) {
-    e.preventDefault(); // allow drop
+    e.preventDefault();
     const from = dragIndexRef.current;
     if (from === null || from === index) return;
-
-    // reorder in place as the tile is dragged over targets
     setOrderedHand((prev) => {
       const next = [...prev];
       const [moved] = next.splice(from, 1);
       next.splice(index, 0, moved);
       return next;
     });
-    // update selected indices to follow the moved tile
     setSelectedIndices((prev) =>
       prev.map((si) => {
         if (si === from) return index;
@@ -174,27 +158,32 @@ export default function MahjongGame({
     dragIndexRef.current = null;
   }
 
-  // ── submit ─────────────────────────────────────────────────────────────────
-
   function submitMove(move: MahjongMove) {
     makeMove(move);
     setSelectedIndices([]);
   }
 
-  const otherPlayerIndices = [0, 1, 2, 3].filter((i) => i !== userPlayerIndex);
+  const otherPlayerIndices = isPlayer
+    ? [3, 2, 1].map((offset) => (userPlayerIndex + offset) % 4)
+    : [0, 1, 2, 3];
 
   function playerName(i: number) {
     return players[i]?.display ?? `Player ${i + 1}`;
   }
 
+  const mySeatWind = isPlayer && view.seatWinds ? view.seatWinds[userPlayerIndex] : null;
+  const roundWind = view.roundWind;
+
   let statusText: string;
-  if (view.phase === "done") {
+  if (view.phase === "voting") {
     statusText =
       view.winner !== null
         ? view.winner === userPlayerIndex
-          ? "You won! 🀄"
+          ? "You won!"
           : `${playerName(view.winner)} won!`
         : "Draw — wall exhausted";
+  } else if (view.phase === "ended") {
+    statusText = "Game over";
   } else if (view.phase === "discard") {
     statusText = isMyTurn
       ? "Your turn — select a tile to discard"
@@ -208,27 +197,72 @@ export default function MahjongGame({
       {/* ── status bar ── */}
       <div className="mahjongStatus smallAndGray">
         <span className="phaseLabel">{statusText}</span>
-        <span>{view.wallSize} tiles remaining</span>
+        <span className="windBadges">
+          {roundWind && (
+            <span
+              className="windBadge roundWind"
+              style={{ marginLeft: "1rem" }}
+              title={`Round wind: ${WindName[roundWind]}`}
+            >
+              Round: {WindLabel[roundWind]}
+            </span>
+          )}
+          {mySeatWind && (
+            <span
+              className="windBadge seatWind"
+              style={{ marginLeft: "1rem" }}
+              title={`Your seat: ${WindName[mySeatWind]}`}
+            >
+              Seat: {WindLabel[mySeatWind]}
+            </span>
+          )}
+          <span style={{ marginLeft: "1rem" }}>{view.wallSize} tiles left</span>
+        </span>
+        <button
+          className="secondary narrow"
+          style={{ marginLeft: "auto" }}
+          onClick={() => setShowReference((v) => !v)}
+        >
+          {showReference ? "Hide guide" : "? Tile guide"}
+        </button>
       </div>
 
       <hr />
 
-      {/* ── other players ── */}
+      {showReference && (
+        <div className="referencePanel">
+          <img
+            src="/mahjong-reference.png"
+            alt="Mahjong tile reference guide"
+            className="referenceImage"
+          />
+        </div>
+      )}
       <div className="otherPlayers">
         {otherPlayerIndices.map((p) => {
           const pView = view.players[p];
           const response = view.meldResponses[p];
           const isDiscarder = isMeldWindow && view.currentPlayer === p;
           const isCurrentTurn = view.phase === "discard" && view.currentPlayer === p;
+          const pSeatWind = view.seatWinds?.[p];
           return (
             <div key={p} className="otherPlayer">
               <div className="playerName">
                 {playerName(p)}
+                {pSeatWind && (
+                  <span
+                    className="windBadge seatWind"
+                    style={{ marginLeft: "0.4rem" }}
+                    title={WindName[pSeatWind]}
+                  >
+                    {WindLabel[pSeatWind]}
+                  </span>
+                )}
                 {isCurrentTurn && " ◀"}
                 {view.dealer === p && " (dealer)"}
                 {isMeldWindow && (
                   <span style={{ marginLeft: "0.4rem" }}>
-                    {isDiscarder ? "🀄 discarded" : response === null ? "⏳" : `✓ ${response.type}`}
+                    {isDiscarder ? "discarded" : response === null ? "⏳" : `✓ ${response.type}`}
                   </span>
                 )}
               </div>
@@ -240,7 +274,7 @@ export default function MahjongGame({
                 </div>
               )}
               <div className="handBacks">
-                {view.phase === "done" && pView.hand.length > 0
+                {isGameOver && pView.hand.length > 0
                   ? pView.hand.map((tile, i) => <TileImage key={i} tile={tile} size="sm" />)
                   : Array.from({ length: pView.hand.length }).map((_, i) => (
                       <TileImage key={i} tile="back" size="sm" />
@@ -335,7 +369,7 @@ export default function MahjongGame({
       )}
 
       {/* ── action panel ── */}
-      {view.phase !== "done" && isPlayer && (
+      {view.phase !== "voting" && view.phase !== "ended" && isPlayer && (
         <div className="actionPanel">
           {isMyTurn && (
             <div className="actionButtons">
@@ -348,9 +382,7 @@ export default function MahjongGame({
                   }
                 }}
               >
-                {selectedIndices.length > 0
-                  ? `Discard ${orderedHand[selectedIndices[0]]}`
-                  : "Select a tile"}
+                {selectedIndices.length > 0 ? "Discard" : "Select a tile"}
               </button>
               <button
                 className="secondary narrow"
@@ -364,11 +396,10 @@ export default function MahjongGame({
                 Kong
               </button>
               <button className="secondary narrow" onClick={() => submitMove({ type: "win" })}>
-                Declare Win (Ji Mo)
+                Declare Win
               </button>
             </div>
           )}
-
           {needToRespond && (
             <div className="actionButtons">
               <button className="secondary narrow" onClick={() => submitMove({ type: "pass" })}>
@@ -382,14 +413,143 @@ export default function MahjongGame({
                 Meld
               </button>
               <button className="primary narrow" onClick={() => submitMove({ type: "win" })}>
-                Win (Sik Wu)
+                Win
               </button>
             </div>
           )}
-
           {isMeldWindow && myResponse !== null && (
             <div className="responseStatus">
               You chose to {myResponse.type}. Waiting for other players…
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── scoring panel (shown during voting and ended) ── */}
+      {isGameOver && (
+        <div className="scoringPanel">
+          {/* hand score breakdown */}
+          {view.lastScoring && view.winner !== null && (
+            <>
+              <div className="scoringWinner">
+                {view.winner === userPlayerIndex
+                  ? "Your winning hand"
+                  : `${playerName(view.winner)}'s winning hand`}
+              </div>
+              <table className="scoringTable">
+                <thead>
+                  <tr>
+                    <th>Pattern</th>
+                    <th className="zhCol">中文</th>
+                    <th className="fanCol">Fan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {view.lastScoring.breakdown.map((entry, i) => (
+                    <tr key={i} className={entry.isLimit ? "limitRow" : ""}>
+                      <td>{entry.name}</td>
+                      <td className="zhCol smallAndGray">{entry.nameZh}</td>
+                      <td className="fanCol">{entry.isLimit ? "Limit" : entry.fan}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr className="scoringTotalRow">
+                    <td colSpan={2}>
+                      {view.lastScoring.isLimit
+                        ? "Limit hand"
+                        : `Total: ${view.lastScoring.totalFan} fan`}
+                    </td>
+                    <td className="fanCol">{view.lastScoring.points} pts</td>
+                  </tr>
+                </tfoot>
+              </table>
+              <div className="scoringPayments">
+                <div className="smallAndGray" style={{ marginBottom: "0.25rem" }}>
+                  Payments
+                </div>
+                {view.lastScoring.payments.map((payment, i) => {
+                  if (payment === 0) return null;
+                  const isWinner = i === view.winner;
+                  return (
+                    <div
+                      key={i}
+                      className={`paymentRow ${isWinner ? "paymentReceive" : "paymentPay"}`}
+                    >
+                      <span>{playerName(i)}</span>
+                      <span>{isWinner ? `+${-payment} pts` : `-${payment} pts`}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {!view.lastScoring && view.winner === null && (
+            <div className="scoringWinner">Draw — wall exhausted, no payments</div>
+          )}
+
+          {/* cumulative scores */}
+          <div className="cumulativeScores">
+            <div className="cumulativeScoresTitle">
+              {view.phase === "ended" ? "Final Scores" : "Scores"}
+            </div>
+            <table className="scoresTable">
+              <tbody>
+                {[0, 1, 2, 3].map((i) => {
+                  const score = view.scores?.[i] ?? 0;
+                  const isHandWinner = i === view.winner;
+                  return (
+                    <tr key={i} className={isHandWinner ? "scoresWinnerRow" : ""}>
+                      <td>{playerName(i)}</td>
+                      <td className={`scoreValue ${score >= 0 ? "scorePos" : "scoreNeg"}`}>
+                        {score >= 0 ? `+${score}` : `${score}`}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* play again voting */}
+          {view.phase === "voting" && (
+            <div className="playAgainSection">
+              <div className="playAgainTitle">Play another hand?</div>
+              <div className="voteStatuses">
+                {[0, 1, 2, 3].map((i) => {
+                  const vote = view.playAgainVotes?.[i];
+                  return (
+                    <span
+                      key={i}
+                      className={`voteStatus ${vote === true ? "voteYes" : vote === false ? "voteNo" : "votePending"}`}
+                    >
+                      {playerName(i)}: {vote === true ? "✓ Yes" : vote === false ? "✗ No" : "⏳"}
+                    </span>
+                  );
+                })}
+              </div>
+              {isPlayer && myVote === null && (
+                <div className="playAgainButtons">
+                  <button
+                    className="primary narrow"
+                    onClick={() => submitMove({ type: "playAgain", vote: true })}
+                  >
+                    Yes, play again
+                  </button>
+                  <button
+                    className="secondary narrow"
+                    onClick={() => submitMove({ type: "playAgain", vote: false })}
+                  >
+                    No thanks
+                  </button>
+                </div>
+              )}
+              {isPlayer && myVote !== null && (
+                <div className="responseStatus">
+                  You voted {myVote ? "yes" : "no"}. Waiting for others…
+                </div>
+              )}
             </div>
           )}
         </div>
