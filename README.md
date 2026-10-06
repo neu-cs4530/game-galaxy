@@ -1,28 +1,74 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/vWAG9U_Y)
-The individual and team project for this class are designed to mirror the
-experiences of a software engineer joining a new development team: you will be
-“onboarded” to our codebase, make several individual contributions, and then
-form a team to propose, develop and implement new features. The codebase that
-we'll be developing is GameNite, a website that answers the question "what if
-Twitch, but for correspondence chess?"
+# GameGalaxy
 
-You will get an opportunity to work with the starter code which provides basic
-skeleton for the app and then additional features will be proposed and
-implemented by you! All implementation will take place in the TypeScript
-programming language, using React for the user interface.
+## Overview
+GameGalaxy is our semester-long project for CS4530 Software Engineering. We were provided a stripped base to work from, worked with course staff to determine our 3 user stories, as well as 10+ conditions of satisfaction for each. The core purpose of this class was to simulate an agile team working environment across three sprints, organized with Jira.  
 
-## Getting Started
+GameGalaxy itself is a site with multiplayer correspondence minigames with spectators, paired with community-focused features like forums, avatars, accessories, and shared lobby navigation. Correspondence games are remote matches where participants may take extended time to make their move, from hours to several days.    
+
+## Tech Stack
+Typescript  
+React  
+Websockets  
+REST API  
+MongoDB  
+Playwright & Vitest  
+
+## Live Site/Demo
+Site: https://summer26-project-group-107.onrender.com/  
+May take ~30s to load on first visit due to Render free plan limitations.  
+
+<table>
+  <tr>
+    <td align="center" valign="top" colspan="2">
+      <img src="ReadMe%20Images/Lobby.png" alt="Game lobby" width="600" /><br />
+      <sub><b>Lobby</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="top" width="50%">
+      <img src="ReadMe%20Images/Avatars.png" alt="Avatars" width="400" /><br />
+      <sub><b>Avatars</b></sub>
+    </td>
+    <td align="center" valign="top" width="50%">
+      <img src="ReadMe%20Images/Notifications.png" alt="Notifications" width="400" /><br />
+      <sub><b>Notifications</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="top" colspan="2">
+      <img src="ReadMe%20Images/Auction.png" alt="Auction" width="600" /><br />
+      <sub><b>Auction</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="top" colspan="2">
+      <img src="ReadMe%20Images/Forum%20Post.png" alt="Forum post" width="600" /><br />
+      <sub><b>Forum</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="top" colspan="2">
+      <img src="ReadMe%20Images/Mahjong.png" alt="Mahjong" width="600" /><br />
+      <sub><b>Mahjong</b></sub>
+    </td>
+  </tr>
+</table>
+
+## Process
+We created an initial proposal with our user stories and the conditions of satisfaction they would cover, as well as our sprint plans. After each sprint, we would collaborate on a retrospective to understand our successes and shortcomings and how to improve for the following week and stay on track.  
+
+User story 1: Avatars, accessories, shop, currency, auction, new lobby  
+User story 2: Forum tags, filtering and sorting, post editing, reactions, thread subscriptions and notifications  
+User story 3: Mahjong with 3 or 4 players   
+
+We reached 91% branch coverage on Vitest, and added many e2e Playwright tests to cover the features we added, particularly the updated lobby navigation system.  
+
+## Running Locally
 
 Run `npm install` in the root directory to install all dependencies for the
-`client`, `server`, and `shared` folders.
+`client`, `server`, and `shared` folders.  
 
-### Working on the application
-
-While you're working on the application, it's useful to run it in "development
-mode" locally. Development mode watches files for changes and updates the
-application when changes happen.
-
-To run gamenite locally in development mode, do one of the following:
+To run locally in development mode, do one of the following:
 
 1. Run `npm run dev` in the top-level directory
 2. Open two terminal windows
@@ -54,7 +100,7 @@ production build of the client. Then, the server can be started in production
 mode by running `npm start -w=server` and accessed by going to
 <http://localhost:8000/>.
 
-## Codebase Folder Structure
+### Codebase Folder Structure
 
 - `client`: Contains the frontend application code, responsible for the user
   interface and interacting with the backend. This directory includes all
@@ -66,7 +112,7 @@ mode by running `npm start -w=server` and accessed by going to
   client and server. This helps maintain consistency and reduces duplication
   of code between the two folders.
 
-## API Routes
+### API Routes
 
 The server provides the following REST endpoints: requests are routed to these
 endpoints in `server/src/app.ts`.
@@ -103,7 +149,7 @@ endpoints in `server/src/app.ts`.
 The Socket.io API for event-driven communication between clients and the
 server is detailed in `shared/src/socket.types.ts`.
 
-## Data Architecture
+### Data Architecture
 
 This web application stores information about users, forum posts, and games.
 The structure of the data can be described by this diagram:
@@ -190,32 +236,3 @@ erDiagram
     }
     Message ||--|| User: "Message.createdBy"
 ```
-
-## Games
-
-To create a new game `example`, you need to take the following steps:
-
-- In a new file `shared/src/games/example.types.ts`, define the game's state:
-  what gets stored on the server as an `ExampleState`, what gets sent to
-  players as an `ExampleView`, and what players send as moves as an
-  `ExampleMove`.
-- In the existing file `shared/src/game.types.ts`:
-  - The `ExampleView` needs to be imported from
-    `shared/src/games/example.types.ts`.
-  - Everything in `shared/src/games/example.ts` file needs be _exported_ (so
-    it can be used in other files that import `game.types.ts`).
-  - The GameKey `example` needs to be added to `zGameKey` and
-    `{ type: 'example'; view: ExampleView }` needs to be added to
-    `TaggedGameView`.
-- In a new file `server/src/games/example.ts`, the rules of the game, which
-  are evaluated in the backend server, need to be added. This file should
-  export `exampleLogic` and `exampleGameService`.
-- In the existing file `server/src/services/game.service.ts`, the mapping from
-  `example` to `exampleGameService` needs to be added to `gameServices`.
-- In a new file `client/src/games/ExampleGame.tsx`, a React component
-  `ExampleGame` needs to be defined, which takes
-  `GameProps<ExampleView, ExampleMove>` as its props.
-- In the existing file `client/src/games/GameDispatch.tsx`, a case statement
-  for `'example'` needs to be added.
-- In the existing file `client/src/util/consts.ts`, a mapping from `example`
-  to the user-facing name for the game needs to be added.
